@@ -8,10 +8,11 @@ const testMiddleware = async (req: Request, res: Response, next: NextFunction) =
     const options = {
       model: "gpt-4"
     }
+    console.log("REQ: ", req)
     const model = new ChatOpenAI(options);
     const messages = [
       new SystemMessage("Translate the following from English into Italian"),
-      new HumanMessage("hi!")
+      new HumanMessage("hi")
     ];
     const parser = new StringOutputParser
     const result = await model.invoke(messages);
