@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ChatOpenAI } from '@langchain/openai';
-import {ChatPromptTemplate, PromptTemplate} from "@langchain/core/prompts"
+import {ChatPromptTemplate, PromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate} from "@langchain/core/prompts"
 import {AIMessage, HumanMessage, SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
 
@@ -17,9 +17,12 @@ const generateThemes = async (req: Request, res: Response) => {
   Instead, focus on using the exact language and phrases used by the user. 
   The themes should be framed in a way that would likely engage the user and highlight important aspects of their experience.
   Also, for each theme, also retrieve the most relevant part (It could be sentence(s), phrase(s) in the narrative, with each theme) 
+  User narrative: 
   `);
 
-  const humanMessage = new HumanMessage(`User's narrative: {user_narrative}`)
+  const humanTemplate = "User's narrative: {user_narrative}"
+
+  const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 
   const narrative = `
   Ever since middle school, I've always seen myself as someone who thrives in the shadows, away from the glaring spotlight of public attention. 
@@ -29,23 +32,25 @@ const generateThemes = async (req: Request, res: Response) => {
   The thought of standing in front of all those people, having to lead and direct, filled me with an intense dread that was completely new to me. 
   `
 
-  const edges = z.object({
+  const formattedHumanMessage = await humanMessage.format({user_narrative: narrative})
+
+  const edgeSchema = z.object({
     themes: z.array(z.object({
       theme: z.string().describe("Each theme from the personal narrative shared by a user."),
       quote: z.string().describe("Most relevant part of the user's narrative, to the theme")
     }))
   })
 
-  const finalPrompt = ChatPromptTemplate.fromMessages([
+  const finalPromptTemplate = ChatPromptTemplate.fromMessages([
     systemMessage,
-    narrative
+    formattedHumanMessage
   ])
 
-  const structuredLlm = model.withStructuredOutput(edges);
-  const chain = finalPrompt.pipe(structuredLlm)
+  const structuredLlm = model.withStructuredOutput(edgeSchema);
+
+  const chain = finalPromptTemplate.pipe(structuredLlm);
 
   const result = await chain.invoke({user_narrative: narrative})
-  // console.log("RESULT: ", result)
 
   res.json(result)
 
