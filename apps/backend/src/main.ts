@@ -1,7 +1,7 @@
 import express from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
-import testRouter from './routes/test';
+import testRouter from './routes/testRoute';
 import cors from 'cors'
 
 const app = express();
@@ -12,11 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.options("*", cors());
 
-app.get('/', (req, res) => {
-  res.send({ message: 'Welcome to backend!' });
-});
-
-app.use("/test", testRouter)
+app.use("/", testRouter)
 
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {
