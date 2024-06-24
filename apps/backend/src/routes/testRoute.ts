@@ -1,5 +1,5 @@
 import express from 'express';
-import generateThemes from "../middlewares/generateThemes";
+import generateThemes from "../middlewares/generateThemesMiddleware";
 
 var router = express.Router()
 

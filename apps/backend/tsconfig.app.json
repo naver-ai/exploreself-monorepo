@@ -1,10 +1,12 @@
 {
   "extends": "./tsconfig.json",
+  "type": "module",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    // "module": "commonjs",
-    "types": ["node", "express"]
+    "module": "ES6",
+    "types": ["node", "express"],
+    "esModuleInterop": true
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/utils/generateThemes.ts", "src/middlewares/generateThemes.ts", "src/routes/testRoute.ts"]
 }

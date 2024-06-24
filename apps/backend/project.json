@@ -3,14 +3,14 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/backend/src",
   "projectType": "application",
+  "type": "module",
   "tags": [],
   "targets": {
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "backend:build"
-      },
+        "buildTarget": "backend:build"      },
       "configurations": {
         "development": {
           "buildTarget": "backend:build:development"

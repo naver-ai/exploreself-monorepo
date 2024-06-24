@@ -4,6 +4,12 @@ import * as bodyParser from 'body-parser';
 import testRouter from './routes/testRoute';
 import cors from 'cors'
 
+process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production' ) ? 'production' : 'development';
+if (process.env.NODE_ENV == 'production') {
+  console.log("Production Mode");
+} else if (process.env.NODE_ENV == 'development') {
+  console.log("Development Mode");
+}
 const app = express();
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
