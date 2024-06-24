@@ -7,7 +7,7 @@ const generateThemes = async (history, user_input, mode) => {
 
   // TODO: mode setting
   const model = new ChatOpenAI({
-    model: "gpt-4"
+    model: "gpt-4o"
   });
 
   const systemMessage = new SystemMessage(`
@@ -20,7 +20,7 @@ const generateThemes = async (history, user_input, mode) => {
   Instead, focus on using the exact language and phrases used by the user. 
   The themes should be framed in a way that would likely engage and be inviting the user and highlight important aspects of their experience.
   Never judge or assume anything that would stigmatize oneself. They will not feel inviting to explore further. 
-  Also, for each theme, also retrieve the most relevant part (It could be sentence(s), phrase(s) in the narrative, with each theme) in Korean.
+  Also, for each theme, also retrieve the most relevant part (It could be sentence(s), phrase(s) in the narrative, with each theme) in Korean, both theme and quote.
   User narrative: 
   `);
 
