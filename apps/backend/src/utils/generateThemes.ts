@@ -3,15 +3,20 @@ import {ChatPromptTemplate, HumanMessagePromptTemplate} from "@langchain/core/pr
 import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
 
-const generateThemes = async (history, user_input, mode) => {
+const generateThemes = async (mode, history, additional_instructions='') => {
 
   // TODO: mode setting
+  // mode 0: extract initial (theme, quote) pair
+  // mode 1: exploration themes
+  // 그냥 함수를 따로 만들기
   const model = new ChatOpenAI({
     model: "gpt-4o"
   });
 
+  const most_recent_input = history.most_recent_input
+
   const systemMessage = new SystemMessage(`
-  You are an assistant that helps user explore and examin user's personal narrative for them to understand it better, in an empowering way. 
+  You are an assistant that helps user explore and examin one's personal narrative for them to understand it better, in an empowering way. 
   The user will share one's personal narrative with you. 
   Your task is to identify 10 themes that the user can explore further. 
   The themes that you elicit will be directly be delivered to the user themselves, and they should feel inviting for the users.  
@@ -41,7 +46,7 @@ const generateThemes = async (history, user_input, mode) => {
   const edgeSchema = z.object({
     themes: z.array(z.object({
       theme: z.string().describe("Each theme from the personal narrative shared by a user."),
-      quote: z.string().describe("Most relevant part of the user's narrative, to the theme")
+      quote: z.string().describe("Most relevant part of the user's narrative to the theme")
     }))
   })
 
@@ -54,9 +59,11 @@ const generateThemes = async (history, user_input, mode) => {
 
   const chain = finalPromptTemplate.pipe(structuredLlm);
 
-  const result = await chain.invoke({user_narrative: history});
+  const result = await chain.invoke({user_narrative: most_recent_input});
 
-  return result
+  console.log("Theme result: ", result)
+
+  return result;
 } 
 
 export default generateThemes;
