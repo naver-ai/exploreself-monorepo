@@ -10,7 +10,7 @@ export interface UserInput {
   text: string,
 }
 
-export interface CompletionRequest {
+export interface ChatCompletionRequest {
   messages: Array<{ role: string, content: string }>;
   topP: number;
   topK: number;
@@ -20,4 +20,11 @@ export interface CompletionRequest {
   stopBefore: string[];
   includeAiFilters: boolean;
   seed: number;
+}
+
+export interface CompletionRequest {
+  start: string;
+  stopBefore: Array<string>;
+  text: string;
+  includeAiFilters: boolean;
 }

@@ -1,15 +1,14 @@
 import express, { Request, Response } from 'express';
-import { CompletionRequest } from '../utils/interfaces';
-import completionExecutor from '../utils/completionExecutor';
+import { ChatCompletionRequest, CompletionRequest } from '../utils/interfaces';
+import hcxChatcompletionExecutor from '../utils/hcxChatCompletionExecutor';
 
-const executeHCXMiddleware = async (req: Request, res: Response) => {
+const hcxChatCompMiddleware = async (req: Request, res: Response) => {
 
-  console.log("Entered executeHCXMiddleware")
   const host = `https://clovastudio.apigw.ntruss.com`
   const hcx_api_key = process.env.HCX_API_KEY
   const hcx_api_key_primary_val = process.env.HCX_API_KEY_PRIMARY_VAL
   const hcx_request_id = process.env.HCX_REQUEST_ID
-  console.log("REQ_ID: ", hcx_request_id)
+
   const messages_input = [
     {
       "role":"system",
@@ -27,7 +26,7 @@ const executeHCXMiddleware = async (req: Request, res: Response) => {
     }
   ]
 
-  const completion_request:CompletionRequest = {
+  const completion_request: ChatCompletionRequest = {
     messages: messages_input,
     topP: 0.8,
     topK: 0,
@@ -39,15 +38,15 @@ const executeHCXMiddleware = async (req: Request, res: Response) => {
     seed:0
   }
 
-  const completion_executor = new completionExecutor(host, hcx_api_key, hcx_api_key_primary_val, hcx_request_id);
+  const completion_executor = new hcxChatcompletionExecutor(host, hcx_api_key, hcx_api_key_primary_val, hcx_request_id);
   try {
-    const hcx_result = await completion_executor.execute(completion_request);
-    console.log("HCX_RESULT: ", hcx_result)
-    res.json(hcx_result)
+    const hcx_chatcomp_result = await completion_executor.execute(completion_request);
+    console.log("HCX_CHAT_COMP_RESULT: ", hcx_chatcomp_result)
+    res.json(hcx_chatcomp_result)
     // res.status(200).send('Request executed successfully');
   } catch (error) {
     res.status(500).send('Error executing request'); 
   }
 }
 
-export default executeHCXMiddleware;
+export default hcxChatCompMiddleware;
