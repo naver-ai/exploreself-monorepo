@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ChatCompletionRequest, CompletionRequest } from '../utils/interfaces';
-import hcxChatcompletionExecutor from '../utils/hcxChatCompletionExecutor';
+import hcxChatCompletionExecutor from '../utils/hcxChatCompletionExecutor';
 
 const hcxChatCompMiddleware = async (req: Request, res: Response) => {
 
@@ -38,7 +38,7 @@ const hcxChatCompMiddleware = async (req: Request, res: Response) => {
     seed:0
   }
 
-  const completion_executor = new hcxChatcompletionExecutor(host, hcx_api_key, hcx_api_key_primary_val, hcx_request_id);
+  const completion_executor = new hcxChatCompletionExecutor(host, hcx_api_key, hcx_api_key_primary_val, hcx_request_id);
   try {
     const hcx_chatcomp_result = await completion_executor.execute(completion_request);
     console.log("HCX_CHAT_COMP_RESULT: ", hcx_chatcomp_result)
