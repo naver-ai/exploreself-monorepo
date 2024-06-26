@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import testRouter from './routes/testRoute';
 import cors from 'cors'
+import mongoose, { mongo } from 'mongoose'; 
 
 process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production' ) ? 'production' : 'development';
 if (process.env.NODE_ENV == 'production') {
@@ -17,6 +18,13 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.options("*", cors());
+
+const uri = 'mongodb://localhost:27017/';
+const dbName = 'myDatabase';
+
+mongoose.connect(uri + dbName)
+  .then(() => console.log('MongoDB connected!'))
+  .catch(error => console.log(error))
 
 app.use("/", testRouter)
 

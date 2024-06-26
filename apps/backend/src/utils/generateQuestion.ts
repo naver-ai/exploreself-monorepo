@@ -10,10 +10,11 @@ const generateQuestions = async (mode, history, selection, additional_instructio
 
 
   console.log("selected theme: ", selection)
+  const most_recent_question = history.most_recent_question
   const most_recent_input = history.most_recent_input
   const stacked_input = history.stacked_input;
 
-  const current_context = (stacked_input || '') + (most_recent_input || '')
+  const current_context = (stacked_input || '') + (most_recent_question || '') + (most_recent_input || '')
   
   const model = new ChatOpenAI({
     model: "gpt-4"
