@@ -1,8 +1,10 @@
 import express from 'express';
-import generateThemes from "../middlewares/generateThemesMiddleware";
+import generateThemesMiddleware from "../middlewares/generateThemesMiddleware";
+import executeHCXMiddleware from '../middlewares/executeHCXMiddleware';
 
 var router = express.Router()
 
-router.get('/generateThemes', generateThemes)
+router.get('/generateThemes', generateThemesMiddleware)
+router.post('/executeHCX', executeHCXMiddleware)
 
 export default router;

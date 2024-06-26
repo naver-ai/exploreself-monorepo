@@ -20,11 +20,11 @@ app.use(cors());
 app.options("*", cors());
 
 const uri = 'mongodb://localhost:27017/';
-const dbName = 'myDatabase';
+const dbName = 'reauthor';
 
-mongoose.connect(uri + dbName)
-  .then(() => console.log('MongoDB connected!'))
-  .catch(error => console.log(error))
+// mongoose.connect(uri + dbName)
+//   .then(() => console.log('MongoDB connected!'))
+//   .catch(error => console.log(error))
 
 app.use("/", testRouter)
 
