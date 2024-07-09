@@ -16,4 +16,5 @@ module.exports = {
       outputHashing: 'none',
     }),
   ],
+  devtool: 'source-map',
 };

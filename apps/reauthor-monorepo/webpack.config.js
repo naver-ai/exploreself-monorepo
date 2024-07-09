@@ -9,6 +9,7 @@ module.exports = {
   devServer: {
     port: 4200,
   },
+  devtool: 'source-map',
   plugins: [
     new NxAppWebpackPlugin({
       tsConfig: './tsconfig.app.json',

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {CompletionRequest} from './interfaces'
+import {CompletionRequest} from '../interfaces'
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -16,7 +16,7 @@ class hcxCompExecutor {
         // this.requestId = requestId;
     }
 
-    async execute(completionRequest: CompletionRequest): Promise<void> {
+    async execute(completionRequest: CompletionRequest): Promise<any> {
       console.log("API: ", this.apiKey)
         const headers = {
             'X-NCP-CLOVASTUDIO-API-KEY': this.apiKey,
@@ -32,7 +32,12 @@ class hcxCompExecutor {
                 {headers}
             );
 
-            return response.data.result
+            const result = {
+                inputText: response.data.result.inputText,
+                outputText: response.data.result.outputText
+            }
+
+            return result
         } catch (error) {
             console.error('Error executing request', error);
         }

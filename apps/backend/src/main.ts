@@ -14,7 +14,7 @@ if (process.env.NODE_ENV == 'production') {
 const app = express();
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use(bodyParser.json())
+app.use(bodyParser.json({type: 'application/json; charset=utf-8'}))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.options("*", cors());
@@ -22,9 +22,9 @@ app.options("*", cors());
 const uri = 'mongodb://localhost:27017/';
 const dbName = 'reauthor';
 
-// mongoose.connect(uri + dbName)
-//   .then(() => console.log('MongoDB connected!'))
-//   .catch(error => console.log(error))
+mongoose.connect(uri + dbName)
+  .then(() => console.log('MongoDB connected!'))
+  .catch(error => console.log(error))
 
 app.use("/", testRouter)
 

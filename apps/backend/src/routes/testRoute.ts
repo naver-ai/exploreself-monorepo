@@ -1,12 +1,15 @@
 import express from 'express';
-import generateThemesMiddleware from "../middlewares/generateThemesMiddleware";
-import hcxChatCompMiddleware from '../middlewares/hcxChatCompMiddleware';
-import hcxCompMiddleware from '../middlewares/hcxCompMiddleware';
+import generateThemesMiddleware from "../controllers/themeController";
+import { hcxChatCompletion, hcxCompletion } from '../controllers/hcxController';
+import dbTestController from '../controllers/dbTestController';
+import { generateQuestion } from '../controllers/questionController';
 
 var router = express.Router()
 
 router.get('/generateThemes', generateThemesMiddleware)
-router.post('/hcxChatComp', hcxChatCompMiddleware)
-router.post('/hcxComp', hcxCompMiddleware)
+router.post('/hcxChatComp', hcxChatCompletion)
+router.post('/hcxComp', hcxCompletion)
+router.post('/dbTest', dbTestController)
+router.post('/generateQuestion', generateQuestion)
 
 export default router;

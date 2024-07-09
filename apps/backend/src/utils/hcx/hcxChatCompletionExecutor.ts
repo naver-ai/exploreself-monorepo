@@ -1,7 +1,7 @@
 import axios from 'axios';
-import {ChatCompletionRequest} from './interfaces'
+import {ChatCompletionRequest} from '../interfaces'
 
-class hcxChatcompletionExecutor {
+class hcxChatCompletionExecutor {
     private host: string;
     private apiKey: string;
     private apiKeyPrimaryVal: string;
@@ -14,7 +14,7 @@ class hcxChatcompletionExecutor {
         // this.requestId = requestId;
     }
 
-    async execute(completionRequest: ChatCompletionRequest): Promise<void> {
+    async execute(completionRequest: ChatCompletionRequest): Promise<any> {
         const headers = {
             'X-NCP-CLOVASTUDIO-API-KEY': this.apiKey,
             'X-NCP-APIGW-API-KEY': this.apiKeyPrimaryVal,
@@ -29,11 +29,16 @@ class hcxChatcompletionExecutor {
                 {headers}
             );
 
-            return response.data.result
+            const result = {
+                input: completionRequest.messages,
+                output: response.data.result.message
+            }
+
+            return result
         } catch (error) {
             console.error('Error executing request', error);
         }
     }
 }
 
-export default hcxChatcompletionExecutor;
+export default hcxChatCompletionExecutor;

@@ -1,7 +1,7 @@
 import { ChatOpenAI, OpenAI, ChatOpenAICallOptions, OpenAICallOptions } from '@langchain/openai';
 import { ChatPromptTemplate, HumanMessagePromptTemplate, PromptTemplate, SystemMessagePromptTemplate } from '@langchain/core/prompts';
 import z from "zod"
-import { chatModel } from '../../config';
+import { chatModel } from '../../config/config';
 
 const generatePlausibleAnswers = async (questionInput: string, contextInput: string | any) => {
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(

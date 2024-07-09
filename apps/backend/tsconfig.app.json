@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "type": "module",
   "compilerOptions": {
+    "sourceMap": true,
     "outDir": "../../dist/out-tsc",
     "module": "ES6",
     "types": ["node", "express"],
@@ -10,9 +11,9 @@
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
   "include": [
     "src/**/*.ts",
-    "src/utils/generateThemes.ts",
-    "src/utils/hcxChatCompletionExecutor.ts", 
-    "src/middlewares/generateThemesMiddleware.ts",
-    "src/middlewares/hcxChatCompMiddleware.ts", 
+    "src/utils/questionChain/generateThemes.ts",
+    "src/utils/hcx/hcxChatCompletionExecutor.ts", 
+    "src/controllers/themeController.ts",
+    "src/controllers/hcxChatCompletion.ts", 
     "src/routes/testRoute.ts"]
 }
