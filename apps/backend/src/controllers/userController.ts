@@ -8,8 +8,9 @@ const getUserInfo = async (req: Request, res: Response) => {
   if (!user) {
     res.status(400).send("Couldn't find user");
   }
-
-  res.json(user)
+  res.json({
+    user: user
+  })
 }
 
 export {getUserInfo}

@@ -1,9 +1,10 @@
 import React, {FC, useEffect, useState} from 'react';
 import axios from "axios";
+import { BrowserRouter , Route, Routes } from 'react-router-dom';
+import Main from './Pages/Main';
 
 const App: FC = () => {
 
-  // const [input, setInput] = useState("");
   const [output, setOutput] = useState<string>("");
 
   const onSubmit = () => {
@@ -18,10 +19,18 @@ const App: FC = () => {
   }
 
   return (
-    <div>
-      <button onClick={onSubmit}>Submit</button>
-      <p>Output: {output}</p>
-    </div>
+    // <div>
+    //   <button onClick={onSubmit}>Submit</button>
+    //   <p>Output: {output}</p>
+    // </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={<Main/>}
+        />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

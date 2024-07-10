@@ -2,6 +2,8 @@ import express from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import testRouter from './routes/testRoute';
+import userRouter from './routes/user'
+
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
 
@@ -27,6 +29,7 @@ mongoose.connect(uri + dbName)
   .catch(error => console.log(error))
 
 app.use("/", testRouter)
+app.use("/user", userRouter)
 
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {

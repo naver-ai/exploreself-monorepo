@@ -22,26 +22,7 @@ const generateThemes = async (req: Request, res: Response) => {
 
   const history_log = await processHistory(history, res)
 
-  // const narrative_eng = `
-  // Ever since middle school, I've always seen myself as someone who thrives in the shadows, away from the glaring spotlight of public attention. 
-  // I preferred to keep my head down, diligently working in quiet solitude, and my social interactions were always subtle, never the center of attention. 
-  // But recently, my usual tranquility at work was disrupted when I was unexpectedly chosen to lead a major project. 
-  // This wasn't just any project; it involved a division-wide presentation, thrusting me into the very spotlight I had always avoided. 
-  // The thought of standing in front of all those people, having to lead and direct, filled me with an intense dread that was completely new to me. 
-  // `
-
-  // const rl = readline.createInterface({
-  //   input: process.stdin,
-  //   output: process.stdout
-  // })
-
   const themes = await generateThemesFromContext(self_narrative, history_log);
-
-  // console.log("EDGES: ", initial_edges.themes)
-
-  // const answerCallback = createAnswerCallback(rl, themes.themes, self_narrative)
-
-  // rl.question('What theme would you like to explore?\n(Select by index): ',answerCallback)
 
   res.json(themes)
 }
