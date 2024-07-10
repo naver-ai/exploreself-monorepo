@@ -1,4 +1,4 @@
-import { HistoryItem, Question, Answer } from "../config/schema";
+import { HistoryItem, Question } from "../config/schema";
 
 const processHistory = async(history, res) => {
   if (history.length === 0) {
@@ -16,19 +16,14 @@ const processHistory = async(history, res) => {
     const qid = historyItem.question;
     const aid = historyItem.answer;
     const qItem = await Question.findById(new qid);
-    const aItem = await Answer.findById(aid);
     
     if (!qItem) {
       console.log("qItem not found");
       return res.send({ error: "Question not found" });
     }
     
-    if (!aItem) {
-      console.log("aItem not found");
-      return res.send({ error: "Answer not found" });
-    }
     
-    history_log.push(`Question: ${qItem.content}, User's answer: ${aItem.content}\n`);
+    history_log.push(`Question: ${qItem.qContent}, User's answer: ${qItem.userAnswer.aContent}\n`);
   }
 
   return history_log

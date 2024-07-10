@@ -13,7 +13,6 @@ const GranularItemSchema = new Schema({
   selected: {type: Boolean, default: false}
 })
 
-
 // TODO: 언어 (localized text)
 const QuestionSchema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
@@ -45,7 +44,6 @@ const ThemeSchema = new Schema({
 const HistoryItemSchema =  new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
   question: {type: Schema.Types.ObjectId, ref: 'Question'},
-  answer: {type: Schema.Types.ObjectId, ref: 'Answer'},
   content: {type: String}
 })
 
@@ -67,10 +65,9 @@ GranularItemSchema.set('timestamps', true)
 
 
 const Question = mongoose.model('Question', QuestionSchema)
-const Thread = mongoose.model('Thread', ThreadSchema)
 const Theme = mongoose.model('Theme', ThemeSchema)
 const HistoryItem = mongoose.model('HistoryItem', HistoryItemSchema)
 const User = mongoose.model('User', UserSchema)
 
 
-export {Question, Thread, Theme, HistoryItem, User}
+export {Question, HistoryItem, User, Theme}
