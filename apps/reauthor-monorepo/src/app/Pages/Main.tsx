@@ -1,24 +1,27 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import {IUser} from '../../../../interface/schemaInterface'
+import {IUser} from '../../../../utils/schemaInterface'
+import NewThemes from "../Components/newThemes";
+import getUserInfo from "../Utils/getUserInfo";
 
 const Main = () => {
 
   const [userInfo, setUserInfo] = useState<IUser | null>(null)
 
   useEffect(() => {
-    axios.get(
-      `http://localhost:3333/user/getUserInfo`
-    ).then((res) => {
-      setUserInfo(res.data.user)
-    }).catch((error) => {
-      console.error("Error in making request: ", error)
-    })
+
+    const fetchUserInfo = async () => {
+      const data = await getUserInfo();
+      setUserInfo(data);
+    };
+
+    fetchUserInfo();
   }, [])
   
   return(
     <div>
       Self narrative: {userInfo? userInfo.selfNarrative: "Loading"}
+      <NewThemes userInfo={userInfo}/>
     </div>
   )
 }

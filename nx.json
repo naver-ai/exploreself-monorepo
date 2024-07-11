@@ -66,5 +66,16 @@
       }
     }
   },
-  "nxCloudAccessToken": "ODE4MzYxYTUtNTU0NS00YjMxLWE0OTYtMzIzZDFkYTNhMDQ5fHJlYWQtd3JpdGU="
+  "nxCloudAccessToken": "ODE4MzYxYTUtNTU0NS00YjMxLWE0OTYtMzIzZDFkYTNhMDQ5fHJlYWQtd3JpdGU=",
+  "targetDefaults": {
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    }
+  }
 }
