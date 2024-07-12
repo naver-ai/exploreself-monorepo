@@ -1,15 +1,16 @@
 import {ChatPromptTemplate, HumanMessagePromptTemplate} from "@langchain/core/prompts"
 import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
-import { chatModel } from '../config'
+import { chatModel } from '../../config'
 import React, { useEffect, useState } from "react";
 import { IUser } from "apps/utils/schemaInterface";
+import ThemeItem from "./ThemeItem";
 
 interface NewThemesProps{
   userInfo: IUser | null
 }
 
-const NewThemes: React.FC<NewThemesProps> = ({userInfo}) => {
+const ThemeSet: React.FC<NewThemesProps> = ({userInfo}) => {
 
   const [themes, setThemes] = useState<any[]>([])
 
@@ -29,7 +30,8 @@ const NewThemes: React.FC<NewThemesProps> = ({userInfo}) => {
       <button onClick={displayThemes}>Regenerate</button>
       <ul>
         {themes.map((item, index) => {
-          return <li key={index}>{item.theme}</li>
+          console.log(index, item)
+          return <ThemeItem theme={item.theme}/>
         })}
       </ul>
     </div>
@@ -58,6 +60,7 @@ const generateThemesFromContext = async (self_narrative: string | undefined, his
   Also, it's important to use the user's expression as much as possible. 
   Never judge or assume anything that would stigmatize oneself. They will not feel inviting to explore further. 
   Also, for each theme, also retrieve the most relevant part (It could be sentence(s), phrase(s) in the narrative, with each theme) in Korean.
+  Also, for the theme, generate a list of diverse expressions implying the same theme, so that the user can choose which expression is more acceptable to them.
   User narrative: 
   `:
   `` // TODO: System message with history log
@@ -70,7 +73,7 @@ const generateThemesFromContext = async (self_narrative: string | undefined, his
 
   const edgeSchema = z.object({
     themes: z.array(z.object({
-      theme: z.string().describe("Each theme from the personal narrative shared by a user."),
+      theme: z.array(z.string().describe("Each theme from the personal narrative shared by a user.")).describe("diverse different expressions implying the same theme, so that the user can choose which expression is more acceptable."),
       quote: z.string().describe("Most relevant part of the user's narrative to the theme")
     }))
   })
@@ -91,4 +94,4 @@ const generateThemesFromContext = async (self_narrative: string | undefined, his
   return result;
 } 
 
-export default NewThemes;
+export default ThemeSet;

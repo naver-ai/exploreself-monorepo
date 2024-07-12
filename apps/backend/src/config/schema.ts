@@ -17,7 +17,7 @@ const GranularItemSchema = new Schema({
 const QuestionSchema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
   qContent: {type: String, required: true},
-  GranularItems: [GranularItemSchema],
+  granularItems: [GranularItemSchema],
   userAnswer: AnswerSchema,
   selected: Boolean,
   createdAt: { type: Date, default: Date.now }

@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import {IUser} from '../../../../utils/schemaInterface'
-import NewThemes from "../Components/newThemes";
-import getUserInfo from "../Utils/getUserInfo";
+import {IUser} from '../../../utils/schemaInterface'
+import ThemeSet from "../Components/InitialThemes/ThemeSet";
+import getUserInfo from "../Utils/getUserInfo"
 
 const Main = () => {
 
@@ -21,7 +21,7 @@ const Main = () => {
   return(
     <div>
       Self narrative: {userInfo? userInfo.selfNarrative: "Loading"}
-      <NewThemes userInfo={userInfo}/>
+      <ThemeSet userInfo={userInfo}/>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import z from "zod"
 import { chatModel } from '../../config/config';
 
 const generatePlausibleAnswers = async (questionInput: string, contextInput: string | any) => {
+
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(
     `Given the following context, provide 10 different plausible answers for the question. 
     Context: {context},\n
