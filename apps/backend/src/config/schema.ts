@@ -43,6 +43,7 @@ const ThemeSchema = new Schema({
 
 const HistoryItemSchema =  new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+  historyType: {type: String},
   question: {type: Schema.Types.ObjectId, ref: 'Question'},
   content: {type: String}
 })
