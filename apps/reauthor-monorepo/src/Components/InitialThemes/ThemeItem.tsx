@@ -3,10 +3,15 @@ import { chatModel } from "../../config"
 
 // TODO: history는 redux에 넣어두기 
 
+
 const ExpressionItem = (props: {
   expression: string
 }) => {
   const generateQuestionSet = () => {
+
+  }
+
+  const addToBookmark = () => {
 
   }
 

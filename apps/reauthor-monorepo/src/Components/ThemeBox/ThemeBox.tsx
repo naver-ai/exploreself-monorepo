@@ -10,4 +10,4 @@ const ThemeBox = (props:{
   )
 }
 
-export default ThemeBox
+export default ThemeBox;
