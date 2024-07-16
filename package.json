@@ -9,9 +9,11 @@
   "dependencies": {
     "@langchain/core": "^0.2.8",
     "@langchain/openai": "^0.1.3",
+    "@redux-devtools/extension": "^3.3.0",
     "@reduxjs/toolkit": "^2.2.6",
     "@types/inquirer": "^9.0.7",
     "@types/mongoose": "^5.11.97",
+    "antd": "^5.19.1",
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",

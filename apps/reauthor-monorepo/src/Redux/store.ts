@@ -1,5 +1,5 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import userReducer from './reducers/userSlice'
+import userReducer, { IUserState } from './reducers/userSlice'
 import {
   persistStore,
   persistReducer,
@@ -16,9 +16,11 @@ const persistConfig = {
   key: 'root',
   storage
 }
-
+export interface IRootState {
+  userInfo: IUserState
+}
 const rootReducer = combineReducers({
-  userReducer
+  userInfo: userReducer
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

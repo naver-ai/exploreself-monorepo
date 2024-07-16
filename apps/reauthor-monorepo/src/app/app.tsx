@@ -2,10 +2,11 @@ import React, {FC, useEffect, useState} from 'react';
 import axios from "axios";
 import { BrowserRouter , Route, Routes } from 'react-router-dom';
 import Main from '../Pages/Main';
-import '../style/index.css'
+// import '../style/index.css'
 import InitialNarrative from '../Pages/InitialNarrative';
 import ValueSet from '../Pages/ValueSet';
 import Login from '../Pages/Login';
+import 'apps/reauthor-monorepo/src/styles.css'
 const App: FC = () => {
 
   return (

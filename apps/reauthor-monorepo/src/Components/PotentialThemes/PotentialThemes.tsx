@@ -4,13 +4,13 @@ import {z} from "zod";
 import { chatModel } from '../../config'
 import React, { useEffect, useState } from "react";
 import { IUser } from "apps/utils/schemaInterface";
-import ThemeItem from "./ThemeItem";
+import PotentialThemeItem from "./PotentialThemeItem";
 
 interface NewThemesProps{
   userInfo: IUser | null
 }
 
-const ThemeSet: React.FC<NewThemesProps> = ({userInfo}) => {
+const PotentialThemes: React.FC<NewThemesProps> = ({userInfo}) => {
 
   const [themes, setThemes] = useState<any[]>([])
 
@@ -26,12 +26,12 @@ const ThemeSet: React.FC<NewThemesProps> = ({userInfo}) => {
   }, [])
   return (
     <div>
-      <div>Themes</div>
-      <button onClick={displayThemes}>Regenerate</button>
+      <div>POTENTIAL THEMES</div>
+      <button onClick={displayThemes}>[Generate themes]</button>
       <ul>
         {themes.map((item, index) => {
           console.log(index, item)
-          return <ThemeItem theme={item.theme}/>
+          return <PotentialThemeItem theme={item.theme}/>
         })}
       </ul>
     </div>
@@ -94,4 +94,4 @@ const generateThemesFromContext = async (self_narrative: string | undefined, his
   return result;
 } 
 
-export default ThemeSet;
+export default PotentialThemes;
