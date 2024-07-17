@@ -1,9 +1,14 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+interface IScaffolding extends Document {
+  scaffolding: string;
+  createdAt: Date;
+}
 interface IAnswer extends Document {
   question: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
   content: string;
+  scaffoldings: IScaffolding[];
   createdAt: Date;
 }
 
@@ -48,3 +53,5 @@ interface IUser extends Document {
   history: IHistoryItem[];
   createdAt: Date;
 }
+
+export {IHistoryItem}

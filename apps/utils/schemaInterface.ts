@@ -48,6 +48,7 @@ interface IHistoryItem extends Document {
 interface IUser extends Document {
   name: string;
   selfNarrative: string;
+  value_set: string[];
   background: string;
   themes: ITheme[];
   history: IHistoryItem[];
