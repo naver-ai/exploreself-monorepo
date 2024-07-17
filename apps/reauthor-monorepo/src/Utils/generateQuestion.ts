@@ -5,6 +5,7 @@ import { z } from "zod";
 const generateQuestionFromContext = async (history_log: Array<string>, theme: string, qType: string) => {
 
   let questions;
+  console.log("Q TYPE IS: ", qType)
 
   switch (qType){
     case 'followup':
