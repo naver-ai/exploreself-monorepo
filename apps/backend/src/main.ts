@@ -33,7 +33,8 @@ mongoose.connect(uri + dbName)
 // app.use("/", testRouter)
 app.use("/user", userRouter)
 app.use("/admin", adminRouter)
-
+app.use("/question", questionRouter)
+app.use("/response", responseRouter)
 
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {
