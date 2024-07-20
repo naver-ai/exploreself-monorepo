@@ -1,6 +1,89 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
+interface IAIFeedback extends Document {
+  // TBD
+}
+
+interface ITypeASelectedKeyword {
+  content: string;
+  ai_generated: boolean;
+}
+
+interface ITypeAGeneratedSentence {
+  type: string;
+  selected: boolean;
+}
+
+interface ITypeAScaffolding extends Document {
+  tried: boolean;
+  unselected_keywords: string[];
+  selected_keywords: ITypeASelectedKeyword[];
+  generated_sentence: ITypeAGeneratedSentence[];
+  ai_synthesize: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface ITypeBQASet {
+  question: string;
+  selected: string[];
+  unselected: string[];
+}
+
+interface ITypeBScaffolding extends Document {
+  tried: boolean;
+  qa_set: ITypeBQASet[];
+  ai_synthesize: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface ITypeCPrompt {
+  type: string;
+  selected: boolean;
+}
+
+interface ITypeCPromptSet {
+  tip: string;
+  prompts: ITypeCPrompt[];
+}
+
+interface ITypeCScaffolding extends Document {
+  tried: boolean;
+  prompt_set: ITypeCPromptSet[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface IScaffoldingData extends Document {
+  typeA: ITypeAScaffolding;
+  typeB: ITypeBScaffolding;
+  typeC: ITypeCScaffolding;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface IThreadItem extends Document {
+  uid: mongoose.Types.ObjectId;
+  question: string;
+  scaffoldingData: IScaffoldingData;
+  response: string;
+  history_information: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface IUser extends Document {
+  name: string;
+  initial_narrative: string;
+  value_set: string[];
+  background: string;
+  thread: mongoose.Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const AIFeedbackSchema = new Schema({
   // TBD
  })
@@ -96,6 +179,7 @@ const AIFeedbackSchema = new Schema({
  const UserSchema = new Schema({
    name: {type: String, required: true},
    initial_narrative: {type: String, required: true},
+   value_set: {type: [String], required: true, default: []},
    background: {type: String, required: true},
    thread: {type: [{type: Schema.Types.ObjectId, ref: 'ThreadItem'}], default: [], required: true},
    createdAt: {type: Date, default: Date.now},
@@ -104,9 +188,7 @@ const AIFeedbackSchema = new Schema({
  
  UserSchema.set('timestamps', true);
  
+ const ThreadItem = mongoose.model<IThreadItem>('ThreadItem', ThreadItemSchema)
+ const User = mongoose.model<IUser>('User', UserSchema)
  
- const ThreadItem = mongoose.model('ThreadItem', ThreadItemSchema)
- const User = mongoose.model('User', UserSchema)
- 
- 
- export {User, ThreadItem}
+ export { User, ThreadItem, IAIFeedback, ITypeAScaffolding, ITypeBScaffolding, ITypeCScaffolding, IScaffoldingData, IThreadItem, IUser };
