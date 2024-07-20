@@ -192,6 +192,7 @@ const AIFeedbackSchema = new Schema({
  
  const UserSchema = new Schema({
    name: {type: String, required: true},
+   ucode: {type: String, required: true},
    initial_narrative: {type: String, required: true},
    value_set: {type: [String], required: true, default: []},
    background: {type: String, required: true},
@@ -204,7 +205,7 @@ const AIFeedbackSchema = new Schema({
  
  UserSchema.set('timestamps', true);
  
- const ThreadItem = mongoose.model<IThreadItem>('ThreadItem', ThreadItemSchema)
+//  const ThreadItem = mongoose.model<IThreadItem>('ThreadItem', ThreadItemSchema)
  const User = mongoose.model<IUser>('User', UserSchema)
  
- export { User, ThreadItem, IAIFeedback, ITypeAScaffolding, ITypeBScaffolding, ITypeCScaffolding, IScaffoldingData, IThreadItem, IUser };
+ export { User, IAIFeedback, ITypeAScaffolding, ITypeBScaffolding, ITypeCScaffolding, IScaffoldingData, IThreadItem, IUser };

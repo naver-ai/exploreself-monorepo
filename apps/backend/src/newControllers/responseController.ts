@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IThreadItem, ThreadItem, User } from "../config/schema";
+import { IThreadItem, User } from "../config/schema";
 import { uid } from "../config/config";
 import generateScaffoldingKeywords from '../newUtils/generateScaffoldingKeywords'
 import { IInitInfo } from "../config/interface";
@@ -8,11 +8,8 @@ import generateSentencesFromKeywords from "../newUtils/generateSentencesFromKeyw
 const saveResponse = async (req: Request, res: Response) => {
   const threadItem: IThreadItem = req.body.thread_item;
 
-  const newThreadItem = new ThreadItem(threadItem)
   try {
-    const savedThreadItem = await newThreadItem.save()
-
-    await User.findByIdAndUpdate(uid, {$push: {thread: newThreadItem}})
+    await User.findByIdAndUpdate(uid, {$push: {thread: threadItem}})
     res.json({
       success: true
     })
