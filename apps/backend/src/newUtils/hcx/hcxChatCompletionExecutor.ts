@@ -1,9 +1,7 @@
 import axios from 'axios';
-import {CompletionRequest} from '../interfaces'
-import dotenv from 'dotenv';
-dotenv.config();
+import {ChatCompletionRequest} from '../../config/interface'
 
-class hcxCompExecutor {
+class hcxChatCompletionExecutor {
     private host: string;
     private apiKey: string;
     private apiKeyPrimaryVal: string;
@@ -16,8 +14,7 @@ class hcxCompExecutor {
         // this.requestId = requestId;
     }
 
-    async execute(completionRequest: CompletionRequest): Promise<any> {
-      console.log("API: ", this.apiKey)
+    async execute(completionRequest: ChatCompletionRequest): Promise<any> {
         const headers = {
             'X-NCP-CLOVASTUDIO-API-KEY': this.apiKey,
             'X-NCP-APIGW-API-KEY': this.apiKeyPrimaryVal,
@@ -27,14 +24,14 @@ class hcxCompExecutor {
 
         try {
             const response = await axios.post(
-                `${this.host}/testapp/v1/completions/LK-D2`,
+                `${this.host}/testapp/v1/chat-completions/HCX-003`,
                 completionRequest,
                 {headers}
             );
 
             const result = {
-                inputText: response.data.result.inputText,
-                outputText: response.data.result.outputText
+                input: completionRequest.messages,
+                output: response.data.result.message
             }
 
             return result
@@ -44,4 +41,4 @@ class hcxCompExecutor {
     }
 }
 
-export default hcxCompExecutor;
+export default hcxChatCompletionExecutor;

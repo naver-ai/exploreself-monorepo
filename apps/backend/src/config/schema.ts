@@ -57,29 +57,36 @@ interface ITypeCScaffolding extends Document {
 }
 
 interface IScaffoldingData extends Document {
-  typeA: ITypeAScaffolding;
-  typeB: ITypeBScaffolding;
-  typeC: ITypeCScaffolding;
-  createdAt: Date;
-  updatedAt: Date;
+  typeA?: ITypeAScaffolding;
+  typeB?: ITypeBScaffolding;
+  typeC?: ITypeCScaffolding;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface IThreadItem extends Document {
-  uid: mongoose.Types.ObjectId;
+  uid?: mongoose.Types.ObjectId;
   question: string;
   scaffoldingData: IScaffoldingData;
   response: string;
-  history_information: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  history_information?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
+// interface IHistoryItem {
+//   history_information: string;
+//   threadItemRef?: mongoose.Types.ObjectId;
+//   createdAt?: Date;
+//   updatedAt?: Date;
+// }
 interface IUser extends Document {
   name: string;
   initial_narrative: string;
   value_set: string[];
   background: string;
-  thread: mongoose.Types.ObjectId[];
+  thread: IThreadItem[];
+  // history: IHistoryItem[]
   createdAt: Date;
   updatedAt: Date;
 }
@@ -169,19 +176,28 @@ const AIFeedbackSchema = new Schema({
      type: String,
      required: true
    },
-   history_information: {type: [String], required: true},
+   history_information: {type: String, required: true},
    createdAt: {type: Date, default: Date.now},
    updatedAt: {type: Date}
  });
  
  ThreadItemSchema.set('timestamps', true)
+
+//  const HistoryItemSchema = new Schema ({
+// 	history_information: {type: String, required: true},
+// 	threadItem: {type: Schema.Types.ObjectId, ref: 'ThreadItem', required: true},
+//   createdAt: {type: Date, default: Date.now},
+//   updatedAt: {type: Date}
+// })
  
  const UserSchema = new Schema({
    name: {type: String, required: true},
    initial_narrative: {type: String, required: true},
    value_set: {type: [String], required: true, default: []},
    background: {type: String, required: true},
-   thread: {type: [{type: Schema.Types.ObjectId, ref: 'ThreadItem'}], default: [], required: true},
+   thread: {type: [ThreadItemSchema], default: [], required: true},
+  //  thread: {type: [{type: Schema.Types.ObjectId, ref: 'ThreadItem'}], default: [], required: true},
+  //  history: {type: [HistoryItemSchema], default: []},
    createdAt: {type: Date, default: Date.now},
    updatedAt: {type: Date}
  });

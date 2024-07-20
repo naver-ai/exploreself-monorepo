@@ -2,6 +2,16 @@ import { Request, Response } from "express";
 import { uid } from "../config/config";
 import { User } from "../config/schema";
 
+const getUserInfo = async (req: Request, res: Response) => {
+  const user = await User.findById(uid)
+  if (!user) {
+    res.status(400).send("Couldn't find user");
+  }
+  res.json({
+    user: user
+  })
+}
+
 // TODO: Check if uid should be wrapped by ObjectId
 const setInitialNarrative = (req: Request, res: Response) => {
   const init_narrative = req.body.init_narrative;
@@ -39,4 +49,4 @@ const setBackground = (req: Request, res: Response) => {
   })
 }
 
-export {setInitialNarrative, setValueSet, setBackground}
+export {getUserInfo, setInitialNarrative, setValueSet, setBackground}

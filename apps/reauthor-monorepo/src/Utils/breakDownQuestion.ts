@@ -1,9 +1,6 @@
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts"
 import { chatModel } from "../config"
 import { z } from "zod";
-import { useSelector } from "react-redux";
-import { IRootState } from "../Redux/store";
-import { IUser } from "apps/utils/schemaInterface";
 import { IUserState } from "../Redux/reducers/userSlice";
 
 const breakDownQuestion = async (userInfo: IUserState, original_question: string) => {

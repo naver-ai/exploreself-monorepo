@@ -16,3 +16,9 @@ export interface CompletionRequest {
   text: string;
   includeAiFilters: boolean;
 }
+
+export interface IInitInfo {
+	init_nar: string;
+	val_set: Array<string>;
+	background: string;
+}

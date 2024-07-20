@@ -4,7 +4,9 @@ import { IUserState } from "../../Redux/reducers/userSlice"
 import { IRootState } from "../../Redux/store"
 import { Content } from "antd/es/layout/layout"
 import { removeTheme, activateTheme, inActivateTheme } from "../../Redux/reducers/userSlice"
-import { theme } from "antd"
+import { theme, Space } from "antd"
+import { PushpinOutlined } from '@ant-design/icons';
+
 
 const BookMarkItem = (props:{
   content: string,
@@ -31,7 +33,12 @@ const BookMarkItem = (props:{
   }
   return(
     <div>
+      <Space className="bg-violet-50 px-2" >
+      <PushpinOutlined/>
       <div className={`${props.isActivated? styleVariants.activated: styleVariants.inactivated}`}>{props.content}</div>
+      </Space>
+      
+      
       <button onClick={activateFromBookmark}>[Activate]</button>
       <button onClick={inActivateFromBookmark}>[Inactivate]</button>
       <button onClick={deleteFromBookmark}>[Delete]</button>

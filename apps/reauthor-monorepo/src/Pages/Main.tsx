@@ -8,6 +8,7 @@ import BookMark from "../Components/SelectedThemes/BookMark";
 import { useSelector } from "react-redux";
 import { IRootState } from "../Redux/store";
 import {Sheet} from 'react-modal-sheet'
+import Sidebar from "../Components/New/Sidebar/Sidebar";
 
 const Main = () => {
 
@@ -28,12 +29,13 @@ const Main = () => {
   
   return(
     <div className="flex flex-row">
-      <div className="basis-1/6"><BookMark/></div>
+      <div className="basis-1/6"><Sidebar/></div>
       <div className="basis-2/3">
         Self narrative: {userInfo? userInfo.selfNarrative: "Loading"}
         {/* Value set: {reduxUserInfo? reduxUserInfo.value_set: "Loading"}
         Background: {reduxUserInfo? reduxUserInfo.background: "Loading"} */}
         <SelectedThemes/>
+        
         <button onClick={() => setOpen(true)}>Open Sheet</button>
         <Sheet isOpen={isOpen} onClose={() => setOpen(false)} detent='content-height'>
           <Sheet.Container>

@@ -2,20 +2,20 @@ import { ChatOpenAI } from '@langchain/openai';
 import {ChatPromptTemplate, HumanMessagePromptTemplate} from "@langchain/core/prompts"
 import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
-import { chatModel } from '../../config/config';
+import { chatModel } from '../config/config';
+import { IInitInfo } from '../config/interface';
 
-
-const generateThemesFromContext = async (self_narrative: string, history_log: Array<string>, additional_instructions='') => {
+const generateThemesFromNarrative = async (init_info: IInitInfo, additional_instructions='') => {
 
   // TODO: mode setting
   // mode 0: extract initial (theme, quote) pair
   // mode 1: exploration themes
   // 그냥 함수를 따로 만들기
 
-  const mode = history_log.length === 0 ? 0 : 1; // mode 0: Only initial narrative, mode 1: With history log
+  const self_narrative = init_info.init_nar
+  // TODO: Add value_set and background
 
-  const system_message = mode===0? 
-  `
+  const system_message =  `
   You are an assistant that helps user explore and examin one's personal narrative for them to understand it better, in an empowering way. 
   The user will share one's personal narrative with you. 
   Your task is to identify 10 themes that the user can explore further. 
@@ -28,8 +28,7 @@ const generateThemesFromContext = async (self_narrative: string, history_log: Ar
   Never judge or assume anything that would stigmatize oneself. They will not feel inviting to explore further. 
   Also, for each theme, also retrieve the most relevant part (It could be sentence(s), phrase(s) in the narrative, with each theme) in Korean.
   User narrative: 
-  `:
-  `` // TODO: System message with history log
+  `
 
   const systemMessage = new SystemMessage(system_message);
 
@@ -60,4 +59,4 @@ const generateThemesFromContext = async (self_narrative: string, history_log: Ar
   return result;
 } 
 
-export default generateThemesFromContext;
+export default generateThemesFromNarrative;
