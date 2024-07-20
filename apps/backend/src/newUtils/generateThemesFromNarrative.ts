@@ -54,8 +54,6 @@ const generateThemesFromNarrative = async (init_info: IInitInfo, additional_inst
 
   const result = await chain.invoke({user_narrative: self_narrative});
 
-  console.log("Theme result: ", result)
-
   return result;
 } 
 

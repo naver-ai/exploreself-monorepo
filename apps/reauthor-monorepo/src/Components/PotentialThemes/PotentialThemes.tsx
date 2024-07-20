@@ -5,6 +5,7 @@ import { chatModel } from '../../config'
 import React, { useEffect, useState } from "react";
 import { IUser } from "apps/utils/schemaInterface";
 import PotentialThemeItem from "./PotentialThemeItem";
+import getInitialThemes from "../../APICall/getInitialThemes";
 
 interface NewThemesProps{
   userInfo: IUser | null
@@ -14,20 +15,21 @@ const PotentialThemes: React.FC<NewThemesProps> = ({userInfo}) => {
 
   const [themes, setThemes] = useState<any[]>([])
 
-  const displayThemes = async (): Promise<void> => {
-    const newThemes = await generateThemesFromContext(userInfo?.selfNarrative,[])
-    setThemes(newThemes.themes)
-  }
+  const fetchInitThemes = async () => {
+    const data = await getInitialThemes();
+    console.log("DATA! ", data)
+    // console.log("THEMES: ", data.themes.map((themeItem: { theme: string; quote: string }) => themeItem.theme))
+    setThemes(data);
+  };
 
-  useEffect(()=> {
-    if (userInfo) {
-      displayThemes()
-    }
+  useEffect(() => {
+    fetchInitThemes();
   }, [])
+
   return (
     <div>
       <div>POTENTIAL THEMES</div>
-      <button onClick={displayThemes}>[Generate themes]</button>
+      <button onClick={fetchInitThemes}>[Generate themes]</button>
       <ul>
         {themes.map((item, index) => {
           console.log(index, item)
@@ -88,8 +90,6 @@ const generateThemesFromContext = async (self_narrative: string | undefined, his
   const chain = finalPromptTemplate.pipe(structuredLlm);
 
   const result = await chain.invoke({user_narrative: self_narrative});
-
-  console.log("Theme result: ", result)
 
   return result;
 } 

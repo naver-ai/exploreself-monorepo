@@ -2,18 +2,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import {IUser} from '../../../utils/schemaInterface'
 import PotentialThemes from '../Components/PotentialThemes/PotentialThemes';
-import getUserInfo from "../Utils/getUserInfo"
+import getUserInfo from "../APICall/getUserInfo"
 import SelectedThemes from "../Components/SelectedThemes/SelectedThemes";
 import BookMark from "../Components/SelectedThemes/BookMark";
 import { useSelector } from "react-redux";
 import { IRootState } from "../Redux/store";
 import {Sheet} from 'react-modal-sheet'
 import Sidebar from "../Components/New/Sidebar/Sidebar";
+import QuestionSetup from "../Components/New/QuestionSetup/QuestionSetup";
 
 const Main = () => {
 
   const [userInfo, setUserInfo] = useState<IUser | null>(null)
-  const reduxUserInfo = useSelector((state: IRootState) => state.userInfo)
   const [isOpen, setOpen] = useState(false)
 
   useEffect(() => {
@@ -31,10 +31,9 @@ const Main = () => {
     <div className="flex flex-row">
       <div className="basis-1/6"><Sidebar/></div>
       <div className="basis-2/3">
-        Self narrative: {userInfo? userInfo.selfNarrative: "Loading"}
-        {/* Value set: {reduxUserInfo? reduxUserInfo.value_set: "Loading"}
-        Background: {reduxUserInfo? reduxUserInfo.background: "Loading"} */}
-        <SelectedThemes/>
+        Self narrative: {userInfo? userInfo.initial_narrative: "Loading"}
+        <QuestionSetup/>
+        {/* <SelectedThemes/> */}
         
         <button onClick={() => setOpen(true)}>Open Sheet</button>
         <Sheet isOpen={isOpen} onClose={() => setOpen(false)} detent='content-height'>
@@ -53,7 +52,7 @@ const Main = () => {
         </Sheet>       
       </div>
       
-      <div className="basis-1/6">Value Set: {userInfo? reduxUserInfo.value_set.join(', '): ""}</div>
+      <div className="basis-1/6">Value Set: {userInfo? userInfo.value_set.join(', '): ""}</div>
       
       
     </div>
