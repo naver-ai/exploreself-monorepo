@@ -5,6 +5,7 @@ import userRouter from './newRoutes/user'
 import adminRouter from './newRoutes/admin'
 import questionRouter from './newRoutes/question'
 import responseRouter from './newRoutes/response'
+import threadRouter from './newRoutes/thread'
 
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
@@ -29,12 +30,14 @@ const dbName = 'reauthor';
 mongoose.connect(uri + dbName)
   .then(() => console.log('MongoDB connected!'))
   .catch(error => console.log(error))
-
+app.use(express.json());
 // app.use("/", testRouter)
 app.use("/user", userRouter)
 app.use("/admin", adminRouter)
 app.use("/question", questionRouter)
 app.use("/response", responseRouter)
+app.use("/thread", threadRouter)
+
 
 const port = process.env.PORT || 3333;
 const server = app.listen(port, () => {

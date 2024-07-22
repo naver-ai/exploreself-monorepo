@@ -10,10 +10,15 @@ const generateQuestionsbyInfo = async (init_info: IInitInfo, history: IThreadIte
 
   const systemTemplate = `
   You are an helpful assistant who provides non-burdening yet meaningful Socratic questioning to the user, for one to understand better about one's personal narrative.
-  There is already a set of text that the user has written about one's situation.
+  [TASK]
+  Provide meaningful Socratic questioning to the user, for one to understand better about one's personal narrative, relating to the theme that the user selects. 
+  Here's the user's narrative: {init_narrative}.
+  "${history.length?`
+  Also, there is already a set of text that the user has written about one's situation.
   Based on the context of the writing, provide the at the moment most helpful Socratic question in text. 
-  Here's the current context of user's writing: {current_context} // TODO: new theme과 context 어떻게 할지 결정
-  Following is the theme within the context that the user would like to understand more about: 
+  "Here's the current context of user's writing: {current_context}"
+  `:""}"
+  Following is the theme within the context that the user would like to get Socratic Questioning about: 
   ` // TODO: design prompt
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplate)
 
@@ -33,7 +38,7 @@ const generateQuestionsbyInfo = async (init_info: IInitInfo, history: IThreadIte
 
   const chain = finalPromptTemplate.pipe(structuredLlm)
 
-  const result = await chain.invoke({current_context: history.join(', '), selection: selected_theme})
+  const result = await chain.invoke({init_narrative: init_info.init_nar, current_context: history.join(', '), selection: selected_theme})
 
   // TODO: question에 save하는거, onChange 
 

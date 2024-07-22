@@ -13,7 +13,7 @@ const getUserInfo = async (req: Request, res: Response) => {
 }
 
 // TODO: Check if uid should be wrapped by ObjectId
-const setInitialNarrative = (req: Request, res: Response) => {
+const setInitialNarrative = async (req: Request, res: Response) => {
   const init_narrative = req.body.init_narrative;
   User.findByIdAndUpdate(uid, {$set: {initial_narrative: init_narrative}}, (err, data) => {
     if (err) throw err;
@@ -25,7 +25,7 @@ const setInitialNarrative = (req: Request, res: Response) => {
   })
 }
 
-const setValueSet = (req: Request, res: Response) => {
+const setValueSet = async (req: Request, res: Response) => {
   const value_set = req.body.value_set;
   User.findByIdAndUpdate(uid, {$set: {value_set: value_set}}, (err, data) => {
     if (err) throw err;
@@ -37,7 +37,7 @@ const setValueSet = (req: Request, res: Response) => {
   })
 }
 
-const setBackground = (req: Request, res: Response) => {
+const setBackground = async (req: Request, res: Response) => {
   const background = req.body.background;
   User.findByIdAndUpdate(uid, {$set: {background: background}}, (err, data) => {
     if (err) throw err;

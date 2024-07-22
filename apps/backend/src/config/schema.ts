@@ -4,25 +4,15 @@ const { Schema } = mongoose;
 interface IAIFeedback extends Document {
   // TBD
 }
-
-interface ITypeASelectedKeyword {
-  content: string;
-  ai_generated: boolean;
-}
-
-interface ITypeAGeneratedSentence {
-  type: string;
-  selected: boolean;
-}
-
 interface ITypeAScaffolding extends Document {
   tried: boolean;
-  unselected_keywords: string[];
-  selected_keywords: ITypeASelectedKeyword[];
-  generated_sentence: ITypeAGeneratedSentence[];
-  ai_synthesize: string;
-  createdAt: Date;
-  updatedAt: Date;
+  unselected_keywords?: string[];
+  selected_keywords: string[];
+  user_added_keywords?: string[],
+  selected_generated_sentence: string[];
+  // ai_synthesize: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface ITypeBQASet {
@@ -65,10 +55,11 @@ interface IScaffoldingData extends Document {
 }
 
 interface IThreadItem extends Document {
-  uid?: mongoose.Types.ObjectId;
-  question: string;
-  scaffoldingData: IScaffoldingData;
-  response: string;
+  uid: mongoose.Types.ObjectId;
+  theme: string;
+  question?: string;
+  scaffoldingData?: IScaffoldingData;
+  response?: string;
   history_information?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -86,6 +77,7 @@ interface IUser extends Document {
   value_set: string[];
   background: string;
   thread: IThreadItem[];
+  threadRef: mongoose.Types.ObjectId[];
   // history: IHistoryItem[]
   createdAt: Date;
   updatedAt: Date;
@@ -105,14 +97,11 @@ const AIFeedbackSchema = new Schema({
      }],
      required: function() { return this.tried; }
    },
-   generated_sentence: {
-     type: [{
-       type: String, 
-       selected: Boolean
-     }],
+   selected_generated_sentence: {
+     type: [String],
      required: function(){return this.tried;}
    },
-   ai_synthesize: {type: String, required: function(){return this.tried;}},
+  //  ai_synthesize: {type: String, required: function(){return this.tried;}},
    createdAt: {type: Date, default: Date.now},
    updatedAt: {type: Date}
  })
@@ -167,16 +156,12 @@ const AIFeedbackSchema = new Schema({
  
  const ThreadItemSchema = new Schema({
    uid: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-   question: {type: String, required: true},
+   theme: {type: String, required: true},
+   question: {type: String},
    scaffoldingData: {
-     type: ScaffoldingDataSchema,
-     required: true
-   },
-   response: {
-     type: String,
-     required: true
-   },
-   history_information: {type: String, required: true},
+     type: ScaffoldingDataSchema},
+   response: {type: String},
+   history_information: {type: String},
    createdAt: {type: Date, default: Date.now},
    updatedAt: {type: Date}
  });
@@ -197,6 +182,7 @@ const AIFeedbackSchema = new Schema({
    value_set: {type: [String], required: true, default: []},
    background: {type: String, required: true},
    thread: {type: [ThreadItemSchema], default: [], required: true},
+   threadRef: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true}, // TODO: Select one --- thread/threadRef
   //  thread: {type: [{type: Schema.Types.ObjectId, ref: 'ThreadItem'}], default: [], required: true},
   //  history: {type: [HistoryItemSchema], default: []},
    createdAt: {type: Date, default: Date.now},
@@ -205,7 +191,7 @@ const AIFeedbackSchema = new Schema({
  
  UserSchema.set('timestamps', true);
  
-//  const ThreadItem = mongoose.model<IThreadItem>('ThreadItem', ThreadItemSchema)
+ const ThreadItem = mongoose.model<IThreadItem>('ThreadItem', ThreadItemSchema)
  const User = mongoose.model<IUser>('User', UserSchema)
  
- export { User, IAIFeedback, ITypeAScaffolding, ITypeBScaffolding, ITypeCScaffolding, IScaffoldingData, IThreadItem, IUser };
+ export { User, IAIFeedback, ITypeAScaffolding, ITypeBScaffolding, ITypeCScaffolding, IScaffoldingData, IThreadItem, IUser, ThreadItem };
