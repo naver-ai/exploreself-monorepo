@@ -1,5 +1,5 @@
 import axios from "axios"
-import { IUser } from "apps/utils/schemaInterface";
+import { IUser } from "../Config/interface";
 
 const getUserInfo = async (): Promise<IUser | null> => {
   try {

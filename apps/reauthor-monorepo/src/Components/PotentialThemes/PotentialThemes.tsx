@@ -3,7 +3,7 @@ import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
 import { chatModel } from '../../config'
 import React, { useEffect, useState } from "react";
-import { IUser } from "apps/utils/schemaInterface";
+import { IUser } from "apps/utils/oldSchemaInterface";
 import PotentialThemeItem from "./PotentialThemeItem";
 import getInitialThemes from "../../APICall/getInitialThemes";
 
