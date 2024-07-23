@@ -7,6 +7,8 @@ import InitialNarrative from '../Pages/InitialNarrative';
 import ValueSet from '../Pages/ValueSet';
 import Login from '../Pages/Login';
 import 'apps/reauthor-monorepo/src/styles.css'
+import '../i18n/i18n'
+
 const App: FC = () => {
 
   return (

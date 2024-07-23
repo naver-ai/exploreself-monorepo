@@ -11,6 +11,7 @@ interface IUserState {
   uid: string;
   is_logged_in: boolean;
   initial_narrative: string;
+  is_korean: boolean;
   value_set: string[];
   background: string[];
   event_history: IEvent[];
@@ -22,6 +23,7 @@ const initialState : IUserState = {
   uid: "",
   is_logged_in: false,
   initial_narrative: '',
+  is_korean: true,
   value_set: [],
   background: [''],
   event_history: [], // TODO: experiment with chat-log, or plain text
@@ -47,6 +49,9 @@ const userSlice = createSlice({
     },
     setInitialNarrative: (state, action) => {
       state.initial_narrative = action.payload
+    },
+    setLanguage: (state, action) => {
+      state.is_korean = action.payload
     },
     // TODO: consider whether to change in Initial Narrative
     setValueSet: (state, action) => {

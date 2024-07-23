@@ -6,12 +6,14 @@ import axios from "axios";
 import { setInitialNarrative } from "../Redux/reducers/userSlice";
 import { useNavigate } from "react-router-dom";
 import setInitNarrative from "../APICall/setInitNarrative";
+import { useTranslation } from 'react-i18next';
 
 
 const {TextArea} = Input;
 const InitialNarrative = () => {
 
   const uid = useSelector((state: IRootState) => state.userInfo.uid);
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

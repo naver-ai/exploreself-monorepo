@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { User } from '../config/schema';
 import generateThemesFromNarrative from '../newUtils/generateThemesFromNarrative'
 import { IInitInfo } from '../config/interface';
-import { generateQuestionsbyInfo } from '../newUtils/generateQuestionsbyInfo';
+import { generateSocraticQuestions } from '../newUtils/generateSocraticQuestions';
 
 const generateInitialThemes = async (req: Request, res: Response) => {
   const uid = req.body.uid
@@ -39,7 +39,7 @@ const generateQuestions = async (req: Request, res: Response) => {
     background: user.background
   }
 
-  const questions = await generateQuestionsbyInfo(basicInfo, threadLog, selected_theme)
+  const questions = await generateSocraticQuestions(basicInfo, threadLog, selected_theme)
   res.json({
     questions: questions
   })

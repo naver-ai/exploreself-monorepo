@@ -6,7 +6,7 @@ import { chatModel } from "../config/config";
 import { IThreadItem } from "../config/schema";
 
 
-const generateQuestionsbyInfo = async (init_info: IInitInfo, history: IThreadItem[], selected_theme: string) => {
+const generateSocraticQuestions = async (init_info: IInitInfo, history: IThreadItem[], selected_theme: string) => {
 
   const systemTemplate = `
   You are an helpful assistant who provides non-burdening yet meaningful Socratic questioning to the user, for one to understand better about one's personal narrative.
@@ -45,4 +45,4 @@ const generateQuestionsbyInfo = async (init_info: IInitInfo, history: IThreadIte
   return result.questions;
 }
 
-export {generateQuestionsbyInfo} ;
+export {generateSocraticQuestions} ;

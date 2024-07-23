@@ -5,6 +5,7 @@ const getInitialThemes = async (uid: string) => {
     const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/question/generateInitialThemes`,{
       uid: uid
     })
+    console.log("RES: ", response.data.themes.themes.map((themeItem: { theme: string; quote: string }) => themeItem))
     return response.data.themes.themes.map((themeItem: { theme: string; quote: string }) => themeItem)
     // return response.data.themes.themes.map((themeItem: { theme: string; quote: string }) => themeItem.theme)
   } catch (err) {

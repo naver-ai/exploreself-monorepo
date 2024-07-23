@@ -63,6 +63,7 @@ const Main = () => {
       <div className="basis-2/3">
         <div>Self narrative</div>
         {userInfo? userInfo.initial_narrative: "Loading"}
+        <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>
         {/* <SelectedThemes/> */}
         <div>
           {threadRefList? threadRefList.map(threadRef => <div className="py-1"><ThreadBox theme={workingThread.theme} tid={threadRef}/></div>): <div>Loading</div>}

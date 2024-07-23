@@ -7,11 +7,6 @@ import { IInitInfo } from '../config/interface';
 
 const generateThemesFromNarrative = async (init_info: IInitInfo, additional_instructions='') => {
 
-  // TODO: mode setting
-  // mode 0: extract initial (theme, quote) pair
-  // mode 1: exploration themes
-  // 그냥 함수를 따로 만들기
-
   const self_narrative = init_info.init_nar
   // TODO: Add value_set and background
 
