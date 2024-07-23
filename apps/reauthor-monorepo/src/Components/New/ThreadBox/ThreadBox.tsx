@@ -4,7 +4,7 @@ import getScaffoldingKeywords from "../../../APICall/getScaffoldingKeywords"
 import getResponseFromKeyword from "../../../APICall/getResponseFromKeyword"
 import { useDispatch, useSelector } from "react-redux"
 import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
-import { Radio, Space, Button, Input, Checkbox } from "antd"
+import { Radio, Space, Button, Input, Checkbox, Card, Anchor } from "antd"
 import type {RadioChangeEvent} from "antd"
 import type { GetProp } from 'antd';
 import { IThreadItem, ITypeAScaffoldingState } from "apps/reauthor-monorepo/src/Config/interface"
@@ -46,6 +46,8 @@ const ThreadBox = (props: {
   const [response, setResponse] = useState<string>("")
   const workState = props.tid === useSelector((state: IRootState) => state.userInfo.working_thread.tid)
   const [threadData, setThreadData] = useState<IThreadItem | null>(null)
+  type ScaffoldingType = 'a' | 'b' | 'c';
+  const [scaffoldingType, setScaffoldingType] = useState<ScaffoldingType>('a')
   const [typeAScaffoldingData, setTypeAScaffoldingData] = useState<ITypeAScaffoldingState>({
     tried: false,
     unselected_keywords: [],
@@ -137,22 +139,55 @@ const ThreadBox = (props: {
     await saveThreadItem(props.tid, selectedQ, {typeA: typeAScaffoldingData}, response)
     dispatch(resetWorkingThread())
   }
+  const handleScaffoldingType = (
+    e: React.MouseEvent<HTMLElement>,
+    link: {
+      title: React.ReactNode,
+      // key: string,
+      href: string
+    }
+  ) => {
+    e.preventDefault();
+    setScaffoldingType(link.href as ScaffoldingType)
+  }
 
   return (
     <div>
-      {workState?
+      <Space direction="vertical" className="flex">
+        <Card title={theme?theme: "Theme Loading"}>
+        {workState?
       <div>
-        THEME: {theme?theme: "Theme Loading"}
         {resPhase? 
         <div>
           <div>{selectedQ}</div>
-          <Checkbox.Group style={{ width: '100%' }} onChange={onSelectKeywords}>
-          {scaffoldingKeywords?.length? scaffoldingKeywords?.map(keyword => <Checkbox value={keyword}>{keyword}</Checkbox>): <div>Loading Keywords</div>}
-          </Checkbox.Group>
-          <Button onClick={onSubmitKeywords}>Selected Keywords</Button>
+          <Anchor 
+          direction="horizontal"
+          onClick={handleScaffoldingType}
+          items={[
+            {
+              title: 'Keywords',
+              key: '',
+              href:'a',
+            },
+            {
+              title: 'Breakdown',
+              key: 'b',
+              href:'b'
+            }
+          ]}/>
+          {scaffoldingType == 'a'?
           <div>
-            {plausibleResponse?.length? plausibleResponse?.map(res => <div draggable={true} onDragStart={onDragRes} data-value={res}>{res}</div>): "Loading"}
+            <Checkbox.Group style={{ width: '100%' }} onChange={onSelectKeywords}>
+            {scaffoldingKeywords?.length? scaffoldingKeywords?.map(keyword => <Checkbox value={keyword}>{keyword}</Checkbox>): <div>Loading Keywords</div>}
+            </Checkbox.Group>
+            <Button onClick={onSubmitKeywords}>Selected Keywords</Button>
+            <div>
+              {plausibleResponse?.length? plausibleResponse?.map(res => <div draggable={true} onDragStart={onDragRes} data-value={res}>{res}</div>): "Loading"}
+            </div>
           </div>
+          :
+          <div>Breaking down questions</div>
+          }
           <TextArea rows={4} onDrop={onDrop} value={response} onDragOver={onDragOver} onChange={(e) => setResponse(e.target.value)}/>
           <Button onClick={onSubmitResponse}>Submit Response</Button>
         </div>
@@ -174,10 +209,12 @@ const ThreadBox = (props: {
         }
       </div>:
       <div>
-        Theme: {threadData?.theme}
-        Question: {threadData?.question}
-        Response: {threadData?.response}
+        <div>Question: {threadData?.question}</div>
+        <div>Response: {threadData?.response}</div>
       </div>}
+        </Card>
+      </Space>
+      
       
       
     </div>

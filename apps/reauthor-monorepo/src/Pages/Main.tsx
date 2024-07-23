@@ -13,6 +13,9 @@ import ThemeBox from "../Components/New/ThemeBox/ThemeBox"
 import ThreadBox from "../Components/New/ThreadBox/ThreadBox";
 import { resetState } from "../Redux/reducers/userSlice";
 import getThreadList from '../APICall/getThreadList'
+import { Button } from "antd";
+import { PlusCircleOutlined } from '@ant-design/icons';
+
 
 
 const Main = () => {
@@ -22,6 +25,7 @@ const Main = () => {
   const [threadRefList, setThreadRefList] = useState<string[] | null>(null)
   const [refresh, setRefresh] = useState(false)
   const workingThread = useSelector((state: IRootState) => state.userInfo.working_thread)
+  const workingState = workingThread.tid != ''
   // console.log("WT ", workingThread)
 
   const fetchInitInfo = async () => {
@@ -57,13 +61,11 @@ const Main = () => {
       <div className="basis-2/3">
         Self narrative: {userInfo? userInfo.initial_narrative: "Loading"}
         {/* <SelectedThemes/> */}
-        
-        <button onClick={() => setOpen(true)}>Open Sheet</button>
         <div>
-          ThreadRef: 
           {threadRefList? threadRefList.map(threadRef => <div><ThreadBox theme={workingThread.theme} tid={threadRef}/></div>): <div>Loading</div>}
-        
         </div>
+        {!workingState? <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>: <div></div>}
+        
         <Sheet isOpen={isOpen} onClose={() => setOpen(false)} detent='content-height'>
           <Sheet.Container>
             {/* <Sheet.Header /> */}
