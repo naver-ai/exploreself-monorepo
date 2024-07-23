@@ -32,7 +32,7 @@ const Main = () => {
   const fetchInitInfo = async () => {
     try {
       const data = await getUserInfo(uid);
-      console.log("UID: ", data)
+      console.log("UID: ", uid)
       setUserInfo(data);
       if (data){
         const threadList = await getThreadList(data._id);
@@ -59,7 +59,7 @@ const Main = () => {
   
   return(
     <div className="flex flex-row">
-      <div className="basis-1/6"><Sidebar/></div>
+      <div className="basis-1/6"><Sidebar threadRef={threadRefList}/></div>
       <div className="basis-2/3">
         <div>Self narrative</div>
         {userInfo? userInfo.initial_narrative: "Loading"}

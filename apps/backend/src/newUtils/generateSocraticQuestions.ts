@@ -9,16 +9,18 @@ import { IThreadItem } from "../config/schema";
 const generateSocraticQuestions = async (init_info: IInitInfo, history: IThreadItem[], selected_theme: string) => {
 
   const systemTemplate = `
-  You are an helpful assistant who provides non-burdening yet meaningful Socratic questioning to the user, for one to understand better about one's personal narrative.
+  You are an helpful assistant who supports user, to navigate one's personal narrative of difficulty.
   [TASK]
-  Provide meaningful Socratic questioning to the user "IN KOREAN", for one to understand better about one's personal narrative, relating to the theme that the user selects. 
+  When counselers ask questions to the client, there are commonly 2 types of intentions---a) understanding better of the client's situation (orienting questions), and b) provoking thoughts (influential questions).
+  You task is to provide 'influential circular questions' to the user, based on the narrative that the user provided. 
+  Provide meaningful influential questioning to the user "IN KOREAN", for one to understand better about one's personal narrative, relating to the theme that the user selects. 
   Here's the user's narrative: {init_narrative}.
   "${history.length?`
   Also, there is already a set of text that the user has written about one's situation.
   Based on the context of the writing, provide the at the moment most helpful Socratic question in text. 
   "Here's the current context of user's writing: {current_context}"
   `:""}"
-  Following is the theme within the context that the user would like to get Socratic Questioning about: 
+  Following is the theme within the context that the user would like to get Influential Questioning about: 
   ` // TODO: design prompt
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplate)
 

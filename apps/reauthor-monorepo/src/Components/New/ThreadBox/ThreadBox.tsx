@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from "react"
-import genQuestions from "../../../APICall/genQuestions"
+import getSocraticQuestions from "../../../APICall/getSocraticQuestions"
 import getScaffoldingKeywords from "../../../APICall/getScaffoldingKeywords"
 import getResponseFromKeyword from "../../../APICall/getResponseFromKeyword"
+import getOrientingQuestions from "../../../APICall/getOrientingQuestions"
 import { useDispatch, useSelector } from "react-redux"
 import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
 import { Radio, Space, Button, Input, Checkbox, Card, Anchor } from "antd"
@@ -12,6 +13,7 @@ import getThreadData from "../../../APICall/getThreadData"
 import saveThreadItem from "../../../APICall/saveThreadItem"
 import { resetWorkingThread } from "../../../Redux/reducers/userSlice"
 import getScaffoldingQuestions from "../../../APICall/getScaffoldingQuestions"
+const {TextArea} = Input;
 
 // const ResponseBox = () => {
 
@@ -56,6 +58,7 @@ const ThreadBox = (props: {
     user_added_keywords: [],
     selected_generated_sentence: []
   })
+  const [orientingQ, setOrientingQ] = useState<string[] | null>([])
   const uid = useSelector((state: IRootState) => state.userInfo.uid)
   const dispatch = useDispatch()
 
@@ -75,10 +78,15 @@ const ThreadBox = (props: {
     setTheme(theme)
     if (workState) {
       if (!resPhase) {
-        const fetchedQuestions = await genQuestions(fetchedThreadData.theme, uid)
+        const fetchedQuestions = await getSocraticQuestions(fetchedThreadData.theme, uid)
         setQuestions(fetchedQuestions)
       }
     }
+  }
+
+  const fetchOrientingQ = async () => {
+    const fetchcedOrientingQ = await getOrientingQuestions(props.theme, uid)
+    setOrientingQ(fetchcedOrientingQ)
   }
 
   const fetchScaffoldingQuestions = async () => {
@@ -90,6 +98,7 @@ const ThreadBox = (props: {
 
   useEffect(() => {
     fetchThreadData();
+    fetchOrientingQ();
   },[])
 
   useEffect(() => {
@@ -168,6 +177,8 @@ const ThreadBox = (props: {
     <div>
       <Space direction="vertical" className="flex">
         <Card title={theme?theme: "Theme Loading"}>
+          {orientingQ?.map(q => q)}
+          <TextArea rows={3}/>
         {workState?
       <div>
         {resPhase? 

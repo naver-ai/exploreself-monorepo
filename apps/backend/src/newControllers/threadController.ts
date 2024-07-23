@@ -77,4 +77,18 @@ const getThreadData = async (req: Request, res: Response) => {
   }
 }
 
-export {createThreadItem, getThreadList, saveThreadItem, getThreadData}
+const getThreadTitleList = async (req: Request, res: Response) => {
+  const {tids} = req.body
+  try {
+    const thread_themes = await ThreadItem.find({_id: {$in: tids}}).select('theme')
+    res.json({
+      themes: thread_themes
+    })
+  } catch (err) {
+    res.json({
+      err: err.message
+    })
+  }
+}
+
+export {createThreadItem, getThreadList, saveThreadItem, getThreadData, getThreadTitleList}
