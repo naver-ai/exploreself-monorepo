@@ -73,6 +73,7 @@ interface IThreadItem extends Document {
 // }
 interface IUser extends Document {
   name: string;
+  ucode: string;
   initial_narrative: string;
   value_set: string[];
   background: string;
@@ -168,21 +169,15 @@ const AIFeedbackSchema = new Schema({
  
  ThreadItemSchema.set('timestamps', true)
 
-//  const HistoryItemSchema = new Schema ({
-// 	history_information: {type: String, required: true},
-// 	threadItem: {type: Schema.Types.ObjectId, ref: 'ThreadItem', required: true},
-//   createdAt: {type: Date, default: Date.now},
-//   updatedAt: {type: Date}
-// })
  
  const UserSchema = new Schema({
    name: {type: String, required: true},
    ucode: {type: String, required: true},
-   initial_narrative: {type: String, required: true},
+   initial_narrative: {type: String, required: true, default: ''},
    value_set: {type: [String], required: true, default: []},
-   background: {type: String, required: true},
+   background: {type: String, required: true, default: ''},
    thread: {type: [ThreadItemSchema], default: [], required: true},
-   threadRef: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true}, // TODO: Select one --- thread/threadRef
+   threadRef: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []}, // TODO: Select one --- thread/threadRef
   //  thread: {type: [{type: Schema.Types.ObjectId, ref: 'ThreadItem'}], default: [], required: true},
   //  history: {type: [HistoryItemSchema], default: []},
    createdAt: {type: Date, default: Date.now},

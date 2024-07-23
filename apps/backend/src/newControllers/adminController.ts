@@ -13,19 +13,28 @@ const loginHandler = async (req: Request, res: Response) => {
         user: user
       });
     } else {
-      const newUser = new User({ name: name, ucode: ucode }); 
-      await newUser.save();
+      console.log("NEW USER")
+      const newUser = new User({ 
+        name: name, 
+        ucode: ucode,
+        initial_narrative: 'initial_narrative',
+        background: 'initial_background',
+        threadRef: []
+      }); 
+      const savedUser = await newUser.save();
+      console.log("SAVED: ", savedUser)
       res.json({
         success: true,
         new: true,
-        user: newUser
+        user: savedUser
       });
     }
   } catch (err) {
+    console.log("ERR: ", err.message)
     res.json({
       err: err.message
     });
   }
 };
 
-export {loginHandler};
+export default loginHandler;

@@ -16,7 +16,7 @@ const ThemeBox = (props:{
   const dispatch = useDispatch();
   const uid = useSelector((state: IRootState) => state.userInfo.uid)
   const fetchInitThemes = async () => {
-    const data = await getInitialThemes();
+    const data = await getInitialThemes(uid);
     // console.log("THEMES: ", data.themes.map((themeItem: { theme: string; quote: string }) => themeItem.theme))
     setThemes(data);
   };

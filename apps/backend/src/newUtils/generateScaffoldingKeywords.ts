@@ -18,7 +18,7 @@ const generateScaffoldingKeywords = async (basicInfo: IInitInfo ,questionInput: 
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(
     `
     You are a helpful counseler aiding a user in reflecting on their personal narrative, who is trying to answer some reflective questions.
-    Answering on reflexive questions is indeed cognitively challenging, and you should assist the user by providing some scaffolding {granularity_instructions}, based on the user's context.
+    Answering on reflexive questions is indeed cognitively challenging, and you should assist the user by providing some scaffolding {granularity_instructions} "IN KOREAN", based on the user's context.
     The context of the user will be provide as twofold. 
     First is the narrative of the user, and second is the previous log of question and answering. 
     This is the narrative of the user: {narrative}

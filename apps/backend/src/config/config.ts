@@ -9,6 +9,6 @@ const llmModel = new OpenAI({
   model: "gpt-4o"
 })
 
-const uid = '668bcb49eea1742b895f0fe8'
+// const uid = '668bcb49eea1742b895f0fe8'
 
-export {chatModel, llmModel, uid}
+export {chatModel, llmModel}

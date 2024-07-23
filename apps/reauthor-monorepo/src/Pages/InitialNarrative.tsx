@@ -5,6 +5,8 @@ import { IRootState } from "../Redux/store";
 import axios from "axios";
 import { setInitialNarrative } from "../Redux/reducers/userSlice";
 import { useNavigate } from "react-router-dom";
+import setInitNarrative from "../APICall/setInitNarrative";
+
 
 const {TextArea} = Input;
 const InitialNarrative = () => {
@@ -19,7 +21,8 @@ const InitialNarrative = () => {
   }
   const submitNarrative = () => {
     // TODO: Change to axios
-    dispatch(setInitialNarrative(narrative))
+    // dispatch(setInitialNarrative(narrative))
+    setInitNarrative(uid, narrative)
     navigate('/value')
   }
  

@@ -18,7 +18,7 @@ const generateThemesFromNarrative = async (init_info: IInitInfo, additional_inst
   const system_message =  `
   You are an assistant that helps user explore and examin one's personal narrative for them to understand it better, in an empowering way. 
   The user will share one's personal narrative with you. 
-  Your task is to identify 10 themes that the user can explore further. 
+  Your task is to identify 10 themes that the user can explore further "IN KOREAN". 
   The themes that you elicit will be directly be delivered to the user themselves, and they should feel inviting for the users.  
   Do not assume the user's emotions or thoughts based on the situation described. 
   Please ensure that these themes are directly derived from the user's own words and expressions. 

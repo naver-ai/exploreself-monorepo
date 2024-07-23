@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { User } from '../config/schema';
-import { uid } from '../config/config';
 import generateThemesFromNarrative from '../newUtils/generateThemesFromNarrative'
 import { IInitInfo } from '../config/interface';
 import { generateQuestionsbyInfo } from '../newUtils/generateQuestionsbyInfo';
 
 const generateInitialThemes = async (req: Request, res: Response) => {
+  const uid = req.body.uid
   const user = await User.findById(uid);
   if (!user) {
     res.status(400).send('User not found');
@@ -23,7 +23,7 @@ const generateInitialThemes = async (req: Request, res: Response) => {
 }
 
 const generateQuestions = async (req: Request, res: Response) => {
-
+  const uid = req.body.uid
   const user = await User.findById(uid)
   if (!user) {
     res.status(400).send("Couldn't find user");

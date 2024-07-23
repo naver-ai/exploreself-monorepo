@@ -26,11 +26,13 @@ const Main = () => {
   const [refresh, setRefresh] = useState(false)
   const workingThread = useSelector((state: IRootState) => state.userInfo.working_thread)
   const workingState = workingThread.tid != ''
+  const uid = useSelector((state: IRootState) => state.userInfo.uid)
   // console.log("WT ", workingThread)
 
   const fetchInitInfo = async () => {
     try {
-      const data = await getUserInfo();
+      const data = await getUserInfo(uid);
+      console.log("UID: ", data)
       setUserInfo(data);
       if (data){
         const threadList = await getThreadList(data._id);
@@ -59,10 +61,11 @@ const Main = () => {
     <div className="flex flex-row">
       <div className="basis-1/6"><Sidebar/></div>
       <div className="basis-2/3">
-        Self narrative: {userInfo? userInfo.initial_narrative: "Loading"}
+        <div>Self narrative</div>
+        {userInfo? userInfo.initial_narrative: "Loading"}
         {/* <SelectedThemes/> */}
         <div>
-          {threadRefList? threadRefList.map(threadRef => <div><ThreadBox theme={workingThread.theme} tid={threadRef}/></div>): <div>Loading</div>}
+          {threadRefList? threadRefList.map(threadRef => <div className="py-1"><ThreadBox theme={workingThread.theme} tid={threadRef}/></div>): <div>Loading</div>}
         </div>
         {!workingState? <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>: <div></div>}
         

@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { IThreadItem, User } from "../config/schema";
-import { uid } from "../config/config";
 import generateScaffoldingKeywords from '../newUtils/generateScaffoldingKeywords'
 import { IInitInfo } from "../config/interface";
 import generateSentencesFromKeywords from "../newUtils/generateSentencesFromKeywords";
+import {generateScaffoldingQuestions} from '../newUtils/generateScaffoldingQuestions'
 
 const saveResponse = async (req: Request, res: Response) => {
   const threadItem: IThreadItem = req.body.thread_item;
+  const uid: string = req.body.uid
 
   try {
     await User.findByIdAndUpdate(uid, {$push: {thread: threadItem}})
@@ -21,6 +22,7 @@ const saveResponse = async (req: Request, res: Response) => {
 const generateKeywords = async (req: Request, res: Response) => {
 
   const question = req.body.question; // type: object
+  const uid = req.body.uid
   const user = await User.findById(uid)
   if (!user) {
     res.status(400).send("Couldn't find user");
@@ -41,6 +43,7 @@ const generateKeywords = async (req: Request, res: Response) => {
 const generateSentences = async (req: Request, res: Response) => {
   const question = req.body.question;
   const selected_keywords = req.body.selected_keywords;
+  const uid = req.body.uid
   const user = await User.findById(uid)
   if (!user) {
     res.status(400).send("Couldn't find user");
@@ -59,8 +62,23 @@ const generateSentences = async (req: Request, res: Response) => {
   })
 }
 
-const breakDownQuestion = (req: Request, res: Response) => {
-  // TBD
+const getScaffoldingQuestions = async (req: Request, res: Response) => {
+  const question = req.body.question;
+  const uid = req.body.uid
+  const user = await User.findById(uid)
+  if (!user) {
+    res.status(400).send("Couldn't find user");
+  }
+  const initInfo: IInitInfo = {
+    init_nar: user.initial_narrative,
+    val_set: user.value_set,
+    background: user.background
+  }
+  
+  const questions = await generateScaffoldingQuestions(initInfo, question)
+  res.json({
+    questions: questions
+  })
 }
 
-export {saveResponse, generateKeywords, generateSentences, breakDownQuestion}
+export {saveResponse, generateKeywords, generateSentences, getScaffoldingQuestions}

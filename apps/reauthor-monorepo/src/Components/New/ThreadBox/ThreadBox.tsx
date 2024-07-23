@@ -11,7 +11,7 @@ import { IThreadItem, ITypeAScaffoldingState } from "apps/reauthor-monorepo/src/
 import getThreadData from "../../../APICall/getThreadData"
 import saveThreadItem from "../../../APICall/saveThreadItem"
 import { resetWorkingThread } from "../../../Redux/reducers/userSlice"
-import { type } from "os"
+import getScaffoldingQuestions from "../../../APICall/getScaffoldingQuestions"
 
 // const ResponseBox = () => {
 
@@ -48,6 +48,7 @@ const ThreadBox = (props: {
   const [threadData, setThreadData] = useState<IThreadItem | null>(null)
   type ScaffoldingType = 'a' | 'b' | 'c';
   const [scaffoldingType, setScaffoldingType] = useState<ScaffoldingType>('a')
+  const [scaffoldingQuestions, setScaffoldingQuestions] = useState<{question: string, choices: string[]}[] | null>([]) 
   const [typeAScaffoldingData, setTypeAScaffoldingData] = useState<ITypeAScaffoldingState>({
     tried: false,
     unselected_keywords: [],
@@ -79,6 +80,12 @@ const ThreadBox = (props: {
       }
     }
   }
+
+  const fetchScaffoldingQuestions = async () => {
+    const fetchedQuestions = await getScaffoldingQuestions(selectedQ, uid)
+    console.log("F", fetchedQuestions)
+    setScaffoldingQuestions(fetchedQuestions)
+  }
   const { TextArea } = Input;
 
   useEffect(() => {
@@ -88,6 +95,12 @@ const ThreadBox = (props: {
   useEffect(() => {
     fetchKeywords();
   },[resPhase])
+  // useEffect(() => {
+  //   // if(scaffoldingType == 'b') {
+  //   //   fetchScaffoldingQuestions()
+  //   // }
+  //   fetchScaffoldingQuestions()
+  // },[scaffoldingType])
 
 
   const onChangeQSelect = (e: RadioChangeEvent) => {
@@ -186,7 +199,10 @@ const ThreadBox = (props: {
             </div>
           </div>
           :
-          <div>Breaking down questions</div>
+          <div>
+            {/* {scaffoldingQuestions? scaffoldingQuestions[0]:<div>Loading</div>} */}
+            Breaking down
+          </div>
           }
           <TextArea rows={4} onDrop={onDrop} value={response} onDragOver={onDragOver} onChange={(e) => setResponse(e.target.value)}/>
           <Button onClick={onSubmitResponse}>Submit Response</Button>
