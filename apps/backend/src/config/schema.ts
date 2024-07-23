@@ -74,6 +74,7 @@ interface IThreadItem extends Document {
 interface IUser extends Document {
   name: string;
   ucode: string;
+  isKorean: boolean;
   initial_narrative: string;
   value_set: string[];
   background: string;
@@ -169,10 +170,10 @@ const AIFeedbackSchema = new Schema({
  
  ThreadItemSchema.set('timestamps', true)
 
- 
  const UserSchema = new Schema({
    name: {type: String, required: true},
    ucode: {type: String, required: true},
+   isKorean: {type: Boolean, required: true},
    initial_narrative: {type: String, required: true, default: ''},
    value_set: {type: [String], required: true, default: []},
    background: {type: String, required: true, default: ''},

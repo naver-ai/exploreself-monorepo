@@ -5,7 +5,8 @@ const loginHandler = async (req: Request, res: Response) => {
   try {
     const ucode = req.body.ucode;
     const name = req.body.name;
-    let user = await User.findOne({ name: name, ucode: ucode });
+    const isKorean = req.body.isKorean
+    let user = await User.findOne({ name: name, ucode: ucode});
     if (user) {
       res.json({
         success: true,
@@ -13,10 +14,10 @@ const loginHandler = async (req: Request, res: Response) => {
         user: user
       });
     } else {
-      console.log("NEW USER")
       const newUser = new User({ 
         name: name, 
         ucode: ucode,
+        isKorean: isKorean,
         initial_narrative: 'initial_narrative',
         background: 'initial_background',
         threadRef: []

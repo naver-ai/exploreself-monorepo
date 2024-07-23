@@ -1,6 +1,6 @@
 import React from 'react';
-import type { FormProps } from 'antd';
-import { Button, Checkbox, Form, Input } from 'antd';
+import type { FormProps, RadioChangeEvent } from 'antd';
+import { Button, Checkbox, Form, Input, Radio } from 'antd';
 import loginHandle from '../APICall/loginHandle';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ const Login = () => {
   // const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [name, setName] = useState<string>('')
   const [ucode, setUcode] = useState<string>('')
+  const [isKorean, setIsKorean] = useState<boolean>(true)
   const navigate = useNavigate();
   const dispatch = useDispatch()
 
@@ -32,7 +33,7 @@ const Login = () => {
   const onSubmit = async () => {
     if (name && ucode) {
       try {
-        const user = await loginHandle(name, ucode)
+        const user = await loginHandle(name, ucode, isKorean)
         dispatch(loginUser(user?.user._id))
         console.log("USER: ", user)
         // const newuid = useSelector((state: IRootState) => state.userInfo.uid)
@@ -44,6 +45,10 @@ const Login = () => {
     }
     // TODO: Handle exception
   }
+
+  const LanguageChange = (e: RadioChangeEvent) => {
+    setIsKorean(e.target.value);
+  };
 
   return(
     <Form
@@ -68,6 +73,10 @@ const Login = () => {
 
       <Input onChange={handleUcode}/>
     </Form.Item>
+    <Radio.Group onChange={LanguageChange} value={isKorean}>
+      <Radio value={true}>Korean</Radio>
+      <Radio value={false}>English</Radio>
+    </Radio.Group>
 
     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
       <Button type="primary" htmlType="submit" onClick={onSubmit}>
