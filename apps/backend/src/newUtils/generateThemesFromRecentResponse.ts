@@ -47,8 +47,7 @@ const generateThemesFromRecentResponse = async (uid: string, additional_instruct
   const previous_input = await synthesizePrevInput(uid)
   const user = await User.findById(uid)
   const recent_thread = user.threadRef[-1]
-  const recent_thread_data = await ThreadItem.findById(recent_thread)
-  const most_recent_session = await synthesizeSession(recent_thread_data, uid)
+  const most_recent_session = await synthesizeSession(recent_thread.toString(), uid)
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 

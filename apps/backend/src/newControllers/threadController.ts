@@ -1,5 +1,6 @@
 import { ThreadItem, User } from "../config/schema"
 import { Request, Response } from "express";
+import synthesizeSession from "../newUtils/synthesizeSession";
 
 const createThreadItem = async (req: Request, res: Response) => {
   
@@ -91,4 +92,37 @@ const getThreadTitleList = async (req: Request, res: Response) => {
   }
 }
 
-export {createThreadItem, getThreadList, saveThreadItem, getThreadData, getThreadTitleList}
+const synthesizeThread = async(req: Request, res: Response) => {
+  const threadData = req.body.threadData
+  const uid = req.body.uid
+  try {
+    const synthesizedData = await synthesizeSession(threadData, uid)
+    res.json({
+      synthesized: synthesizedData
+    })
+  } catch (err) {
+    res.json({
+      err: err.message
+    })
+  }
+}
+
+const saveSynthesized = async(req: Request, res: Response) => {
+  const synthesized = req.body.synthesized;
+  const tid = req.body.tid
+  try {
+    await ThreadItem.findByIdAndUpdate(tid, {$set: {
+      synthesized: synthesized,
+    }})
+    res.json({
+      success: true
+    })
+  } catch (err) {
+    res.json({
+      success: false,
+      err: err.message
+    })
+  }
+}
+
+export {createThreadItem, getThreadList, saveThreadItem, getThreadData, getThreadTitleList, synthesizeThread, saveSynthesized}

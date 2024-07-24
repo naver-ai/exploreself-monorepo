@@ -93,7 +93,7 @@ const QnASet = (props:{
   }
   const onSubmitResponse = async () => {
     // TODO: save orientingInput
-    await saveThreadItem(props.tid, selectedQ, {}, response)
+    await saveThreadItem(props.tid, uid, selectedQ, {}, response)
     props.handlePhase(3)
   }
 

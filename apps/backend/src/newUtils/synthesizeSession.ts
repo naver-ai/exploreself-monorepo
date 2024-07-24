@@ -8,11 +8,15 @@ import synthesizeProfilicInfo from "./synthesizeProfilicInfo";
 import { User } from "../config/schema";
 import synthesizePrevInput from "./synthesizePrevInput";
 
-const synthesizeSession = async (threadData: IThreadItem, uid: string) => {
-  const theme = threadData.theme
-  const orientingInput = threadData.orientingInput
-  const question = threadData.question
-  const response = threadData.response
+const synthesizeSession = async (tid: string, uid: string) => {
+  const threadItem = await ThreadItem.findById(tid)
+  if(!threadItem){
+    console.log("Err in fetching threadItdm")
+  }
+  const theme = threadItem.theme
+  const orientingInput = threadItem.orientingInput
+  const question = threadItem.question
+  const response = threadItem.response
 
   const system_message=`
   [Role] You are a assistant of counselor that synthesizes the counseling session. 
