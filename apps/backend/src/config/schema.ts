@@ -62,6 +62,7 @@ interface IThreadItem extends Document {
   scaffoldingData?: IScaffoldingData;
   response?: string;
   history_information?: string;
+  synthesized?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -166,6 +167,7 @@ const AIFeedbackSchema = new Schema({
      type: ScaffoldingDataSchema},
    response: {type: String},
    history_information: {type: String},
+   synthesized: {type: String},
    createdAt: {type: Date, default: Date.now},
    updatedAt: {type: Date}
  });

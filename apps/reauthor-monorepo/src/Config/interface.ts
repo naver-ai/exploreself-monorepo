@@ -17,6 +17,7 @@ export interface IThreadItem {
   orientingInput?: string;
   question?: string;
   scaffoldingData?: IScaffoldingData;
+  synthesized?: string;
   response?: string;
   history_information?: string;
 }

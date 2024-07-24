@@ -6,6 +6,7 @@ import { chatModel } from '../config/config';
 import { IInitInfo } from '../config/interface';
 import synthesizeProfilicInfo from "./synthesizeProfilicInfo";
 import { User } from "../config/schema";
+import synthesizePrevInput from "./synthesizePrevInput";
 
 const synthesizeSession = async (threadData: IThreadItem, uid: string) => {
   const theme = threadData.theme
@@ -27,7 +28,7 @@ const synthesizeSession = async (threadData: IThreadItem, uid: string) => {
   Your task is to synthesize the session so that the counseler can refer to this for the next session. 
 
   [Input]
-  <previous_input/>: Client's narrative of the previous sessions. 
+  <previous_input/>: Client's narrative and background of the previous sessions. 
   <card/>: The card that the user selected for the session
   <client_description/>: Client's description of one's narrative, related to the card
   <question/>: The question that the counseler asked to the client
@@ -45,31 +46,12 @@ const synthesizeSession = async (threadData: IThreadItem, uid: string) => {
   <question/>: {question}
   <user_response/>: {response}
   `
-
-  const userInfo = await User.findById(uid)
-  if (!userInfo){
-    console.log("Err in fetching user")
-  }
-  const synthesizedProfilic = synthesizeProfilicInfo(userInfo.initial_narrative, userInfo.value_set, userInfo.background);
-  const threadRef = userInfo.threadRef
-  const synthesizedThreadList = await ThreadItem.find({_id: {$in: threadRef}}).select('synthesized')
-  if (!synthesizedThreadList){
-    console.log("Err in fetching synthesizedThreadList")
-  }
-  const previous_input = 
-  `----previous input start----
-  [Initial information]\n
-  "${synthesizedProfilic}"\n` + 
-  synthesizedThreadList.map((item, index) => 
-  `[Session "${index + 1}"]\n
-  "${item}"
-  ----previous input end----
-  `)
+  const previous_input = await synthesizePrevInput(uid)
 
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(system_message)
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(human_template)
 
-  const summarySchema = z.string().describe("Synthesis of the session, well capturing the detailed expressions.")
+  const summarySchema = z.string().describe("Synthesis of the session, well capturing user's detailed expressions.")
 
   const finalPromptTemplate = ChatPromptTemplate.fromMessages([
     systemMessage,
