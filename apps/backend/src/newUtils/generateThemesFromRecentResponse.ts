@@ -23,6 +23,7 @@ const generateThemesFromRecentResponse = async (uid: string, additional_instruct
 
   [Task] 
   Your specific task is to identify new 'cards' (themes/aspects) within the client's narrative, mainly arising from on the most recent session. 
+  For each card(theme/aspects), also provide the referred part/quote of user input of the previous session. 
 
   [Input type and format]
   <previous_input/>: Client's narrative and background of the previous sessions. 
@@ -34,7 +35,7 @@ const generateThemesFromRecentResponse = async (uid: string, additional_instruct
   Stick to the expression that user has used. Being synced with user's language/expression is important. 
 
   [Output]
-  Array of text string(keyword or short phrase), which is the new set of 'cards'. 
+  Array of object, containing text string(keyword or short phrase), which is the new set of 'cards'. 
   `
 
   const systemMessage = new SystemMessage(system_message);
@@ -51,12 +52,10 @@ const generateThemesFromRecentResponse = async (uid: string, additional_instruct
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 
-  const edgeSchema = z.object({
-    themes: z.array(z.object({
-      theme: z.string().describe("Each theme from the personal narrative shared by a user."),
-      quote: z.string().describe("Most relevant part of the user's narrative to the theme")
+  const edgeSchema =z.array(z.object({
+      card: z.string().describe("Each card(theme/aspect) based on the user input of previous session"),
+      quote: z.string().describe("Most relevant part with the card, among what user mentioned in the previous session")
     }))
-  })
 
   const finalPromptTemplate = ChatPromptTemplate.fromMessages([
     systemMessage,

@@ -1,27 +1,8 @@
 import { Request, Response } from 'express';
 import { User } from '../config/schema';
-import generateThemesFromNarrative from '../newUtils/generateThemesFromNarrative'
 import { IInitInfo } from '../config/interface';
 import { generateSocraticQuestions } from '../newUtils/generateSocraticQuestions';
 import { generateOrientingQuestions } from '../newUtils/generateOrientingQuestions';
-
-const generateInitialThemes = async (req: Request, res: Response) => {
-  const uid = req.body.uid
-  const user = await User.findById(uid);
-  if (!user) {
-    res.status(400).send('User not found');
-  }
-  const basicInfo: IInitInfo = {
-    init_nar: user.initial_narrative,
-    val_set: user.value_set,
-    background: user.background
-  }
-  const themes = await generateThemesFromNarrative(basicInfo);
-
-  res.json({
-    themes: themes
-  })
-}
 
 const generateSocraticQuestionController = async (req: Request, res: Response) => {
   const uid = req.body.uid
@@ -69,4 +50,4 @@ const generateOrientincQuestionsController = async (req: Request, res: Response)
   })
 }
 
-export {generateInitialThemes, generateSocraticQuestionController, generateOrientincQuestionsController}
+export {generateSocraticQuestionController, generateOrientincQuestionsController}

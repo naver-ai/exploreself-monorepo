@@ -2,10 +2,9 @@ import axios from "axios"
 
 const getInitialThemes = async (uid: string) => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/question/generateInitialThemes`,{
+    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/thread/generateInitialThemes`,{
       uid: uid
     })
-    console.log("RES: ", response.data.themes.themes.map((themeItem: { theme: string; quote: string }) => themeItem))
     return response.data.themes.themes.map((themeItem: { theme: string; quote: string }) => themeItem)
     // return response.data.themes.themes.map((themeItem: { theme: string; quote: string }) => themeItem.theme)
   } catch (err) {
