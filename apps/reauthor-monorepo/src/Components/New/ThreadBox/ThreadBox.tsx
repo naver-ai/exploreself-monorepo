@@ -3,7 +3,7 @@ import getSocraticQuestions from "../../../APICall/getSocraticQuestions"
 import getScaffoldingKeywords from "../../../APICall/getScaffoldingKeywords"
 import getResponseFromKeyword from "../../../APICall/getResponseFromKeyword"
 import getOrientingQuestions from "../../../APICall/getOrientingQuestions"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
 import { Radio, Space, Button, Input, Checkbox, Card, Anchor, Flex, Row } from "antd"
 import type {RadioChangeEvent} from "antd"
@@ -13,8 +13,9 @@ import getThreadData from "../../../APICall/getThreadData"
 import saveThreadItem from "../../../APICall/saveThreadItem"
 import { resetWorkingThread } from "../../../Redux/reducers/userSlice"
 import getScaffoldingQuestions from "../../../APICall/getScaffoldingQuestions"
-import { isSet } from "util/types"
+import saveOrientingInput from '../../../APICall/saveOrientingInput'
 const {TextArea} = Input;
+import getOrientingInput from "../../../APICall/getOrientingInput"
 
 // const ResponseBox = () => {
 
@@ -47,14 +48,34 @@ const OrientingInput = (props:{
     setInput(e.target.value)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    await saveOrientingInput(props.tid, input)
     props.handlePhase(2);
   }
+
+  const fetchOrientingInput = async() => {
+    const orientingInput = await getOrientingInput(props.tid)
+    if(orientingInput) {
+      setInput(orientingInput)
+    }
+  }
+  useEffect(() => {
+    if(props.phase > 1){
+      fetchOrientingInput()
+    }
+  },[props.phase])
   
   return(
     <div>
-      <TextArea rows={3} onChange={handleChange} value={input}/>
-      <Button onClick={handleSubmit}>Submit Input</Button>
+      {props.phase == 1? 
+      <div>
+        <TextArea rows={3} onChange={handleChange} value={input}/>
+        <Button onClick={handleSubmit}>Submit Input</Button>
+      </div>:
+      <div>
+        {input}
+      </div>}
+      
     </div>
   )
 }
@@ -78,6 +99,7 @@ const QnASet = (props:{
     const fetchedQuestions = await getSocraticQuestions(props.theme, uid)
     if(fetchedQuestions){
       setQuestionList(fetchedQuestions)
+      setSelectedQ(fetchedQuestions[tmpN])
     }
   }
   const onSelectQuestion = async () => {
@@ -99,13 +121,13 @@ const QnASet = (props:{
 
   useEffect(() => {
     fetchSocraticQuestions();
-  },[])
+  },[props.phase])
 
 
   return(
     <div>
       {isSetQ?"setq":"notsetq"}
-      <Flex vertical={false} className={isSetQ? 'hidden':''}>
+      <Flex vertical={false} className={(isSetQ || props.phase == 1)? 'hidden':''}>
         <TextArea value={selectedQ} onChange={(e) => setSelectedQ(e.target.value)}/>
         <Button onClick={onRegenerate} >Regenerate</Button>
         <Button onClick={onSelectQuestion}>Select</Button>
@@ -187,6 +209,7 @@ const ThreadBox = (props:{
 
   return (
     <div>
+      {phase}
       <Space direction="vertical" className="flex">
         <Card title={theme?theme: "Theme Loading"}>
           {phase < 3? 

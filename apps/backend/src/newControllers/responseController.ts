@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IThreadItem, User } from "../config/schema";
+import { IThreadItem, ThreadItem, User } from "../config/schema";
 import generateScaffoldingKeywords from '../newUtils/generateScaffoldingKeywords'
 import { IInitInfo } from "../config/interface";
 import generateSentencesFromKeywords from "../newUtils/generateSentencesFromKeywords";
@@ -15,6 +15,24 @@ const saveResponse = async (req: Request, res: Response) => {
       success: true
     })
   } catch (err) {
+    res.json({
+      err: err.message
+    })
+  }
+}
+
+const saveOrientingInput = async(req: Request, res: Response) => {
+  const orientingInput = req.body.orientingInput
+  const tid = req.body.tid
+  try {
+    await ThreadItem.findByIdAndUpdate(tid, {$set: {orientingInput: orientingInput}})
+    res.json({
+      success: true
+    })
+  } catch (err) {
+    res.json({
+      err: err.message
+    })
     throw err;
   }
 }
@@ -81,4 +99,4 @@ const getScaffoldingQuestions = async (req: Request, res: Response) => {
   })
 }
 
-export {saveResponse, generateKeywords, generateSentences, getScaffoldingQuestions}
+export {saveResponse, generateKeywords, generateSentences, getScaffoldingQuestions, saveOrientingInput}

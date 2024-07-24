@@ -47,14 +47,25 @@ const saveThreadItem = async (req: Request, res: Response) => {
   }
 }
 
+const getOrientingInput = async (req: Request, res: Response) => {
+  const tid = req.body.tid;
+  try {
+    const thread = await ThreadItem.findById(tid)
+    res.json({
+      orientingInput: thread.orientingInput
+    })
+  } catch (err) {
+    res.json({
+      err: err.message
+    })
+  }
+}
+
 const getThreadList = async (req: Request, res: Response) => {
   const uid = req.body.uid
   try {
     // const user = await User.findById(uid).populate('threadRef').exec();
     const user = await User.findById(uid);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
     return res.json({
       threadRef: user.threadRef
     })
@@ -125,4 +136,4 @@ const saveSynthesized = async(req: Request, res: Response) => {
   }
 }
 
-export {createThreadItem, getThreadList, saveThreadItem, getThreadData, getThreadTitleList, synthesizeThread, saveSynthesized}
+export {createThreadItem, getThreadList, saveThreadItem, getThreadData, getThreadTitleList, synthesizeThread, saveSynthesized, getOrientingInput}
