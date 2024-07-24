@@ -6,11 +6,13 @@ import {setWorkingThread} from '../../../Redux/reducers/userSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import createThreadItem from '../../../APICall/createThreadItem';
 import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
+import getThemesFromResp from '../../../APICall/getThemesFromResp';
 
 const ThemeBox = (props:{
   onThreadCreated: () => void; 
 }) => {
   const [themes, setThemes] = useState([]);
+  const [respThemes, setRespThemes] = useState([]);
   const [selected, setSelected] = useState<string>('');
   const [inputValue, setInputValue] = useState<string>('');
   const dispatch = useDispatch();
@@ -22,6 +24,12 @@ const ThemeBox = (props:{
     setThemes(data);
   };
 
+  const fetchThemesFromRef = async() => {
+    const data = await getThemesFromResp(uid);
+    console.log("RESPTHEME: ", data)
+    setRespThemes(data)
+  }
+
   const onChange = (e: RadioChangeEvent) => {
     setSelected(e.target.value)
   }
@@ -32,7 +40,6 @@ const ThemeBox = (props:{
 
   const onSubmit = async () => {
     // TODO: Handling when input value is empty
-    console.log("ONSUBUID: ", uid)
     const tid = await createThreadItem(uid, selected)
     dispatch(setWorkingThread({tid: tid, theme: selected}))
     props.onThreadCreated()
@@ -41,7 +48,10 @@ const ThemeBox = (props:{
 
   useEffect(() => {
     fetchInitThemes();
+    fetchThemesFromRef();
+    console.log("RES: ", respThemes)
   },[])
+
   return (
     <div>
       {themes.length?
@@ -49,6 +59,9 @@ const ThemeBox = (props:{
       <Radio.Group onChange={onChange} value={selected}>
         <Space direction="vertical">
         {themes.map((themeItem: { theme: string; quote: string }) => <Radio value={themeItem.theme}>{themeItem.theme}</Radio>)}
+        </Space>
+        <Space direction="vertical">
+        {respThemes.map((themeItem: { theme: string; quote: string }) => <Radio value={themeItem.theme}>{themeItem.theme}</Radio>)}
         <Radio value={inputValue}><Input style={{ width: 100, marginLeft: 10 }} onChange={onInputChange}/></Radio>
         </Space>
       </Radio.Group>

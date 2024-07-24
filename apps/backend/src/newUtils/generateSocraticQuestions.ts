@@ -28,7 +28,6 @@ const generateSocraticQuestions = async (uid: string, selected_theme: string, or
 
   const prev_input = await synthesizePrevInput(uid)
 
-
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplate)
 
   const humanTemplate = `
@@ -44,7 +43,7 @@ const generateSocraticQuestions = async (uid: string, selected_theme: string, or
   ])
 
   const questionSchema = z.object({
-    questions: z.array(z.string())
+    questions: z.array(z.string().describe('question in Korean'))
   })
   
   const structuredLlm = chatModel.withStructuredOutput(questionSchema)

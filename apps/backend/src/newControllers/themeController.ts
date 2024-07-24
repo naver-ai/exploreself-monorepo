@@ -26,7 +26,8 @@ const generateThemesFromResp = async (req: Request, res: Response) => {
   const uid = req.body.uid
   
   try {
-    const themes = await generateThemesFromNarrative(uid);
+    const themes = await generateThemesFromRecentResponse(uid);
+    console.log("THEMES: ", themes)
     res.json({
       themes: themes
     })

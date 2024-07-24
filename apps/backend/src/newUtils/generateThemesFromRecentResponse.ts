@@ -1,15 +1,16 @@
 import {ChatPromptTemplate, HumanMessagePromptTemplate} from "@langchain/core/prompts"
 import {SystemMessage} from "@langchain/core/messages"
-import {z} from "zod";
+import {undefined, z} from "zod";
 import { chatModel } from '../config/config';
 import { IInitInfo } from '../config/interface';
 import synthesizePrevInput from "./synthesizePrevInput";
 import synthesizeSession from "./synthesizeSession";
 import { ThreadItem, User } from "../config/schema";
+import { readEnv } from "openai/core";
 
 
 const generateThemesFromRecentResponse = async (uid: string, additional_instructions='') => {
-
+  console.log("UID: ", uid)
   const system_message =  `
   [Role] You are a counselor assisting users in navigating and understanding their personal challenges and difficulties.
 
@@ -24,6 +25,7 @@ const generateThemesFromRecentResponse = async (uid: string, additional_instruct
   [Task] 
   Your specific task is to identify new 'cards' (themes/aspects) within the client's narrative, mainly arising from on the most recent session. 
   For each card(theme/aspects), also provide the referred part/quote of user input of the previous session. 
+  Try not do 'inference' in generating cards, and go ahead by assuming, but elicit cards from the response itself.
 
   [Input type and format]
   <previous_input/>: Client's narrative and background of the previous sessions. 
@@ -47,15 +49,21 @@ const generateThemesFromRecentResponse = async (uid: string, additional_instruct
 
   const previous_input = await synthesizePrevInput(uid)
   const user = await User.findById(uid)
-  const recent_thread = user.threadRef[-1]
+  const recent_thread = user.threadRef[user.threadRef.length-1]
+  
   const most_recent_session = await synthesizeSession(recent_thread.toString(), uid)
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 
-  const edgeSchema =z.array(z.object({
-      card: z.string().describe("Each card(theme/aspect) based on the user input of previous session"),
-      quote: z.string().describe("Most relevant part with the card, among what user mentioned in the previous session")
-    }))
+  const edgeSchema =z.object(
+    {
+      "cards":z.array(z.object({
+        theme: z.string().describe("Each card(theme/aspect) based on the user input of previous session"),
+        quote: z.string().describe("Most relevant part with the card, among what user mentioned in the previous session")
+      }))
+    }
+  )
+  
 
   const finalPromptTemplate = ChatPromptTemplate.fromMessages([
     systemMessage,
@@ -66,9 +74,9 @@ const generateThemesFromRecentResponse = async (uid: string, additional_instruct
 
   const chain = finalPromptTemplate.pipe(structuredLlm);
 
-  const result = await chain.invoke({previous_input: previous_input, recent_session: most_recent_session});
 
-  return result;
+  const result = await chain.invoke({previous_input: previous_input, recent_session: most_recent_session});
+  return result.cards;
 } 
 
 export default generateThemesFromRecentResponse;

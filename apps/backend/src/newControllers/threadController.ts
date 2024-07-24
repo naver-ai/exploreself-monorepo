@@ -104,10 +104,11 @@ const getThreadTitleList = async (req: Request, res: Response) => {
 }
 
 const synthesizeThread = async(req: Request, res: Response) => {
-  const threadData = req.body.threadData
+  const tid = req.body.tid
   const uid = req.body.uid
+  console.log("THREaddata: ", tid)
   try {
-    const synthesizedData = await synthesizeSession(threadData, uid)
+    const synthesizedData = await synthesizeSession(tid, uid)
     res.json({
       synthesized: synthesizedData
     })

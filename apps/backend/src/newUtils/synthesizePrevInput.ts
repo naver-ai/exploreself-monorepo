@@ -19,8 +19,8 @@ const synthesizePrevInput = async (uid: string) => {
   [Initial information]\n
   "${synthesizedProfilic}"\n` + 
   synthesizedThreadList.map((item, index) => {
-    if(item.synthesized && item.synthesized.length > 1){
-      `[Session]\n
+    if(item.synthesized && item.synthesized.length > 0){
+      return `[Session]\n
     "${item.synthesized}"
     `
     }

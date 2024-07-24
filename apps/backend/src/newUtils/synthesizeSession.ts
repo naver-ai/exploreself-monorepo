@@ -55,7 +55,9 @@ const synthesizeSession = async (tid: string, uid: string) => {
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(system_message)
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(human_template)
 
-  const summarySchema = z.string().describe("Synthesis of the session, well capturing user's detailed expressions.")
+  const summarySchema = z.object({
+      "synthesis": z.string().describe("Synthesis of the session, well capturing user's detailed expressions.")
+    })
 
   const finalPromptTemplate = ChatPromptTemplate.fromMessages([
     systemMessage,
@@ -65,10 +67,8 @@ const synthesizeSession = async (tid: string, uid: string) => {
   const structuredLlm = chatModel.withStructuredOutput(summarySchema);
 
   const chain = finalPromptTemplate.pipe(structuredLlm);
-
   const result = await chain.invoke({previous_input: previous_input, theme: theme, orientingInput: orientingInput, question: question, response: response});
-
-  return result;
+  return result.synthesis
 
 }
 
