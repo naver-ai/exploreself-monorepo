@@ -94,12 +94,20 @@ const QnASet = (props:{
   const [tmpN, setTmpN] = useState<number>(0)
   const [scaffoldingKeywords, setScaffoldingKeywords] = useState<string[] | null>()
   const [response, setResponse] = useState<string>('')
+  const [orienting, setOrienting] = useState<string | null>('')
+
+  const fetchOrienting = async() => {
+    const orientingInput = await getOrientingInput(props.tid)
+    setOrienting(orientingInput)
+  }
 
   const fetchSocraticQuestions = async() => {
-    const fetchedQuestions = await getSocraticQuestions(props.theme, uid)
-    if(fetchedQuestions){
-      setQuestionList(fetchedQuestions)
-      setSelectedQ(fetchedQuestions[tmpN])
+    if(orienting){
+      const fetchedQuestions = await getSocraticQuestions(props.theme, uid, orienting)
+      if(fetchedQuestions){
+        setQuestionList(fetchedQuestions)
+        setSelectedQ(fetchedQuestions[tmpN])
+      }
     }
   }
   const onSelectQuestion = async () => {
@@ -120,13 +128,17 @@ const QnASet = (props:{
   }
 
   useEffect(() => {
-    fetchSocraticQuestions();
+    fetchOrienting();
   },[props.phase])
+
+  useEffect(() => {
+    fetchSocraticQuestions();
+  },[props.phase, orienting])
 
 
   return(
     <div>
-      {isSetQ?"setq":"notsetq"}
+      {/* {isSetQ?"setq":"notsetq"} */}
       <Flex vertical={false} className={(isSetQ || props.phase == 1)? 'hidden':''}>
         <TextArea value={selectedQ} onChange={(e) => setSelectedQ(e.target.value)}/>
         <Button onClick={onRegenerate} >Regenerate</Button>
@@ -160,6 +172,7 @@ const FinishedThread = (props:{
 
   const fetchThreadData = async () => {
     const fetchedThreadData = await getThreadData(props.tid)
+    setOrientingInput(fetchedThreadData.orientingInput)
     setQuestion(fetchedThreadData.question)
     setResponse(fetchedThreadData.response)
   }
@@ -168,7 +181,7 @@ const FinishedThread = (props:{
   },[])
   return (
     <div>
-      Oriented: TBD
+      Oriented: {orientingInput}
       Question: {question}
       Response: {response}
     </div>

@@ -6,22 +6,11 @@ import { generateOrientingQuestions } from '../newUtils/generateOrientingQuestio
 
 const generateSocraticQuestionController = async (req: Request, res: Response) => {
   const uid = req.body.uid
-  const user = await User.findById(uid)
-  if (!user) {
-    res.status(400).send("Couldn't find user");
-  }
+
   const selected_theme = req.body.selected_theme;
-  const threadLog = user.thread
+  const orienting_input = req.body.orienting_input;
 
-  // const history = user.history.map(historyItem => historyItem.history_information);
-
-  const basicInfo: IInitInfo = {
-    init_nar: user.initial_narrative,
-    val_set: user.value_set,
-    background: user.background
-  }
-
-  const questions = await generateSocraticQuestions(basicInfo, threadLog, selected_theme)
+  const questions = await generateSocraticQuestions(uid, selected_theme, orienting_input)
   res.json({
     questions: questions
   })

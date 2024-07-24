@@ -4,27 +4,38 @@ import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemp
 import { z } from "zod";
 import { chatModel } from "../config/config";
 import { IThreadItem } from "../config/schema";
+import synthesizePrevInput from "./synthesizePrevInput";
 
 
-const generateSocraticQuestions = async (init_info: IInitInfo, history: IThreadItem[], selected_theme: string) => {
-
+const generateSocraticQuestions = async (uid: string, selected_theme: string, orientingInput: string) => {
+  
   const systemTemplate = `
-  You are an helpful assistant who supports user, to navigate one's personal narrative of difficulty.
+  [Role]
+  You are a therapeutic assistant specializing in generating reflexive questions to facilitate self-reflection and personal growth in clients. Reflexive questions are designed to encourage clients to think about their thoughts, feelings, behaviors, and relationships from new perspectives, promoting self-awareness and the discovery of new possibilities.
+  
   [TASK]
-  When counselers ask questions to the client, there are commonly 2 types of intentions---a) understanding better of the client's situation (orienting questions), and b) provoking thoughts (influential questions).
-  You task is to provide 'influential circular questions' to the user, based on the narrative that the user provided. 
-  Provide meaningful influential questioning to the user "IN KOREAN", for one to understand better about one's personal narrative, relating to the theme that the user selects. 
-  Here's the user's narrative: {init_narrative}.
-  "${history.length?`
-  Also, there is already a set of text that the user has written about one's situation.
-  Based on the context of the writing, provide the at the moment most helpful Socratic question in text. 
-  "Here's the current context of user's writing: {current_context}"
-  `:""}"
-  Following is the theme within the context that the user would like to get Influential Questioning about: 
+  Given a client's personal narrative, your task is to generate reflexive questions that:
+  - Facilitate Self-Reflection: Encourage the client to reflect on their experiences, thoughts, and feelings.
+  - Promote Autonomy: Empower the client to consider new possibilities and solutions on their own.
+  - Respect Client's Perspective: Maintain a non-directive, respectful tone that honors the client's autonomy and unique perspective.
+  - Open New Perspectives: Help the client see their situation from different angles, potentially leading to new insights and ways of thinking. 
+
+  [Input type and format]
+  <user_narrative/>: User's narrative
+  <theme/>: The overall theme to generate reflexive questions about
+  <theme_description/>: How user described in detail about the theme. Refer to this description when generating reflexive question about the given theme.
   ` // TODO: design prompt
+
+  const prev_input = await synthesizePrevInput(uid)
+
+
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplate)
 
-  const humanTemplate = `{selection}` // TODO: design prompt
+  const humanTemplate = `
+  <user_narrative/>: {prev_input}
+  <theme/>: {theme}
+  <theme_description>: {theme_description}
+  ` // TODO: design prompt
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 
   const finalPromptTemplate = ChatPromptTemplate.fromMessages([
@@ -40,7 +51,7 @@ const generateSocraticQuestions = async (init_info: IInitInfo, history: IThreadI
 
   const chain = finalPromptTemplate.pipe(structuredLlm)
 
-  const result = await chain.invoke({init_narrative: init_info.init_nar, current_context: history.join(', '), selection: selected_theme})
+  const result = await chain.invoke({prev_input: prev_input, theme: selected_theme, theme_description: orientingInput})
 
   // TODO: question에 save하는거, onChange 
 
