@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../config/schema";
+import { undefined } from "zod";
 
 const getUserInfo = async (req: Request, res: Response) => {
   const uid = req.body.uid

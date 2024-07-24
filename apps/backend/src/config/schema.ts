@@ -57,6 +57,7 @@ interface IScaffoldingData extends Document {
 interface IThreadItem extends Document {
   uid: mongoose.Types.ObjectId;
   theme: string;
+  orientingInput?: string;
   question?: string;
   scaffoldingData?: IScaffoldingData;
   response?: string;
@@ -159,6 +160,7 @@ const AIFeedbackSchema = new Schema({
  const ThreadItemSchema = new Schema({
    uid: {type: Schema.Types.ObjectId, ref: 'User', required: true},
    theme: {type: String, required: true},
+   orientingInput: {type: String},
    question: {type: String},
    scaffoldingData: {
      type: ScaffoldingDataSchema},

@@ -5,7 +5,7 @@ import getResponseFromKeyword from "../../../APICall/getResponseFromKeyword"
 import getOrientingQuestions from "../../../APICall/getOrientingQuestions"
 import { useDispatch, useSelector } from "react-redux"
 import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
-import { Radio, Space, Button, Input, Checkbox, Card, Anchor } from "antd"
+import { Radio, Space, Button, Input, Checkbox, Card, Anchor, Flex, Row } from "antd"
 import type {RadioChangeEvent} from "antd"
 import type { GetProp } from 'antd';
 import { IThreadItem, ITypeAScaffoldingState } from "apps/reauthor-monorepo/src/Config/interface"
@@ -13,6 +13,7 @@ import getThreadData from "../../../APICall/getThreadData"
 import saveThreadItem from "../../../APICall/saveThreadItem"
 import { resetWorkingThread } from "../../../Redux/reducers/userSlice"
 import getScaffoldingQuestions from "../../../APICall/getScaffoldingQuestions"
+import { isSet } from "util/types"
 const {TextArea} = Input;
 
 // const ResponseBox = () => {
@@ -34,215 +35,169 @@ const {TextArea} = Input;
 //   )
 // }
 
-const ThreadBox = (props: {
+const OrientingInput = (props:{
+  handlePhase: (phase: number) => void,
+  phase: number,
+  tid: string
+}) => {
+
+  const [input, setInput] = useState<string>('')
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+  }
+
+  const handleSubmit = () => {
+    props.handlePhase(2);
+  }
+  
+  return(
+    <div>
+      <TextArea rows={3} onChange={handleChange} value={input}/>
+      <Button onClick={handleSubmit}>Submit Input</Button>
+    </div>
+  )
+}
+
+const QnASet = (props:{
+  handlePhase: (phase: number) => void,
+  phase: number,
+  tid: string,
+  theme: string
+}) => {
+  const uid = useSelector((state: IRootState) => state.userInfo.uid)
+
+  const [selectedQ, setSelectedQ] = useState<string>('')
+  const [isSetQ, setIsSetQ] = useState<boolean>(false)
+  const [questionList, setQuestionList] = useState<string[]>([])
+  const [tmpN, setTmpN] = useState<number>(0)
+  const [scaffoldingKeywords, setScaffoldingKeywords] = useState<string[] | null>()
+  const [response, setResponse] = useState<string>('')
+
+  const fetchSocraticQuestions = async() => {
+    const fetchedQuestions = await getSocraticQuestions(props.theme, uid)
+    if(fetchedQuestions){
+      setQuestionList(fetchedQuestions)
+    }
+  }
+  const onSelectQuestion = async () => {
+    setIsSetQ(true)
+    // TODO: Add orientingInput as param of getScaffoldingKeywords
+    const fetchedKeywords = await getScaffoldingKeywords(uid, selectedQ);
+    setScaffoldingKeywords(fetchedKeywords)
+  }
+  const onRegenerate = () => {
+    setSelectedQ(questionList[tmpN + 1])
+    setTmpN(tmpN+1)
+    // TODO: Handling when exceed length
+  }
+  const onSubmitResponse = async () => {
+    // TODO: save orientingInput
+    await saveThreadItem(props.tid, selectedQ, {}, response)
+    props.handlePhase(3)
+  }
+
+  useEffect(() => {
+    fetchSocraticQuestions();
+  },[])
+
+
+  return(
+    <div>
+      {isSetQ?"setq":"notsetq"}
+      <Flex vertical={false} className={isSetQ? 'hidden':''}>
+        <TextArea value={selectedQ} onChange={(e) => setSelectedQ(e.target.value)}/>
+        <Button onClick={onRegenerate} >Regenerate</Button>
+        <Button onClick={onSelectQuestion}>Select</Button>
+      </Flex>
+      <Flex vertical={true} className={isSetQ? '':'hidden'}>
+      <div>{selectedQ}</div>
+        Scaffolding Keywords
+        <Flex vertical={false}>
+          <div>
+            {scaffoldingKeywords?scaffoldingKeywords.map(keyword => <div>{keyword}</div>):"Loading keywords"}
+          </div>
+          <div>Drop here</div>
+        </Flex>
+        Response
+        <TextArea className={isSetQ?'':'hidden'} onChange={(e) => setResponse(e.target.value)}/>
+        <Button onClick={onSubmitResponse}>Submit Response</Button>
+      </Flex>
+    </div>
+  )
+}
+
+const FinishedThread = (props:{
+  tid: string,
+  question: string,
+  response: string
+}) => {
+  const [orientingInput, setOrientingInput] = useState('')
+  const [question, setQuestion] = useState('')
+  const [response, setResponse] = useState('')
+
+  const fetchThreadData = async () => {
+    const fetchedThreadData = await getThreadData(props.tid)
+    setQuestion(fetchedThreadData.question)
+    setResponse(fetchedThreadData.response)
+  }
+  useEffect(() => {
+    fetchThreadData()
+  },[])
+  return (
+    <div>
+      Oriented: TBD
+      Question: {question}
+      Response: {response}
+    </div>
+  )
+}
+
+const ThreadBox = (props:{
   theme: string,
   tid: string
 }) => {
-  // State: question selection, response, finished 
-  const [theme, setTheme] = useState<string | null>(null)
-  const [resPhase, setResPhase] = useState(false)
-  const [questions, setQuestions] = useState<string[] | null>([])
-  const [selectedQ, setSelectedQ] = useState<string>("")
-  const [scaffoldingKeywords, setScaffoldingKeywords] = useState<string[] | null>([])
-  const [plausibleResponse, setPlausibleResponse] = useState<string[] | null>([])
-  const [response, setResponse] = useState<string>("")
-  const workState = props.tid === useSelector((state: IRootState) => state.userInfo.working_thread.tid)
-  const [threadData, setThreadData] = useState<IThreadItem | null>(null)
-  type ScaffoldingType = 'a' | 'b' | 'c';
-  const [scaffoldingType, setScaffoldingType] = useState<ScaffoldingType>('a')
-  const [scaffoldingQuestions, setScaffoldingQuestions] = useState<{question: string, choices: string[]}[] | null>([]) 
-  const [typeAScaffoldingData, setTypeAScaffoldingData] = useState<ITypeAScaffoldingState>({
-    tried: false,
-    unselected_keywords: [],
-    selected_keywords: [],
-    user_added_keywords: [],
-    selected_generated_sentence: []
-  })
-  const [orientingQ, setOrientingQ] = useState<string[] | null>([])
-  const uid = useSelector((state: IRootState) => state.userInfo.uid)
-  const dispatch = useDispatch()
+    /*
+  - Phase 1: orienting input <OrientingInput/> , 
+  - Phase 2-a: question clarify <QnASet/>, qset: false
+  - Phase 2-b: response <ResponseInput/>, qset: true
+  - Phase 3: Finished 
+  */ 
+  const workingStatus = useSelector((state: IRootState) => state.userInfo.working_thread)
+  const [phase, setPhase] = useState<number>((props.tid===workingStatus.tid)?1:3)
+  const [theme, setTheme] = useState<string>('')
+  const [question, setQuestion] = useState<string>('')
+  const [response, setResponse] = useState<string>('')
 
-  const fetchKeywords = async () => {
-    const fetchedKeywords = await getScaffoldingKeywords(uid, selectedQ);
-    setScaffoldingKeywords(fetchedKeywords)
-
-  }
-  const fetchResponse = async() => {
-    const fetchedResponse = await getResponseFromKeyword(selectedQ, typeAScaffoldingData.selected_keywords, uid)
-    setPlausibleResponse(fetchedResponse)
-  }
   const fetchThreadData = async () => {
     const fetchedThreadData = await getThreadData(props.tid)
-    setThreadData(fetchedThreadData)
-    const theme = fetchedThreadData.theme
-    setTheme(theme)
-    if (workState) {
-      if (!resPhase) {
-        const fetchedQuestions = await getSocraticQuestions(fetchedThreadData.theme, uid)
-        setQuestions(fetchedQuestions)
-      }
+    setTheme(fetchedThreadData.theme)
+    if (phase == 3){
+      setQuestion(question)
+      setResponse(response)
     }
   }
-
-  const fetchOrientingQ = async () => {
-    const fetchcedOrientingQ = await getOrientingQuestions(props.theme, uid)
-    setOrientingQ(fetchcedOrientingQ)
+  const handlePhase = (phase: number) => {
+    setPhase(phase)
   }
-
-  const fetchScaffoldingQuestions = async () => {
-    const fetchedQuestions = await getScaffoldingQuestions(selectedQ, uid)
-    console.log("F", fetchedQuestions)
-    setScaffoldingQuestions(fetchedQuestions)
-  }
-  const { TextArea } = Input;
-
   useEffect(() => {
     fetchThreadData();
-    fetchOrientingQ();
   },[])
 
-  useEffect(() => {
-    fetchKeywords();
-  },[resPhase])
-  // useEffect(() => {
-  //   // if(scaffoldingType == 'b') {
-  //   //   fetchScaffoldingQuestions()
-  //   // }
-  //   fetchScaffoldingQuestions()
-  // },[scaffoldingType])
-
-
-  const onChangeQSelect = (e: RadioChangeEvent) => {
-    setSelectedQ(e.target.value)
-  }
-
-  const onSubmitQ = () => {
-    // TODO: Handling when input value is empty
-    setResPhase(true)
-  }
-
-  const onSelectKeywords: GetProp<typeof Checkbox.Group, 'onChange'> = (checkedValues) => {
-    const stringCheckedValues = checkedValues as string[];
-    setTypeAScaffoldingData(prevState => ({
-      ...prevState,
-      tried: true,
-      selected_keywords: stringCheckedValues
-    }))
-  };
-
-  const onSubmitKeywords = async () => {
-    await fetchResponse()
-  }
-
-  const onDragRes = (e: React.DragEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
-    const value = target.getAttribute('data-value');
-    if (value) {
-      e.dataTransfer.setData('res', value);
-    }
-  };
-
-  const onDrop = (e: React.DragEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
-    const data = e.dataTransfer.getData('res');
-    if (data) {
-      setTypeAScaffoldingData(prevState => ({
-        ...prevState,
-        selected_generated_sentence: [...typeAScaffoldingData.selected_generated_sentence,data]
-      }))
-      setResponse(prevValue => prevValue ? `${prevValue} ${data}` : data);
-    }
-  }
-  const onDragOver = (e: React.DragEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
-  };
-
-  const onSubmitResponse = async () => {
-    await saveThreadItem(props.tid, selectedQ, {typeA: typeAScaffoldingData}, response)
-    dispatch(resetWorkingThread())
-  }
-  const handleScaffoldingType = (
-    e: React.MouseEvent<HTMLElement>,
-    link: {
-      title: React.ReactNode,
-      // key: string,
-      href: string
-    }
-  ) => {
-    e.preventDefault();
-    setScaffoldingType(link.href as ScaffoldingType)
-  }
 
   return (
     <div>
       <Space direction="vertical" className="flex">
         <Card title={theme?theme: "Theme Loading"}>
-          {orientingQ?.map(q => q)}
-          <TextArea rows={3}/>
-        {workState?
-      <div>
-        {resPhase? 
-        <div>
-          <div>{selectedQ}</div>
-          <Anchor 
-          direction="horizontal"
-          onClick={handleScaffoldingType}
-          items={[
-            {
-              title: 'Keywords',
-              key: '',
-              href:'a',
-            },
-            {
-              title: 'Breakdown',
-              key: 'b',
-              href:'b'
-            }
-          ]}/>
-          {scaffoldingType == 'a'?
+          {phase < 3? 
           <div>
-            <Checkbox.Group style={{ width: '100%' }} onChange={onSelectKeywords}>
-            {scaffoldingKeywords?.length? scaffoldingKeywords?.map(keyword => <Checkbox value={keyword}>{keyword}</Checkbox>): <div>Loading Keywords</div>}
-            </Checkbox.Group>
-            <Button onClick={onSubmitKeywords}>Selected Keywords</Button>
-            <div>
-              {plausibleResponse?.length? plausibleResponse?.map(res => <div draggable={true} onDragStart={onDragRes} data-value={res}>{res}</div>): "Loading"}
-            </div>
+            <OrientingInput handlePhase={handlePhase} tid={props.tid} phase={phase}/>
+            <QnASet handlePhase={handlePhase} phase={phase} tid={props.tid} theme={theme}/>
           </div>
           :
-          <div>
-            {/* {scaffoldingQuestions? scaffoldingQuestions[0]:<div>Loading</div>} */}
-            Breaking down
-          </div>
-          }
-          <TextArea rows={4} onDrop={onDrop} value={response} onDragOver={onDragOver} onChange={(e) => setResponse(e.target.value)}/>
-          <Button onClick={onSubmitResponse}>Submit Response</Button>
-        </div>
-        : 
-        <div>
-        {questions? 
-        <div>
-          <Radio.Group onChange={onChangeQSelect} value={selectedQ}>
-            <Space direction="vertical">
-            {questions.map(q => (
-              <Radio value={q}>{q}</Radio>
-            ))}
-            </Space>
-          </Radio.Group>
-          <Button onClick={onSubmitQ}>Selected</Button>
-        </div>
-        :"Questions loading"}
-      </div>
-        }
-      </div>:
-      <div>
-        <div>Question: {threadData?.question}</div>
-        <div>Response: {threadData?.response}</div>
-      </div>}
+          <FinishedThread tid={props.tid} question={question} response={response}/>}
         </Card>
       </Space>
-      
-      
       
     </div>
   )

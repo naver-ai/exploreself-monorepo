@@ -14,6 +14,7 @@ export interface IScaffoldingData {
 export interface IThreadItem {
   tid: string,
   theme: string;
+  orientingInput?: string;
   question?: string;
   scaffoldingData?: IScaffoldingData;
   response?: string;
