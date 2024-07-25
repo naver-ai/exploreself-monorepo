@@ -1,14 +1,17 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-interface IAIFeedback extends Document {
-  // TBD
+interface IAIGuide extends Document {
+  content: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface IQASet extends Document {
   question: {label: string; content: string},
   keywords: string[],
   response: string,
+  aiGuides?: IAIGuide[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -33,8 +36,10 @@ interface IUser extends Document {
   updatedAt: Date;
 }
 
-const AIFeedbackSchema = new Schema({
-  // TBD
+const AIGuideSchema = new Schema({
+  content: {type: String},
+  createdAt: {type: Date, default: Date.now},
+  updatedAt: {type: Date}
  })
 
  const QASetSchema = new Schema({
@@ -44,6 +49,10 @@ const AIFeedbackSchema = new Schema({
       content: String
     },
     required: true
+  },
+  aiGuides: {
+    type: [AIGuideSchema],
+    default: []
   },
   keywords: [String],
   response: String,
@@ -82,4 +91,4 @@ const AIFeedbackSchema = new Schema({
  const ThreadItem = mongoose.model<IThreadItem>('ThreadItem', ThreadItemSchema)
  const User = mongoose.model<IUser>('User', UserSchema)
  
- export { User, IAIFeedback, IThreadItem, IUser, ThreadItem, QASet, IQASet };
+ export { User, IAIGuide, IThreadItem, IUser, ThreadItem, QASet, IQASet };
