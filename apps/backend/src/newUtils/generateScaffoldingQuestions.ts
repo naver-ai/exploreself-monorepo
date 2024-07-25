@@ -10,14 +10,13 @@ interface ScaffoldingQuestion {
 
 const generateScaffoldingQuestions = async (init_info: IInitInfo, question: string): Promise<ScaffoldingQuestion[]> => {
   const systemTemplate = `
-  You are a helpful assistant who provides multiple-choice scaffolding questions to help the user navigate their personal narrative of difficulty.
-  [TASK]
-  Based on the user's background and the main Socratic question, generate a list of easier multiple-choice scaffolding questions that can help the user answer the main Socratic question.
+  - Role: You are a helpful assistant who provides multiple-choice scaffolding questions to help the user navigate their personal narrative of difficulty.
+  - Task: Based on the user's background and the main Socratic question, generate a list of easier multiple-choice scaffolding questions that can help the user answer the main Socratic question.
   For example, those scaffolding questions would be Which of the following emotions did you most feel when~? --- such questions that is suitable for multiple choice questions. What, Who, When, etc. 
   
   Here's the user's background: {narrative}.
   Main Socratic question: {question}
-  Provide a list of scaffolding questions in the format: {{"question": "string", "choices": ["string"]}}
+  Provide a list of scaffolding questions in the format IN KOREAN: {{"question": "string", "choices": ["string"]}}
   `;
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplate);
 

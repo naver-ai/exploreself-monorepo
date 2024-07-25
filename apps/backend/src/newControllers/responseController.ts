@@ -3,6 +3,7 @@ import { IThreadItem, ThreadItem, User } from "../config/schema";
 import generateScaffoldingKeywords from '../newUtils/generateScaffoldingKeywords'
 import { IInitInfo } from "../config/interface";
 import generateSentencesFromKeywords from "../newUtils/generateSentencesFromKeywords";
+import generateThemeScaffoldingKeywords from '../newUtils/generateThemeScaffoldingKeywords'
 import {generateScaffoldingQuestions} from '../newUtils/generateScaffoldingQuestions'
 
 const saveResponse = async (req: Request, res: Response) => {
@@ -99,4 +100,20 @@ const getScaffoldingQuestions = async (req: Request, res: Response) => {
   })
 }
 
-export {saveResponse, generateKeywords, generateSentences, getScaffoldingQuestions, saveOrientingInput}
+const getThemeScaffoldingKeywords = async(req: Request, res: Response) => {
+  const uid = req.body.uid
+  const theme = req.body.theme
+
+  try {
+    const scaffoldingSet = await generateThemeScaffoldingKeywords(uid, theme)
+    res.json({
+      scaffoldingSet: scaffoldingSet
+    })
+  } catch (err){
+    res.json({
+      err: err.message
+    })
+  }
+}
+
+export {saveResponse, generateKeywords, generateSentences, getScaffoldingQuestions, saveOrientingInput, getThemeScaffoldingKeywords}

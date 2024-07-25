@@ -21,7 +21,7 @@ const generateThemesFromNarrative = async (init_info: IInitInfo, additional_inst
   The themes should be framed in a way that would likely engage and be inviting the user and highlight important aspects of their experience.
   Also, it's important to use the user's expression as much as possible. 
   Never judge or assume anything that would stigmatize oneself. They will not feel inviting to explore further. 
-  Also, for each theme, also retrieve the most relevant part (It could be sentence(s), phrase(s) in the narrative, with each theme) in Korean.
+  Also, for each theme, also retrieve the most relevant part (It could be sentence(s), phrase(s) in the narrative, with each theme) "in Korean".
   User narrative: 
   `
 

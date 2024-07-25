@@ -19,6 +19,7 @@ const generateSocraticQuestions = async (uid: string, selected_theme: string, or
   - Promote Autonomy: Empower the client to consider new possibilities and solutions on their own.
   - Respect Client's Perspective: Maintain a non-directive, respectful tone that honors the client's autonomy and unique perspective.
   - Open New Perspectives: Help the client see their situation from different angles, potentially leading to new insights and ways of thinking. 
+  - Provide question in Korean
 
   [Input type and format]
   <user_narrative/>: User's narrative

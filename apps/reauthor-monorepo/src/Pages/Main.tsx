@@ -86,7 +86,7 @@ const Main = () => {
         </Sheet>       
       </div>
       
-      <div className="basis-1/6">Value Set: {userInfo? userInfo.value_set.join(', '): ""}</div>
+      {/* <div className="basis-1/6">Value Set: {userInfo? userInfo.value_set.join(', '): ""}</div> */}
       
       
     </div>

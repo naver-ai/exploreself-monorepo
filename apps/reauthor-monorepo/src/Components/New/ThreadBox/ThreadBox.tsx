@@ -3,9 +3,12 @@ import getSocraticQuestions from "../../../APICall/getSocraticQuestions"
 import getScaffoldingKeywords from "../../../APICall/getScaffoldingKeywords"
 import getResponseFromKeyword from "../../../APICall/getResponseFromKeyword"
 import getOrientingQuestions from "../../../APICall/getOrientingQuestions"
+import getThemeScaffoldingKeywords from '../../../APICall/getThemeScaffolding'
 import { useSelector } from "react-redux"
 import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
 import { Radio, Space, Button, Input, Checkbox, Card, Anchor, Flex, Row } from "antd"
+import { DeleteOutlined } from '@ant-design/icons';
+
 import type {RadioChangeEvent} from "antd"
 import type { GetProp } from 'antd';
 import { IThreadItem, ITypeAScaffoldingState } from "apps/reauthor-monorepo/src/Config/interface"
@@ -39,10 +42,26 @@ import getOrientingInput from "../../../APICall/getOrientingInput"
 const OrientingInput = (props:{
   handlePhase: (phase: number) => void,
   phase: number,
-  tid: string
+  tid: string,
+  theme: string
 }) => {
 
   const [input, setInput] = useState<string>('')
+  const uid= useSelector((state: IRootState) => state.userInfo.uid)
+  const [themeScaffolding, setThemeScaffolding] = useState<{item: string, rationale: string}[]>([])
+  const [visibleItems, setVisibleItems] = useState<{ item: string, rationale: string }[]>([]);
+  
+  const handleShowMore = () => {
+    const nextItem = themeScaffolding[visibleItems.length];
+    if (nextItem) {
+      setVisibleItems([...visibleItems, nextItem]);
+    }
+  };
+
+  const handleDelete = (index: number) => {
+    const newVisibleItems = visibleItems.filter((_, i) => i !== index);
+    setVisibleItems(newVisibleItems);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value)
@@ -59,17 +78,68 @@ const OrientingInput = (props:{
       setInput(orientingInput)
     }
   }
+
+  const fetchThemeScaffoldings = async() => {
+    const scaffoldingSet = await getThemeScaffoldingKeywords(uid, props.theme)
+    if(scaffoldingSet){
+      setThemeScaffolding(scaffoldingSet)
+      setVisibleItems([scaffoldingSet[0]])
+    }
+  }
+
+  useEffect(() => {
+    fetchThemeScaffoldings();
+  },[])
+
   useEffect(() => {
     if(props.phase > 1){
       fetchOrientingInput()
     }
   },[props.phase])
+
+  const onDragScaffolding = (e: React.DragEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    const value = target.getAttribute('data-value');
+    if (value) {
+      e.dataTransfer.setData('scaffolding', value);
+    }
+  };
+
+  const onDrop = (e: React.DragEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData('scaffolding');
+    if (data) {
+      setInput(prevValue => prevValue ? `${prevValue}\n [${data}] ` : `[${data}] `);
+    }
+  }
+  const onDragOver = (e: React.DragEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+  };
+  
   
   return(
     <div>
       {props.phase == 1? 
       <div>
-        <TextArea rows={3} onChange={handleChange} value={input}/>
+        <Flex vertical={false}>
+          <Flex vertical={true}>
+
+          {visibleItems.map((scaffolding, index) => (
+            <div key={index} className="flex items-center space-x-1">
+              <div draggable={true} onDragStart={onDragScaffolding} data-value={scaffolding.item}>{scaffolding.item}</div>
+              <Button onClick={() => handleDelete(index)} icon={<DeleteOutlined/>}/>
+            </div>
+          ))}
+          
+          
+          
+            {visibleItems.length < themeScaffolding.length && (
+              
+              <Button onClick={handleShowMore}>Show more</Button>
+            )}
+          </Flex>
+          <TextArea rows={3} onChange={handleChange} value={input} onDragOver={onDragOver} onDrop={onDrop}/>
+        </Flex>
         <Button onClick={handleSubmit}>Submit Input</Button>
       </div>:
       <div>
@@ -227,7 +297,7 @@ const ThreadBox = (props:{
         <Card title={theme?theme: "Theme Loading"}>
           {phase < 3? 
           <div>
-            <OrientingInput handlePhase={handlePhase} tid={props.tid} phase={phase}/>
+            <OrientingInput handlePhase={handlePhase} tid={props.tid} phase={phase} theme={theme}/>
             <QnASet handlePhase={handlePhase} phase={phase} tid={props.tid} theme={theme}/>
           </div>
           :

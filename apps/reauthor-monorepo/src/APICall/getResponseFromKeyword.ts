@@ -1,5 +1,4 @@
 import axios from "axios";
-import { debug } from "console";
 
 const getResponseFromKeyword = async (question: string, selected_keywords: string[], uid: string): Promise<string[] | null> => {
   try {

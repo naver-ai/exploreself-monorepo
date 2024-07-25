@@ -24,7 +24,7 @@ const generateScaffoldingKeywords = async (basicInfo: IInitInfo ,questionInput: 
     This is the narrative of the user: {narrative}
   ` + (thread.length? `This is the log: "${threadLogTemplate}"`: "")
   )
-  const humanMessage = HumanMessagePromptTemplate.fromTemplate('You should 10 different plausible {granularity_instructions} which might act as a scaffolding and hint that might be related to answering the question: {question}')
+  const humanMessage = HumanMessagePromptTemplate.fromTemplate('You should 10 different plausible {granularity_instructions} which might act as a scaffolding and hint that might be related to answering the question: {question} "IN KOREAN"')
 
   const finalPromptTemplate = ChatPromptTemplate.fromMessages([
     systemMessage,
