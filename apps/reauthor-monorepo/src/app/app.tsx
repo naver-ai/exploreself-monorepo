@@ -1,5 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
-import axios from "axios";
+import {FC} from 'react';
 import { BrowserRouter , Route, Routes } from 'react-router-dom';
 import Main from '../Pages/Main';
 // import '../style/index.css'

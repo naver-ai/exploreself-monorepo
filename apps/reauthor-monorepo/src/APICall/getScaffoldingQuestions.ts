@@ -1,9 +1,9 @@
-import axios from "axios"
+import { Http } from "../net/http";
 
 const getScaffoldingQuestions = async (question: string, uid: string): Promise<{question: string, choices: string[]}[] | null> => {
   try {
     // TODO: Add uid
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/response/getScaffoldingQuestions`, {
+    const response = await Http.axios.post(`/response/getScaffoldingQuestions`, {
       question: question,
       uid: uid
     })

@@ -1,8 +1,8 @@
-import axios from "axios"
+import { Http } from "../net/http";
 
 const getInitialThemes = async (uid: string) => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/theme/generateInitialThemes`,{
+    const response = await Http.axios.post(`/theme/generateInitialThemes`,{
       uid: uid
     })
     return response.data.themes.themes.map((themeItem: { theme: string; quote: string }) => themeItem)

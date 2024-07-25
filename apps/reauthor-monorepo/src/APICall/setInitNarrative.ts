@@ -1,9 +1,8 @@
-import axios from "axios"
-import { IUser } from "../Config/interface";
+import { Http } from "../net/http";
 
 const setInitNarrative = async (uid: string, narrative: string): Promise<boolean | null> => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/user/setInitialNarrative`, {
+    const response = await Http.axios.post(`/user/setInitialNarrative`, {
       uid: uid,
       init_narrative: narrative
     })

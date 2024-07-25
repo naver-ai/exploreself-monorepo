@@ -1,9 +1,9 @@
-import axios from "axios";
 import { IThreadItem } from "../Config/interface";
+import { Http } from "../net/http";
 
 const getThreadTitleList = async (tids: string[]): Promise<IThreadItem[] | null>=> {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/thread/getThreadTitleList`, {
+    const response = await Http.axios.post(`/thread/getThreadTitleList`, {
       tids: tids
     })
     return response.data.themes;

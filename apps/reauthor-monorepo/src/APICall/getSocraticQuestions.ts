@@ -1,8 +1,8 @@
-import axios from "axios"
+import { Http } from "../net/http";
 
 const getSocraticQuestions = async (theme: string, uid: string, orienting_input:string): Promise<string[] | null> => {
   try {
-    const response = axios.post(`${(import.meta as any).env.VITE_BACKEND}/question/generateSocratic`, {
+    const response = Http.axios.post(`/question/generateSocratic`, {
       uid: uid,
       selected_theme: theme,
       orienting_input: orienting_input

@@ -1,8 +1,8 @@
-import axios from "axios";
+import { Http } from "../net/http";
 
 const getThreadData = async (tid: string) => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/thread/getThreadData`, {
+    const response = await Http.axios.post(`/thread/getThreadData`, {
       tid: tid
     })
     return response.data.threadData;

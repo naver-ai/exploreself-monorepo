@@ -1,8 +1,8 @@
-import axios from "axios";
+import { Http } from "../net/http";
 
 const getResponseFromKeyword = async (question: string, selected_keywords: string[], uid: string): Promise<string[] | null> => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/response/generateSentences`, {
+    const response = await Http.axios.post(`/response/generateSentences`, {
       question: question,
       selected_keywords: selected_keywords,
       uid: uid

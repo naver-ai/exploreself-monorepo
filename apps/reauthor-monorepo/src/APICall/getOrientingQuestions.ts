@@ -1,8 +1,8 @@
-import axios from "axios"
+import { Http } from "../net/http";
 
 const getOrientingQuestions = async (theme: string, uid: string): Promise<string[] | null> => {
   try {
-    const response = axios.post(`${(import.meta as any).env.VITE_BACKEND}/question/generateOrienting`, {
+    const response = Http.axios.post(`/question/generateOrienting`, {
       uid: uid,
       selected_theme: theme,
     })

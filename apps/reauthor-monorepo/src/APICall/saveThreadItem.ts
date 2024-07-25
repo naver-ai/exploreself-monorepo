@@ -1,10 +1,10 @@
-import axios from "axios";
 import { IScaffoldingData } from "../Config/interface";
 import synthesizeThread from "./synthesizeThread";
+import { Http } from "../net/http";
 
 const saveThreadItem = async (tid: string, uid: string, question: string, scaffoldingData: IScaffoldingData, userResponse: string): Promise<string[] | null> => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/thread/saveThreadItem`, {
+    const response = await Http.axios.post(`/thread/saveThreadItem`, {
       tid: tid,
       question: question,
       scaffoldingData: scaffoldingData,
@@ -13,7 +13,7 @@ const saveThreadItem = async (tid: string, uid: string, question: string, scaffo
     // console.log("RESP: ", response.data)
     const synthesized = await synthesizeThread(tid, uid)
     // synthesized를 user에게 보여줄 수도 있음. 
-    const updatedResponse = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/thread/saveSynthesized`, {
+    const updatedResponse = await Http.axios.post(`/thread/saveSynthesized`, {
       synthesized: synthesized
     })
     return updatedResponse.data.success;
