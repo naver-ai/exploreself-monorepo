@@ -24,7 +24,7 @@ const generateThemesFromRecentResponse = async (uid: string, additional_instruct
 
   [Task] 
   Your specific task is to identify new 'cards' (themes/aspects) within the client's narrative, mainly arising from on the most recent session. 
-  For each card(theme/aspects), also provide the referred part/quote of user input of the previous session "in KOREAN". 
+  For each card(theme/aspects), also provide the referred part/quote of user input of the previous session "in Korean". 
   Try not do 'inference' in generating cards, and go ahead by assuming, but elicit cards from the response itself.
 
   [Input type and format]

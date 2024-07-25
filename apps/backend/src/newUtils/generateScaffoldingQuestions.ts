@@ -16,7 +16,7 @@ const generateScaffoldingQuestions = async (init_info: IInitInfo, question: stri
   
   Here's the user's background: {narrative}.
   Main Socratic question: {question}
-  Provide a list of scaffolding questions in the format IN KOREAN: {{"question": "string", "choices": ["string"]}}
+  Provide a list of scaffolding questions in the format in Korean: {{"question": "string", "choices": ["string"]}}
   `;
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplate);
 

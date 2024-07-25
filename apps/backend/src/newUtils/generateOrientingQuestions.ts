@@ -23,7 +23,7 @@ const generateOrientingQuestions = async (init_info: IInitInfo, history: IThread
   You should focus on the "theme", weight more on the "theme". 
   
   [Personal Narrative]
-  Provide meaningful Orientinc Circular questioning to the user "IN KOREAN", for one to understand better about one's personal narrative, relating to the theme that the user selects. 
+  Provide meaningful Orientinc Circular questioning to the user "in Korean", for one to understand better about one's personal narrative, relating to the theme that the user selects. 
   Here's the user's narrative: {init_narrative}.
   "${history.length?`
   Also, there is already a set of text that the user has written about one's situation.

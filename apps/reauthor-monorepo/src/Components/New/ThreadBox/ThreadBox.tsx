@@ -6,7 +6,7 @@ import getOrientingQuestions from "../../../APICall/getOrientingQuestions"
 import getThemeScaffoldingKeywords from '../../../APICall/getThemeScaffolding'
 import { useSelector } from "react-redux"
 import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
-import { Radio, Space, Button, Input, Checkbox, Card, Anchor, Flex, Row } from "antd"
+import { Radio, Space, Button, Input, Checkbox, Card, Anchor, Flex, Row, Divider } from "antd"
 import { DeleteOutlined } from '@ant-design/icons';
 
 import type {RadioChangeEvent} from "antd"
@@ -20,24 +20,6 @@ import saveOrientingInput from '../../../APICall/saveOrientingInput'
 const {TextArea} = Input;
 import getOrientingInput from "../../../APICall/getOrientingInput"
 
-// const ResponseBox = () => {
-
-// }
-
-// const BreakQuestionScaffoldingBox = () => {
-
-// }
-
-// const KeywordScaffoldingBox = () => {
-
-// }
-
-// const ResponsePhase = () => {
-//   const [mode, setMode] = useState("YET")
-//   return (
-//     <div>Mode: {mode}</div>
-//   )
-// }
 
 const OrientingInput = (props:{
   handlePhase: (phase: number) => void,
@@ -162,9 +144,22 @@ const QnASet = (props:{
   const [isSetQ, setIsSetQ] = useState<boolean>(false)
   const [questionList, setQuestionList] = useState<string[]>([])
   const [tmpN, setTmpN] = useState<number>(0)
-  const [scaffoldingKeywords, setScaffoldingKeywords] = useState<string[] | null>()
+  const [scaffoldingKeywords, setScaffoldingKeywords] = useState<string[]>([])
   const [response, setResponse] = useState<string>('')
   const [orienting, setOrienting] = useState<string | null>('')
+  const [visibleItems, setVisibleItems] = useState<string[]>([])
+
+  const handleShowMore = () => {
+    const nextItem = scaffoldingKeywords[visibleItems.length];
+    if (nextItem) {
+      setVisibleItems([...visibleItems, nextItem]);
+    }
+  };
+
+  const handleDelete = (index: number) => {
+    const newVisibleItems = visibleItems.filter((_, i) => i !== index);
+    setVisibleItems(newVisibleItems);
+  };
 
   const fetchOrienting = async() => {
     const orientingInput = await getOrientingInput(props.tid)
@@ -184,7 +179,10 @@ const QnASet = (props:{
     setIsSetQ(true)
     // TODO: Add orientingInput as param of getScaffoldingKeywords
     const fetchedKeywords = await getScaffoldingKeywords(uid, selectedQ);
-    setScaffoldingKeywords(fetchedKeywords)
+    if(fetchedKeywords){
+      setScaffoldingKeywords(fetchedKeywords)
+      setVisibleItems([scaffoldingKeywords[0]]);
+    }
   }
   const onRegenerate = () => {
     setSelectedQ(questionList[tmpN + 1])
@@ -216,15 +214,13 @@ const QnASet = (props:{
       </Flex>
       <Flex vertical={true} className={isSetQ? '':'hidden'}>
       <div>{selectedQ}</div>
-        Scaffolding Keywords
         <Flex vertical={false}>
-          <div>
-            {scaffoldingKeywords?scaffoldingKeywords.map(keyword => <div>{keyword}</div>):"Loading keywords"}
-          </div>
-          <div>Drop here</div>
-        </Flex>
-        Response
+        <div>
+          {scaffoldingKeywords?scaffoldingKeywords.map(keyword => <div>{keyword}</div>):"Loading keywords"}
+        </div>
         <TextArea className={isSetQ?'':'hidden'} onChange={(e) => setResponse(e.target.value)}/>
+        </Flex>
+        
         <Button onClick={onSubmitResponse}>Submit Response</Button>
       </Flex>
     </div>
@@ -251,9 +247,14 @@ const FinishedThread = (props:{
   },[])
   return (
     <div>
-      Oriented: {orientingInput}
-      Question: {question}
-      Response: {response}
+      <div>Oriented: {orientingInput}</div>
+      <div>Question: {question}</div>
+      <div>Response: {response}</div>
+      <Flex vertical={false}>
+        <Button>Write more</Button>
+        <Button>Get another question to think about</Button>
+      </Flex>
+      
     </div>
   )
 }
@@ -298,6 +299,7 @@ const ThreadBox = (props:{
           {phase < 3? 
           <div>
             <OrientingInput handlePhase={handlePhase} tid={props.tid} phase={phase} theme={theme}/>
+            <Divider/>
             <QnASet handlePhase={handlePhase} phase={phase} tid={props.tid} theme={theme}/>
           </div>
           :

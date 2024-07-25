@@ -2,10 +2,11 @@ import getInitialThemes from '../../../APICall/getInitialThemes'
 import { useEffect, useState } from "react";
 import type { RadioChangeEvent } from 'antd';
 import { Button, Radio, Space, Input } from 'antd';
-import {setWorkingThread} from '../../../Redux/reducers/userSlice' 
+import {addPinnedTheme, resetPinnedThemes, setWorkingThread} from '../../../Redux/reducers/userSlice' 
 import { useDispatch, useSelector } from 'react-redux';
 import createThreadItem from '../../../APICall/createThreadItem';
 import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
+import { MdBookmarkBorder } from "react-icons/md";
 import getThemesFromResp from '../../../APICall/getThemesFromResp';
 
 const ThemeBox = (props:{
@@ -30,8 +31,17 @@ const ThemeBox = (props:{
     setRespThemes(data)
   }
 
+  const handleAddPinnedTheme = (theme: string) => {
+    dispatch(addPinnedTheme(theme))
+  }
+
   const onChange = (e: RadioChangeEvent) => {
     setSelected(e.target.value)
+  }
+
+  const onChangeSelect = (theme: string) => {
+    // dispatch(resetPinnedThemes())
+    setSelected(theme)
   }
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -56,15 +66,34 @@ const ThemeBox = (props:{
     <div>
       {themes.length?
       <div>
-      <Radio.Group onChange={onChange} value={selected}>
+      <Space direction='vertical'>
+      {themes.map((themeItem: { theme: string; quote: string }, index) => 
+        <div key={index} className="flex items-center space-x-2">
+          <div 
+            onClick={() => onChangeSelect(themeItem.theme)}
+            className={`cursor-pointer ${selected === themeItem.theme ? 'bg-blue-500 text-white' : ''}`}
+          >
+            {themeItem.theme}
+          </div>
+          <MdBookmarkBorder onClick={() => handleAddPinnedTheme(themeItem.theme)} className="cursor-pointer"/>
+        </div>
+        )}
+      </Space>
+      {/* <Radio.Group onChange={onChange} value={selected}>
         <Space direction="vertical">
-        {themes.map((themeItem: { theme: string; quote: string }) => <Radio value={themeItem.theme}>{themeItem.theme}</Radio>)}
+        {themes.map((themeItem: { theme: string; quote: string }, index) => 
+        <div>
+          <Radio value={themeItem.theme}>{themeItem.theme}</Radio>
+          <MdBookmarkBorder onClick={() => handleAddPinnedTheme(themeItem.theme)}/>
+        </div>
+        )}
         </Space>
         <Space direction="vertical">
-        {respThemes.map((themeItem: { theme: string; quote: string }) => <Radio value={themeItem.theme}>{themeItem.theme}</Radio>)}
+        {respThemes.map((themeItem: { theme: string; quote: string }) => 
+        <Radio value={themeItem.theme}>{themeItem.theme}</Radio>)}
         <Radio value={inputValue}><Input style={{ width: 100, marginLeft: 10 }} onChange={onInputChange}/></Radio>
         </Space>
-      </Radio.Group>
+      </Radio.Group> */}
       <Button onClick={onSubmit}>Selected</Button>
       </div>
       
