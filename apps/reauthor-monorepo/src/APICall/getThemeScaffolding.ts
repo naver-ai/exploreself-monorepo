@@ -1,8 +1,8 @@
-import axios from "axios"
+import { Http } from "../net/http"
 
 const getThemeScaffoldingKeywords = async (uid: string, theme: string) => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/response/getThemeScaffoldingKeywords`,{
+    const response = await Http.axios.post(`/response/getThemeScaffoldingKeywords`,{
       uid: uid,
       theme: theme
     })

@@ -1,9 +1,8 @@
-import axios from "axios";
-import { IThreadItem } from "../Config/interface";
+import { Http } from "../net/http";
 
 const synthesizeThread = async (tid: string, uid: string): Promise<string[] | null> => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/thread/synthesizeThread`, {
+    const response = await Http.axios.post(`/thread/synthesizeThread`, {
       tid: tid,
       uid: uid
     })

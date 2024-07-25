@@ -1,8 +1,8 @@
-import axios from "axios";
+import { Http } from "../net/http";
 
 const createThreadItem = async (uid: string, theme: string): Promise<string[] | null> => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/thread/createThreadItem`, {
+    const response = await Http.axios.post(`/thread/createThreadItem`, {
       uid: uid,
       theme: theme,
     })

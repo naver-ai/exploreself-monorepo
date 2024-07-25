@@ -1,9 +1,9 @@
-import axios from "axios"
 import { IUser } from "../Config/interface";
+import { Http } from "../net/http";
 
 const getUserInfo = async (uid: string): Promise<IUser | null> => {
   try {
-    const response = await axios.post(`http://localhost:3333/user/getUserInfo`,{
+    const response = await Http.axios.post(`/user/getUserInfo`,{
       uid: uid
     });
     console.log("RESPONSE: ", response.data)

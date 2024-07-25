@@ -1,8 +1,8 @@
-import axios from "axios";
-import { IThreadItem } from "../Config/interface";
+import { Http } from "../net/http";
+
 const getThreadList = async (uid: string): Promise<string[] | null>=> {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/thread/getThreadList`, {
+    const response = await Http.axios.post(`/thread/getThreadList`, {
       uid: uid
     })
     return response.data.threadRef;

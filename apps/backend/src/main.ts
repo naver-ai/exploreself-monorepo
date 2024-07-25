@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Router } from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import userRouter from './newRoutes/user'
@@ -33,14 +33,21 @@ mongoose.connect(uri + dbName)
   .catch(error => console.log(error))
 app.use(express.json());
 // app.use("/", testRouter)
-app.use("/user", userRouter)
-app.use("/admin", adminRouter)
-app.use("/question", questionRouter)
-app.use("/response", responseRouter)
-app.use("/thread", threadRouter)
-app.use("/theme", themeRouter)
+const apiRouter = express.Router()
+apiRouter.use("/user", userRouter)
+apiRouter.use("/admin", adminRouter)
+apiRouter.use("/question", questionRouter)
+apiRouter.use("/response", responseRouter)
+apiRouter.use("/thread", threadRouter)
+apiRouter.use("/theme", themeRouter)
 
-const port = process.env.PORT || 3333;
+apiRouter.get("/ping", (req, res) => {
+  res.send("Server responds.")
+})
+
+app.use("/api/v1", apiRouter)
+
+const port = process.env.BACKEND_PORT || 3000;
 const server = app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`);
 });

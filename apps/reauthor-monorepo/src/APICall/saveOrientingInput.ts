@@ -1,8 +1,8 @@
-import axios from "axios"
+import { Http } from "../net/http";
 
 const saveOrientingInput = async (tid: string, orientingInput: string): Promise<boolean | null> => {
   try {
-    const response = await axios.post(`${(import.meta as any).env.VITE_BACKEND}/response/saveOrientingInput`, {
+    const response = await Http.axios.post(`/response/saveOrientingInput`, {
       tid: tid,
       orientingInput: orientingInput
     })
