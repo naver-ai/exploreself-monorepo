@@ -42,6 +42,8 @@ const AIGuideSchema = new Schema({
   updatedAt: {type: Date}
  })
 
+ AIGuideSchema.set('timestamps', true)
+
  const QASetSchema = new Schema({
   question: {
     type: {
