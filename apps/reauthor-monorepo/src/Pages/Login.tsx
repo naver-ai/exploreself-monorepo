@@ -4,7 +4,7 @@ import { Button, Checkbox, Form, Input, Radio } from 'antd';
 import loginHandle from '../APICall/loginHandle';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { loginUser } from '../Redux/reducers/userSlice';
+import { loginUser, resetPinnedThemes } from '../Redux/reducers/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../Redux/store';
 
@@ -35,6 +35,7 @@ const Login = () => {
       try {
         const user = await loginHandle(name, ucode, isKorean)
         dispatch(loginUser(user?.user._id))
+        dispatch(resetPinnedThemes())
         console.log("USER: ", user)
         // const newuid = useSelector((state: IRootState) => state.userInfo.uid)
         // console.log("NEW: ", newuid)

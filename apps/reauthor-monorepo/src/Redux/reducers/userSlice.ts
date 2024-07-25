@@ -16,6 +16,7 @@ interface IUserState {
   background: string[];
   event_history: IEvent[];
   question_stack: string[];
+  pinned_themes: string[];
   working_thread: IThreadItem;
 }
 
@@ -32,6 +33,7 @@ const initialState : IUserState = {
   // TODO: Change update 하려면 id가 필요하고, 이건 db랑 직접 소통하는게 나을 것 같기도 
   // TODO: some schema might be beneficial to be unified with DB, some not --- 언제 DB/redux를 sync하고, 언제 DB에서 가져오고 redux에서 가져올지 결정
   question_stack: [],
+  pinned_themes: [],
   working_thread: {
     tid: '',
     theme: ''
@@ -50,6 +52,7 @@ const userSlice = createSlice({
     setInitialNarrative: (state, action) => {
       state.initial_narrative = action.payload
     },
+
     setLanguage: (state, action) => {
       state.is_korean = action.payload
     },
@@ -64,6 +67,15 @@ const userSlice = createSlice({
     addBackground: (state, action) => {
       state.background = [...state.background, action.payload];
       // TODO: Update history
+    },
+    addPinnedTheme: (state, action) => {
+      state.pinned_themes = [...state.pinned_themes, action.payload]
+    },
+    resetPinnedThemes: (state) => {
+      state.pinned_themes = []
+    },
+    removePinnedTheme: (state, action) => {
+      state.pinned_themes = state.pinned_themes.filter(theme => theme !== action.payload);
     },
     deleteBackground: (state, action) =>{
       // TODO: fill in
@@ -120,5 +132,5 @@ const userSlice = createSlice({
 })
 
 export {IUserState}
-export const {resetWorkingThread, resetState, setWorkingThread, loginUser, setInitialNarrative, setValueSet, updateValueSet, addBackground, updateEventHistory, addQuestionStack, popQuestionStack} = userSlice.actions;
+export const {removePinnedTheme, addPinnedTheme, resetPinnedThemes, resetWorkingThread, resetState, setWorkingThread, loginUser, setInitialNarrative, setValueSet, updateValueSet, addBackground, updateEventHistory, addQuestionStack, popQuestionStack} = userSlice.actions;
 export default userSlice.reducer;

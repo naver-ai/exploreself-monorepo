@@ -1,10 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {IThreadItem, IUser} from '../Config/interface'
-import PotentialThemes from '../Components/PotentialThemes/PotentialThemes';
 import getUserInfo from "../APICall/getUserInfo"
-import SelectedThemes from "../Components/SelectedThemes/SelectedThemes";
-import BookMark from "../Components/SelectedThemes/BookMark";
 import { useDispatch, useSelector } from "react-redux";
 import { IRootState } from "../Redux/store";
 import {Sheet} from 'react-modal-sheet'
@@ -13,7 +10,7 @@ import ThemeBox from "../Components/New/ThemeBox/ThemeBox"
 import ThreadBox from "../Components/New/ThreadBox/ThreadBox";
 import { resetState } from "../Redux/reducers/userSlice";
 import getThreadList from '../APICall/getThreadList'
-import { Button } from "antd";
+import { Button, Divider } from "antd";
 import { PlusCircleOutlined } from '@ant-design/icons';
 
 
@@ -59,11 +56,15 @@ const Main = () => {
   
   return(
     <div className="flex flex-row">
-      <div className="basis-1/6"><Sidebar threadRef={threadRefList}/></div>
+      <div className="basis-1/6">
+        <Sidebar threadRef={threadRefList} onThreadCreated={handleThreadCreated}/>
+        <Divider/>
+        <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>
+      </div>
       <div className="basis-2/3">
         <div>Self narrative</div>
         {userInfo? userInfo.initial_narrative: "Loading"}
-        <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>
+        
         {/* <SelectedThemes/> */}
         <div>
           {threadRefList? threadRefList.map(threadRef => <div className="py-1"><ThreadBox theme={workingThread.theme} tid={threadRef}/></div>): <div>Loading</div>}

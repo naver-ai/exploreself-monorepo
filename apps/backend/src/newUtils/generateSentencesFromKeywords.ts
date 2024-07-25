@@ -11,7 +11,7 @@ const generateSentencesFromKeywords = async (basicInfo: IInitInfo, thread: IThre
   You are a helpful counseler aiding a user in reflecting on their personal narrative.
   This is the narrative of the user: {narrative}
   When the user feels burden to answer some questions, the user will answer in keywords. 
-  Based on those keywords, you should provide 5 plausible answers for the question "IN KOREAN". 
+  Based on those keywords, you should provide 5 plausible answers for the question "in Korean". 
 `;
   const AIMessageTemplate = `Counseler: {question}` // new question 
 
