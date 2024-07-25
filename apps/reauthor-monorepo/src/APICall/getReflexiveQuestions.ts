@@ -1,8 +1,8 @@
 import axios from "axios"
 
-const getSocraticQuestions = async (theme: string, uid: string, orienting_input:string): Promise<string[] | null> => {
+const getReflexiveQuestions = async (theme: string, uid: string, orienting_input:string): Promise<string[] | null> => {
   try {
-    const response = axios.post(`${(import.meta as any).env.VITE_BACKEND}/question/generateSocratic`, {
+    const response = axios.post(`${(import.meta as any).env.VITE_BACKEND}/question/generateReflexive`, {
       uid: uid,
       selected_theme: theme,
       orienting_input: orienting_input
@@ -14,4 +14,4 @@ const getSocraticQuestions = async (theme: string, uid: string, orienting_input:
   }
 }
 
-export default getSocraticQuestions;
+export default getReflexiveQuestions;

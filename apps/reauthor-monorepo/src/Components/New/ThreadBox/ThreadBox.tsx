@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react"
-import getSocraticQuestions from "../../../APICall/getSocraticQuestions"
+import getReflexiveQuestions from "../../../APICall/getReflexiveQuestions"
 import getScaffoldingKeywords from "../../../APICall/getScaffoldingKeywords"
 import getResponseFromKeyword from "../../../APICall/getResponseFromKeyword"
 import getOrientingQuestions from "../../../APICall/getOrientingQuestions"
@@ -168,7 +168,7 @@ const QnASet = (props:{
 
   const fetchSocraticQuestions = async() => {
     if(orienting){
-      const fetchedQuestions = await getSocraticQuestions(props.theme, uid, orienting)
+      const fetchedQuestions = await getReflexiveQuestions(props.theme, uid, orienting)
       if(fetchedQuestions){
         setQuestionList(fetchedQuestions)
         setSelectedQ(fetchedQuestions[tmpN])

@@ -7,7 +7,7 @@ import { IThreadItem } from "../config/schema";
 import synthesizePrevInput from "./synthesizePrevInput";
 
 
-const generateSocraticQuestions = async (uid: string, selected_theme: string, orientingInput: string) => {
+const generateReflexiveQuestions = async (uid: string, selected_theme: string, orientingInput: string) => {
   
   const systemTemplate = `
   [Role]
@@ -58,4 +58,4 @@ const generateSocraticQuestions = async (uid: string, selected_theme: string, or
   return result.questions;
 }
 
-export {generateSocraticQuestions} ;
+export {generateReflexiveQuestions} ;
