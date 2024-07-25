@@ -4,7 +4,7 @@ import path from 'path'
 import inquirer from 'inquirer'
 
 const envPath = path.resolve(process.cwd(), ".env")
-
+console.log(envPath)
 
 if(fs.existsSync(envPath) == false){
     fs.createFileSync(envPath)
@@ -25,7 +25,7 @@ const VITE_BLACKLISTS = [/*"OPENAI_API_KEY",*/ "AUTH_SECRET"]
 async function setup(){
     const env = dotenv.config({path: envPath})
 
-    const questions= []
+    const questions = []
 
     if(env.parsed?.["BACKEND_PORT"] == null){
         questions.push({
@@ -100,7 +100,7 @@ async function setup(){
 
     fs.writeFileSync(envPath, envFileContent, {encoding:'utf-8'})
 
-    fs.copyFileSync(envPath, path.join(process.cwd(), "/apps/reauthor-monorepo", ".env"))
+    fs.copyFileSync(envPath, path.join(process.cwd(), "apps/reauthor-monorepo", ".env"))
 }
 
 setup().then()

@@ -19,6 +19,13 @@
           "buildTarget": "backend:build:production"
         }
       }
+    },
+
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node apps/backend/setup.mjs"
+      }
     }
   }
 }

@@ -4,10 +4,9 @@
   "license": "MIT",
   "nx": {},
   "scripts": {
-    "setup": "node ./setup.js",
+    "setup": "nx run backend:setup",
     "start": "nx run-many --targets=serve --projects=reauthor-monorepo,backend"
   },
-  "type": "module",
   "private": true,
   "dependencies": {
     "@langchain/core": "^0.2.8",
