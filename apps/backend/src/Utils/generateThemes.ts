@@ -6,7 +6,7 @@ import { chatModel } from '../config/config';
 import { IInitInfo } from '../config/interface';
 import nunjucks from 'nunjucks'
 import { User, ThreadItem, IThreadItem } from '../config/schema';
-import { IUser, IUserBase } from '@core';
+import { IUserBase } from '@core';
 import synthesizeProfilicInfo from './synthesizeProfilicInfo';
 import synthesizePrevThreads from './synthesizeThread'
 

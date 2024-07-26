@@ -1,9 +1,9 @@
-import { IInitInfo } from "../config/interface";
+import { IInitInfo } from "../../config/interface";
 import { Response } from 'express' 
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts"
 import { z } from "zod";
-import { chatModel } from "../config/config";
-import { IThreadItem } from "../config/schema";
+import { chatModel } from "../../config/config";
+import { IThreadItem } from "../../config/schema";
 
 
 const generateOrientingScaffoldingKeywords = async (init_info: IInitInfo, history: IThreadItem[], selected_theme: string) => {

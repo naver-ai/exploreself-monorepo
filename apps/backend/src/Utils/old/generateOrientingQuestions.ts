@@ -1,8 +1,8 @@
-import { IInitInfo } from "../config/interface";
+import { IInitInfo } from "../../config/interface";
 import { Response } from 'express' 
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts"
 import { z } from "zod";
-import { chatModel } from "../config/config";
+import { chatModel } from "../../config/config";
 import { User, ThreadItem } from "../config/newSchema";
 
 

@@ -1,9 +1,9 @@
-import { IInitInfo } from "../config/interface";
-import { chatModel } from "../config/config";
+import { IInitInfo } from "../../config/interface";
+import { chatModel } from "../../config/config";
 import { AIMessagePromptTemplate, ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts"
 
 import z from "zod"
-import { IThreadItem } from "../config/schema";
+import { IThreadItem } from "../../config/schema";
 import {threadItemListToChatMessageList} from "./threadItemToLog";
 
 const generateSentencesFromKeywords = async (basicInfo: IInitInfo, thread: IThreadItem[], question: string, selected_keywords: string[]) => {

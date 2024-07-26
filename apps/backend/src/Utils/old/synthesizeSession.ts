@@ -1,7 +1,7 @@
-import { ThreadItem } from "../config/schema"
+import { ThreadItem } from "../../config/schema"
 import {ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate} from "@langchain/core/prompts"
 import {z} from "zod";
-import { chatModel } from '../config/config';
+import { chatModel } from '../../config/config';
 import synthesizePrevInput from "./synthesizePrevInput";
 
 const synthesizeSession = async (tid: string, uid: string) => {

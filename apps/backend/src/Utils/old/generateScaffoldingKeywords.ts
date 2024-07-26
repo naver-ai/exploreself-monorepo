@@ -1,9 +1,9 @@
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from '@langchain/core/prompts';
 import z from "zod"
-import { chatModel } from '../config/config';
-import { IInitInfo } from '../config/interface';
+import { chatModel } from '../../config/config';
+import { IInitInfo } from '../../config/interface';
 import {threadItemListToSingleChatMessage} from './threadItemToLog';
-import { IThreadItem } from '../config/schema';
+import { IThreadItem } from '../../config/schema';
 
 const generateScaffoldingKeywords = async (basicInfo: IInitInfo ,questionInput: string, thread: IThreadItem[], granularity?: number) => {
 

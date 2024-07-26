@@ -2,8 +2,8 @@ import { ChatOpenAI } from '@langchain/openai';
 import {ChatPromptTemplate, HumanMessagePromptTemplate} from "@langchain/core/prompts"
 import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
-import { chatModel } from '../config/config';
-import { IInitInfo } from '../config/interface';
+import { chatModel } from '../../config/config';
+import { IInitInfo } from '../../config/interface';
 
 const generateThemesFromNarrative = async (init_info: IInitInfo, additional_instructions='') => {
 

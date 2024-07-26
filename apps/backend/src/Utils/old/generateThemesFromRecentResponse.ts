@@ -1,11 +1,11 @@
 import {ChatPromptTemplate, HumanMessagePromptTemplate} from "@langchain/core/prompts"
 import {SystemMessage} from "@langchain/core/messages"
 import {undefined, z} from "zod";
-import { chatModel } from '../config/config';
-import { IInitInfo } from '../config/interface';
+import { chatModel } from '../../config/config';
+import { IInitInfo } from '../../config/interface';
 import synthesizePrevInput from "./synthesizePrevInput";
 import synthesizeSession from "./synthesizeSession";
-import { ThreadItem, User } from "../config/schema";
+import { ThreadItem, User } from "../../config/schema";
 import { readEnv } from "openai/core";
 
 

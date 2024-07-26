@@ -1,4 +1,4 @@
-import { IThreadItem } from "../config/schema";
+import { IThreadItem } from "../../config/schema";
 import { HumanMessagePromptTemplate, AIMessagePromptTemplate, } from '@langchain/core/prompts';
 
 

@@ -1,6 +1,6 @@
-import { ThreadItem } from "../config/schema"
-import synthesizeProfilicInfo from "./synthesizeProfilicInfo";
-import { User } from "../config/schema";
+import { ThreadItem } from "../../config/schema"
+import synthesizeProfilicInfo from "../synthesizeProfilicInfo";
+import { User } from "../../config/schema";
 
 const synthesizePrevInput = async (uid: string) => {
 
