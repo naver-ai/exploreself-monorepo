@@ -1,18 +1,8 @@
 import express from 'express';
 import { User } from "../config/schema";
+import { RequestWithUser, signedInUserMiddleware } from './middlewares';
 
 var router = express.Router()
-
-const getUserInfo = async (req, res) => {
-  const uid = req.body.uid
-  const user = await User.findById(uid)
-  if (!user) {
-    res.status(400).send("Couldn't find user");
-  }
-  res.json({
-    user: user
-  })
-}
 
 // TODO: Check if uid should be wrapped by ObjectId
 const setInitialNarrative = async (req, res) => {
@@ -59,7 +49,11 @@ const setBackground = async (req, res) => {
     }
   })
 }
-router.post('/getUserInfo', getUserInfo);
+router.get('/', signedInUserMiddleware, async (req: RequestWithUser, res) => {
+  res.json({
+    user: req.user.toJSON()
+  })
+});
 router.post('/setInitialNarrative', setInitialNarrative)
 router.post('/setValueSet', setValueSet)
 router.post('setBackground', setBackground)

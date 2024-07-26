@@ -2,15 +2,13 @@ import getInitialThemes from '../../../APICall/getInitialThemes'
 import { useCallback, useEffect, useState } from "react";
 import type { RadioChangeEvent } from 'antd';
 import { Button, Radio, Space, Input } from 'antd';
-import {addPinnedTheme, resetPinnedThemes, setWorkingThread} from '../../../Redux/reducers/userSlice'
+import {addPinnedTheme, fetchUserInfo, resetPinnedThemes, setWorkingThread} from '../../../Redux/reducers/userSlice'
 import createThreadItem from '../../../APICall/createThreadItem';
 import { MdBookmarkBorder } from "react-icons/md";
 import getThemesFromResp from '../../../APICall/getThemesFromResp';
 import { useDispatch, useSelector } from '../../../Redux/hooks';
 
-const ThemeBox = (props:{
-  onThreadCreated: () => void; 
-}) => {
+const ThemeBox = () => {
   const [themes, setThemes] = useState([]);
   const [respThemes, setRespThemes] = useState([]);
   const [selected, setSelected] = useState<string>('');
@@ -54,7 +52,7 @@ const ThemeBox = (props:{
     // TODO: Handling when input value is empty
     const tid = await createThreadItem(uid!, selected)
     dispatch(setWorkingThread({tid: tid, theme: selected}))
-    props.onThreadCreated()
+    dispatch(fetchUserInfo())
     // TODO: Dispatch working thread id
   }
 

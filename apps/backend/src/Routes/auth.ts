@@ -24,7 +24,7 @@ router.post('/login', createPasscodeValidation(), async (req: Request, res: Resp
             const passcode = req.body.passcode
             let user = await User.findOne({ passcode });
             if (user) {  
-              res.status(200).send({ token: makeUserToken(user), user })
+              res.status(200).send({ token: makeUserToken(user), user: user.toJSON() })
             } else {
               res.status(400).send("WrongCredential")
             }
@@ -35,6 +35,7 @@ router.post('/login', createPasscodeValidation(), async (req: Request, res: Resp
             });
           }
     }else{
+      console.log("Sign in error - ", vErrors.array())
         res.status(500).send({errors: vErrors.array()})
     }
   });
@@ -57,7 +58,7 @@ router.post("/register", createPasscodeValidation(),
         });
         const savedUser = await newUser.save();
         console.log("SAVED: ", savedUser)
-        res.status(200).send({ token: makeUserToken(savedUser), user: newUser })
+        res.status(200).send({ token: makeUserToken(savedUser), user: newUser.toJSON() })
     }else{
         res.status(500).send({errors: vErrors.array()})
     }
