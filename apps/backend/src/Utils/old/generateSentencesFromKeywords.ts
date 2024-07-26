@@ -3,10 +3,10 @@ import { chatModel } from "../../config/config";
 import { AIMessagePromptTemplate, ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts"
 
 import z from "zod"
-import { IThreadItem } from "../../config/schema";
+import { IThreadORM } from "../../config/schema";
 import {threadItemListToChatMessageList} from "./threadItemToLog";
 
-const generateSentencesFromKeywords = async (basicInfo: IInitInfo, thread: IThreadItem[], question: string, selected_keywords: string[]) => {
+const generateSentencesFromKeywords = async (basicInfo: IInitInfo, thread: IThreadORM[], question: string, selected_keywords: string[]) => {
   const systemMessageTemplate = `
   You are a helpful counseler aiding a user in reflecting on their personal narrative.
   This is the narrative of the user: {narrative}

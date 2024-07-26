@@ -5,9 +5,10 @@ import { User, ThreadItem } from "../config/schema";
 import nunjucks from 'nunjucks'
 import synthesizePrevThreads from './synthesizeThread'
 import synthesizeProfilicInfo from "./synthesizeProfilicInfo";
+import mongoose from 'mongoose';
 
 
-const generateQuestions = async (uid: string, tid: string) => {
+const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
 
   const userData = await User.findById(uid);
   const threadData = await ThreadItem.findById(tid);

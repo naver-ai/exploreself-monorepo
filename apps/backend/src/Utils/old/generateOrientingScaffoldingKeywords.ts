@@ -3,10 +3,10 @@ import { Response } from 'express'
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts"
 import { z } from "zod";
 import { chatModel } from "../../config/config";
-import { IThreadItem } from "../../config/schema";
+import { IThreadORM } from "../../config/schema";
 
 
-const generateOrientingScaffoldingKeywords = async (init_info: IInitInfo, history: IThreadItem[], selected_theme: string) => {
+const generateOrientingScaffoldingKeywords = async (init_info: IInitInfo, history: IThreadORM[], selected_theme: string) => {
 
   const systemTemplate = `
   You are an helpful assistant who supports individual with difficulty to understand better about one's personal narrative.

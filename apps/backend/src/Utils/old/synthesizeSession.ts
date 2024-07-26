@@ -3,8 +3,9 @@ import {ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTempl
 import {z} from "zod";
 import { chatModel } from '../../config/config';
 import synthesizePrevInput from "./synthesizePrevInput";
+import mongoose from "mongoose";
 
-const synthesizeSession = async (tid: string, uid: string) => {
+const synthesizeSession = async (tid: string, uid: mongoose.Types.ObjectId) => {
   const threadItem = await ThreadItem.findById(tid)
   if(!threadItem){
     console.log("Err in fetching threadItdm")

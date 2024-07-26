@@ -1,8 +1,8 @@
-import { IThreadItem } from "../../config/schema";
+import { IThreadORM } from "../../config/schema";
 import { HumanMessagePromptTemplate, AIMessagePromptTemplate, } from '@langchain/core/prompts';
 
 
-const threadItemToChatMessage = (threadItem: IThreadItem) => {
+const threadItemToChatMessage = (threadItem: IThreadORM) => {
   //TODO fix new schema error
   const AI_message_template = "" //`Counsler: "${threadItem.question}"`
   const human_message_template = "" //`Client: "${threadItem.response}"`
@@ -11,7 +11,7 @@ const threadItemToChatMessage = (threadItem: IThreadItem) => {
   return [AIMessage, humanMessage];
 }
 
-const threadItemToChatTemplate = (threadItem: IThreadItem) => {
+const threadItemToChatTemplate = (threadItem: IThreadORM) => {
   const question = "" // threadItem.question;
   const response = "" // threadItem.response;
   const chatTemplate = `
@@ -21,11 +21,11 @@ const threadItemToChatTemplate = (threadItem: IThreadItem) => {
   return chatTemplate
 }
 
-const threadItemListToChatMessageList = (thread: IThreadItem[]) => { 
+const threadItemListToChatMessageList = (thread: IThreadORM[]) => { 
   return thread.map(threadItem => threadItemToChatMessage(threadItem)).flat();
 }
 
-const threadItemListToSingleChatMessage = (thread: IThreadItem[]) => {
+const threadItemListToSingleChatMessage = (thread: IThreadORM[]) => {
   return thread.map(threadItem => threadItemToChatTemplate(threadItem)).join('')
 }
 

@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 import { ThreadItem, User } from "../config/schema"
 import nunjucks from 'nunjucks'
 
@@ -17,7 +18,7 @@ const synthesizeThread = async (tid: string) => {
   return synthesis
 }
 
-const synthesizePrevThreads = async (uid: string) => {
+const synthesizePrevThreads = async (uid: mongoose.Types.ObjectId) => {
   const user = await User.findById(uid);
   
   if (!user) {

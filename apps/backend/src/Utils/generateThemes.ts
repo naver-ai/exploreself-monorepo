@@ -5,14 +5,15 @@ import {z} from "zod";
 import { chatModel } from '../config/config';
 import { IInitInfo } from '../config/interface';
 import nunjucks from 'nunjucks'
-import { User, ThreadItem, IThreadItem } from '../config/schema';
+import { User, ThreadItem, IThreadORM } from '../config/schema';
 import { IUserBase } from '@core';
 import synthesizeProfilicInfo from './synthesizeProfilicInfo';
 import synthesizePrevThreads from './synthesizeThread'
+import mongoose from 'mongoose';
 
-const generateThemes = async (uid: string, tid: string, additional_instructions='') => {
+const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructions='') => {
 
-  const userData = await User.findById(uid).populate({path: 'threadRef'}) as IUserBase & {threadRef: IThreadItem[]}
+  const userData = await User.findById(uid).populate({path: 'threadRef'}) as IUserBase & {threadRef: IThreadORM[]}
   const themeList = userData.threadRef?.map(iteme => iteme.theme)
   
   const system_message =  nunjucks.renderString(`

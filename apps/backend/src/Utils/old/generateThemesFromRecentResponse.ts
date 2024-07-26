@@ -7,10 +7,10 @@ import synthesizePrevInput from "./synthesizePrevInput";
 import synthesizeSession from "./synthesizeSession";
 import { ThreadItem, User } from "../../config/schema";
 import { readEnv } from "openai/core";
+import mongoose from "mongoose";
 
 
-const generateThemesFromRecentResponse = async (uid: string, additional_instructions='') => {
-  console.log("UID: ", uid)
+const generateThemesFromRecentResponse = async (uid: mongoose.Types.ObjectId, additional_instructions='') => {
   const system_message =  `
   [Role] You are a counselor assisting users in navigating and understanding their personal challenges and difficulties.
 

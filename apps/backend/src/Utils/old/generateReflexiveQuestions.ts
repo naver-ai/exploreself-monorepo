@@ -2,9 +2,10 @@ import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemp
 import { z } from "zod";
 import { chatModel } from "../../config/config";
 import synthesizePrevInput from "./synthesizePrevInput";
+import mongoose from "mongoose";
 
 
-const generateReflexiveQuestions = async (uid: string, selected_theme: string, orientingInput: string) => {
+const generateReflexiveQuestions = async (uid: mongoose.Types.ObjectId, selected_theme: string, orientingInput: string) => {
   
   const systemTemplate = `
   [Role]

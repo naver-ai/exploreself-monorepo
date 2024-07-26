@@ -2,8 +2,9 @@ import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemp
 import z from "zod"
 import { chatModel } from '../../config/config';
 import synthesizePrevInput from './synthesizePrevInput';
+import mongoose from 'mongoose';
 
-const generateThemeScaffoldingKeywords = async (uid: string ,theme: string) => {
+const generateThemeScaffoldingKeywords = async (uid: mongoose.Types.ObjectId ,theme: string) => {
 
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(
     `

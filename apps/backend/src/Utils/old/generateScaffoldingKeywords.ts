@@ -3,9 +3,9 @@ import z from "zod"
 import { chatModel } from '../../config/config';
 import { IInitInfo } from '../../config/interface';
 import {threadItemListToSingleChatMessage} from './threadItemToLog';
-import { IThreadItem } from '../../config/schema';
+import { IThreadORM } from '../../config/schema';
 
-const generateScaffoldingKeywords = async (basicInfo: IInitInfo ,questionInput: string, thread: IThreadItem[], granularity?: number) => {
+const generateScaffoldingKeywords = async (basicInfo: IInitInfo ,questionInput: string, thread: IThreadORM[], granularity?: number) => {
 
   let granularity_instructions;
   switch (granularity) {

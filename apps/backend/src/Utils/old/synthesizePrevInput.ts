@@ -1,8 +1,9 @@
 import { ThreadItem } from "../../config/schema"
 import synthesizeProfilicInfo from "../synthesizeProfilicInfo";
 import { User } from "../../config/schema";
+import mongoose from 'mongoose'
 
-const synthesizePrevInput = async (uid: string) => {
+const synthesizePrevInput = async (uid: mongoose.Types.ObjectId) => {
 
   const userInfo = await User.findById(uid)
   if (!userInfo){
