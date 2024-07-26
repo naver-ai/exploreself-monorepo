@@ -28,9 +28,9 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty narrative, and the client's background.
-  {{% if !threadLength %}}
+  {% if threadLength > 0 %}
     <previous_session_log>: Logs of sessions before the current session.
-  {{% endif %}}
+  {% endif %}
 
   `,{threadLength: themeList.length})
 
@@ -38,9 +38,9 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
 
   const humanTemplate = nunjucks.renderString(`
   <initial_information> : {init_info}\n
-  {{% if !threadLength %}}
+  {% if !threadLength > 0 %}
     <previous_session_log>: {prev_log}
-  {{% endif %}}
+  {% endif %}
   `, {threadLength: themeList.length})
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)

@@ -25,21 +25,23 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty, and the client's background.
-  {{% if !threadLength %}}
+  {% if threadLength > 1 %}
     <previous_session_log>: Logs of sessions before the current session.
-  {{% endif %}}
+  {% endif %}
   <theme_of_session/>: Theme of the current session. 
   `, { threadLength: threadLength })
+
    // TODO: design prompt
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplate)
 
   const humanTemplate = nunjucks.renderString(`
   <initial_information/>: {init_info}
-  {{% if !threadLength %}}
+  {% if threadLength > 1 %}
     <previous_session_log>: {prev_session_log}
-  {{% endif %}}
+  {% endif %}
   <theme_of_session/>: {theme}
   `, { threadLength: threadLength }) 
+  console.log("H: ", humanTemplate)
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 
@@ -59,11 +61,14 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
 
   const chain = finalPromptTemplate.pipe(structuredLlm)
   const init_info = synthesizeProfilicInfo(userData.initial_narrative, userData.value_set, userData.background)
-  const prev_session_log = await synthesizePrevThreads(uid)
-
-  const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: threadData.theme})
-
-  return result.questions;
+  
+  try {
+    const prev_session_log = await synthesizePrevThreads(uid)
+    const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: threadData.theme})
+    return result.questions;
+  } catch (err){
+    throw err;
+  }
 }
 
 export default generateQuestions;
