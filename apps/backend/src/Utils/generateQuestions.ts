@@ -3,7 +3,7 @@ import { z } from "zod";
 import { chatModel } from "../config/config";
 import { User, ThreadItem } from "../config/schema";
 import nunjucks from 'nunjucks'
-import synthesizePrevInput from "./old/synthesizePrevInput";
+import synthesizePrevThreads from './synthesizeThread'
 import synthesizeProfilicInfo from "./synthesizeProfilicInfo";
 
 
@@ -13,7 +13,6 @@ const generateQuestions = async (uid: string, tid: string) => {
   const threadData = await ThreadItem.findById(tid);
 
   const threadLength = userData.threadRef.length;
-  const qaLength = threadData.questions.length;
 
   const systemTemplate = nunjucks.renderString(`
   [Role]
@@ -59,7 +58,7 @@ const generateQuestions = async (uid: string, tid: string) => {
 
   const chain = finalPromptTemplate.pipe(structuredLlm)
   const init_info = synthesizeProfilicInfo(userData.initial_narrative, userData.value_set, userData.background)
-  const prev_session_log = await synthesizePrevInput(uid)
+  const prev_session_log = await synthesizePrevThreads(uid)
 
   const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: threadData.theme})
 
