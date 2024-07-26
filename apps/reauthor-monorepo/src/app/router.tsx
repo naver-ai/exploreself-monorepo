@@ -1,10 +1,11 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom"
-import Main from "../Pages/Main"
+import {MainPage} from "../Pages/MainPage"
 import InitialNarrative from "../Pages/InitialNarrative"
 import ValueSet from "../Pages/ValueSet"
-import Login from "../Pages/Login"
+import {LoginPage} from "../features/auth/pages/LoginPage"
 import { useVerifyToken } from "../features/auth/hooks"
 import { useEffect } from "react"
+import { SignedInScreenFrame } from "../Components/New/SignedInScreenFrame"
 
 const SignedInRoute = () => {
     const {verify, isSignedIn} = useVerifyToken()
@@ -34,21 +35,23 @@ export const MainRouter = () => {
             <Route path="app">
                 <Route
                     path="login"
-                    element={<Login/>}
+                    element={<LoginPage/>}
                 />
                 <Route element={<SignedInRoute/>}>
-                    <Route
-                    index
-                    element={<Main/>}
-                    />
-                    <Route
-                    path="narrative"
-                    element={<InitialNarrative/>}
-                    />
-                    <Route
-                    path="value"
-                    element={<ValueSet/>}
-                    />
+                    <Route element={<SignedInScreenFrame/>}>
+                        <Route
+                        index
+                        element={<MainPage/>}
+                        />
+                        <Route
+                        path="narrative"
+                        element={<InitialNarrative/>}
+                        />
+                        <Route
+                        path="value"
+                        element={<ValueSet/>}
+                        />
+                    </Route>
                 </Route>
             </Route>            
           </Routes>

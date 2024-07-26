@@ -4,7 +4,6 @@ import { ItemType } from './valueType';
 import DraggableItem from './DraggableItem';
 import DropTargetBox from './DropTargetBox';
 import update from 'immutability-helper'
-import { setValueSet } from '../../Redux/reducers/userSlice';
 import { useDispatch } from '../../Redux/hooks';
 
 interface DragDropContainerProps {
@@ -41,7 +40,7 @@ const DragDropContainer: React.FC<DragDropContainerProps> = ({ initialItems }) =
 
   const setValues = () => {
     console.log("Set values")
-    dispatch(setValueSet(topBoxItems.map(item => item.value)))
+    //dispatch(setValueSet(topBoxItems.map(item => item.value)))
     debugger;
   }
 

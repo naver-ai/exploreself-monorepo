@@ -10,6 +10,7 @@ import themeRouter from './routes/theme'
 
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
+import { User } from './config/schema';
 
 process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production' ) ? 'production' : 'development';
 if (process.env.NODE_ENV == 'production') {
@@ -29,7 +30,22 @@ const uri = 'mongodb://localhost:27017/';
 const dbName = 'reauthor';
 
 mongoose.connect(uri + dbName)
-  .then(() => console.log('MongoDB connected!'))
+  .then(async () => {
+    console.log('MongoDB connected!')
+
+    const testUser = await User.findOne({alias: "test"})
+    if(!testUser){
+      console.log("Create test user...")
+      const newUser = await new User({
+        alias: "test",
+        name: "송인화",
+        passcode: "12345",
+        isKorean: true
+      }).save()
+      console.log("Created new user: ", newUser.toJSON())
+    }
+
+  })
   .catch(error => console.log(error))
 app.use(express.json());
 // app.use("/", testRouter)

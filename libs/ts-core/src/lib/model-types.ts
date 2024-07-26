@@ -78,6 +78,7 @@ export interface IUserBase {
   updatedAt: Date;
 }
 
-export interface IUser {
-
+export interface IUserWithThreadIds extends IUserBase {
+  _id: string,
+  threadRef: Array<string>
 }

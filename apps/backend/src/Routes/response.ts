@@ -1,10 +1,10 @@
 import express from 'express';
 import { IThreadItem, ThreadItem, User } from "../config/schema";
-import generateScaffoldingKeywords from '../newUtils/generateScaffoldingKeywords'
+import generateScaffoldingKeywords from '../Utils/generateScaffoldingKeywords'
 import { IInitInfo } from "../config/interface";
-import generateSentencesFromKeywords from "../newUtils/generateSentencesFromKeywords";
-import generateThemeScaffoldingKeywords from '../newUtils/generateThemeScaffoldingKeywords'
-import {generateScaffoldingQuestions} from '../newUtils/generateScaffoldingQuestions'
+import generateSentencesFromKeywords from "../Utils/generateSentencesFromKeywords";
+import generateThemeScaffoldingKeywords from '../Utils/generateThemeScaffoldingKeywords'
+import {generateScaffoldingQuestions} from '../Utils/generateScaffoldingQuestions'
 
 var router = express.Router()
 

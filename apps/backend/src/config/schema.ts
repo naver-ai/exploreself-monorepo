@@ -1,6 +1,5 @@
 import { IUserBase } from "@core";
-import mongoose from "mongoose";
-const { Schema } = mongoose;
+import mongoose, {Schema, Document} from "mongoose";
 
 export interface IAIGuide extends Document {
   content: string;
@@ -83,6 +82,12 @@ export const UserSchema = new Schema({
  });
  
 UserSchema.set('timestamps', true);
+UserSchema.set('toJSON', {
+  transform: function(doc, ret, options) {
+      delete ret.passcode;
+      return ret;
+  }
+})
  
 export const QASet = mongoose.model<IQASet>('QASet', QASetSchema)
 export const ThreadItem = mongoose.model<IThreadItem>('ThreadItem', ThreadItemSchema)
