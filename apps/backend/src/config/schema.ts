@@ -9,7 +9,7 @@ export interface IAIGuide extends Document {
 }
 
 export interface IQASet extends Document {
-  question: {label: string; content: string},
+  question: {label?: string; content: string},
   keywords: string[],
   response: string,
   aiGuides?: IAIGuide[];
@@ -41,8 +41,8 @@ AIGuideSchema.set('timestamps', true)
 export const QASetSchema = new Schema({
   question: {
     type: {
-      label: String,
-      content: String
+      label: {type: String},
+      content: {type: String, required: true}
     },
     required: true
   },
@@ -61,7 +61,7 @@ QASetSchema.set('timestamps', true);
 export const ThreadItemSchema = new Schema({
    uid: {type: Schema.Types.ObjectId, ref: 'User', required: true},
    theme: {type: String, required: true},
-   questions: {type: [QASetSchema]},
+   questions: {type: [Schema.Types.ObjectId], ref: 'QASet', required: true, default: []},
    synthesized: {type: String},
    createdAt: {type: Date, default: Date.now},
    updatedAt: {type: Date}
