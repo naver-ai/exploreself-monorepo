@@ -1,4 +1,4 @@
-import { Http } from "../net/http"
+import { Http } from "../../net/http"
 
 const getThemeScaffoldingKeywords = async (uid: string, theme: string) => {
   try {

@@ -1,11 +1,11 @@
-import getInitialThemes from '../../../APICall/getInitialThemes'
+import getInitialThemes from '../../../APICall/old/getInitialThemes'
 import { useCallback, useEffect, useState } from "react";
 import type { RadioChangeEvent } from 'antd';
 import { Button, Radio, Space, Input } from 'antd';
 import {addPinnedTheme, fetchUserInfo, resetPinnedThemes, setWorkingThread} from '../../../Redux/reducers/userSlice'
-import createThreadItem from '../../../APICall/createThreadItem';
+import createThreadItem from '../../../APICall/old/createThreadItem';
 import { MdBookmarkBorder } from "react-icons/md";
-import getThemesFromResp from '../../../APICall/getThemesFromResp';
+import getThemesFromResp from '../../../APICall/old/getThemesFromResp';
 import { useDispatch, useSelector } from '../../../Redux/hooks';
 
 const ThemeBox = () => {

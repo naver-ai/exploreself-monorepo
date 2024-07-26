@@ -1,4 +1,4 @@
-import { Http } from "../net/http";
+import { Http } from "../../net/http";
 
 const getScaffoldingKeywords = async (uid: string, question: string): Promise<string[] | null> => {
   try {

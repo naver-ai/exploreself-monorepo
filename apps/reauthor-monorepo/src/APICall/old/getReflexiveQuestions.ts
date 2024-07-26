@@ -1,4 +1,4 @@
-import { Http } from "../net/http";
+import { Http } from "../../net/http";
 
 const getReflexiveQuestions = async (theme: string, uid: string, orienting_input:string): Promise<string[] | null> => {
   try {

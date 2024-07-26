@@ -1,4 +1,4 @@
-import { Http } from "../net/http";
+import { Http } from "../../net/http";
 
 const setInitNarrative = async (uid: string, narrative: string): Promise<boolean | null> => {
   try {

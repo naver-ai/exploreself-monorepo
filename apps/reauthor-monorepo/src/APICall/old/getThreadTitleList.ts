@@ -1,5 +1,5 @@
-import { IThreadItem } from "../Config/interface";
-import { Http } from "../net/http";
+import { IThreadItem } from "../../Config/interface";
+import { Http } from "../../net/http";
 
 const getThreadTitleList = async (tids: string[]): Promise<IThreadItem[] | null>=> {
   try {

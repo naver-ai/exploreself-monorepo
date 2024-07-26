@@ -1,6 +1,6 @@
-import { IScaffoldingData } from "../Config/interface";
+import { IScaffoldingData } from "../../Config/interface";
 import synthesizeThread from "./synthesizeThread";
-import { Http } from "../net/http";
+import { Http } from "../../net/http";
 
 const saveThreadItem = async (tid: string, uid: string, question: string, scaffoldingData: IScaffoldingData, userResponse: string): Promise<string[] | null> => {
   try {

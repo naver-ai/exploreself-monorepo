@@ -1,5 +1,5 @@
-import { IUser } from "../Config/interface";
-import { Http } from "../net/http";
+import { IUser } from "../../Config/interface";
+import { Http } from "../../net/http";
 
 const loginHandle = async (name: string, ucode: string, isKorean: boolean): Promise<{success: boolean, user: IUser, new: boolean} | null> => {
   try {

@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from "react"
-import getReflexiveQuestions from "../../../APICall/getReflexiveQuestions"
-import getScaffoldingKeywords from "../../../APICall/getScaffoldingKeywords"
-import getThemeScaffoldingKeywords from '../../../APICall/getThemeScaffolding'
+import getReflexiveQuestions from "../../../APICall/old/getReflexiveQuestions"
+import getScaffoldingKeywords from "../../../APICall/old/getScaffoldingKeywords"
+import getThemeScaffoldingKeywords from '../../../APICall/old/getThemeScaffolding'
 import { Space, Button, Input, Card, Flex, Divider } from "antd"
 import { DeleteOutlined } from '@ant-design/icons';
 
-import getThreadData from "../../../APICall/getThreadData"
-import saveThreadItem from "../../../APICall/saveThreadItem"
-import saveOrientingInput from '../../../APICall/saveOrientingInput'
+import getThreadData from "../../../APICall/old/getThreadData"
+import saveThreadItem from "../../../APICall/old/saveThreadItem"
+import saveOrientingInput from '../../../APICall/old/saveOrientingInput'
 const {TextArea} = Input;
-import getOrientingInput from "../../../APICall/getOrientingInput"
+import getOrientingInput from "../../../APICall/old/getOrientingInput"
 import { useSelector } from "../../../Redux/hooks"
 
 

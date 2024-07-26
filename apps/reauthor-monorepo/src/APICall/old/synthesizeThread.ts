@@ -1,4 +1,4 @@
-import { Http } from "../net/http";
+import { Http } from "../../net/http";
 
 const synthesizeThread = async (tid: string, uid: string): Promise<string[] | null> => {
   try {

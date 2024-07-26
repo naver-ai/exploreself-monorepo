@@ -1,4 +1,4 @@
-import { Http } from "../net/http";
+import { Http } from "../../net/http";
 
 const getOrientingInput = async (tid: string): Promise<string | null> => {
   try {

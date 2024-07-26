@@ -1,4 +1,4 @@
-import { Http } from "../net/http";
+import { Http } from "../../net/http";
 
 const getResponseFromKeyword = async (question: string, selected_keywords: string[], uid: string): Promise<string[] | null> => {
   try {

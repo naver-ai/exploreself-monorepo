@@ -2,7 +2,7 @@ import { Input, Button } from "antd";
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import setInitNarrative from "../APICall/setInitNarrative";
+import setInitNarrative from "../APICall/old/setInitNarrative";
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from "../Redux/hooks";
 

@@ -1,4 +1,4 @@
-import { Http } from "../net/http";
+import { Http } from "../../net/http";
 
 const saveOrientingInput = async (tid: string, orientingInput: string): Promise<boolean | null> => {
   try {

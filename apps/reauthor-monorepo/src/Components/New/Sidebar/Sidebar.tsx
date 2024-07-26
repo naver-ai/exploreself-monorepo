@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import getThreadTitleList from '../../../APICall/getThreadTitleList' 
+import getThreadTitleList from '../../../APICall/old/getThreadTitleList' 
 import { IThreadItem } from 'apps/reauthor-monorepo/src/Config/interface'
 import { Divider } from 'antd'
-import createThreadItem from '../../../APICall/createThreadItem'
+import createThreadItem from '../../../APICall/old/createThreadItem'
 import {fetchUserInfo, removePinnedTheme} from '../../../Redux/reducers/userSlice'
 import { useDispatch, useSelector } from '../../../Redux/hooks'
 
