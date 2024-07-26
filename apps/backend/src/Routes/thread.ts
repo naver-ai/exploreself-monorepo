@@ -1,6 +1,6 @@
 import express from 'express';
 import { ThreadItem, User } from "../config/schema"
-import synthesizeSession from "../newUtils/synthesizeSession";var router = express.Router()
+import synthesizeSession from "../Utils/synthesizeSession";var router = express.Router()
 
 
 const createThreadItem = async (req, res) => {

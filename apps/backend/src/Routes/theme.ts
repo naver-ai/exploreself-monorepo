@@ -1,7 +1,7 @@
 import express from 'express';
 import { User } from '../config/schema';
-import generateThemesFromNarrative from '../newUtils/generateThemesFromNarrative'
-import generateThemesFromRecentResponse from '../newUtils/generateThemesFromRecentResponse'
+import generateThemesFromNarrative from '../Utils/generateThemesFromNarrative'
+import generateThemesFromRecentResponse from '../Utils/generateThemesFromRecentResponse'
 import { IInitInfo } from '../config/interface';
 
 var router = express.Router()

@@ -1,8 +1,8 @@
 import express from 'express';
 import { User } from '../config/schema';
 import { IInitInfo } from '../config/interface';
-import { generateReflexiveQuestions } from '../newUtils/generateReflexiveQuestions';
-import { generateOrientingQuestions } from '../newUtils/generateOrientingQuestions';
+import { generateReflexiveQuestions } from '../Utils/generateReflexiveQuestions';
+import { generateOrientingQuestions } from '../Utils/generateOrientingQuestions';
 
 var router = express.Router()
 
@@ -36,7 +36,7 @@ const generateOrientincQuestionsController = async (req, res) => {
     background: user.background
   }
   //TODO fix threadlog error in new schema
-  const questions = await generateOrientingQuestions(basicInfo, threadLog as any, selected_theme)
+  const questions = await generateOrientingQuestions(user.id, threadLog as any)
   res.json({
     questions: questions
   })
