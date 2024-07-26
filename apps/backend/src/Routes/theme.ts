@@ -59,6 +59,6 @@ const generateThemesFromResp = async (req, res) => {
 
 router.post('/generateInitialThemes', signedInUserMiddleware, generateInitialThemes);
 router.post('/generateThemesFromResp', signedInUserMiddleware, generateThemesFromResp)
-router.post('/getThemes', signedInUserMiddleware, generateThemesHandler)
+router.get('/getThemes', signedInUserMiddleware, generateThemesHandler)
 
 export default router;

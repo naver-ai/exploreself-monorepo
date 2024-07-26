@@ -38,10 +38,11 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
 
   const humanTemplate = nunjucks.renderString(`
   <initial_information> : {init_info}\n
-  {% if !threadLength > 0 %}
+  {% if threadLength > 0 %}
     <previous_session_log>: {prev_log}
   {% endif %}
   `, {threadLength: themeList.length})
+
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 

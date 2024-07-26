@@ -1,10 +1,8 @@
 import { Http } from "../net/http";
 
-const getThemes = async (token: string, uid: string) => {
+const getThemes = async (token: string) => {
   try {
-    const response = await Http.axios.post(`/theme/getThemes`,{
-      uid: uid
-    },{
+    const response = await Http.axios.get(`/theme/getThemes`,{
       headers: Http.makeSignedInHeader(token)
     })
     return response.data.themes

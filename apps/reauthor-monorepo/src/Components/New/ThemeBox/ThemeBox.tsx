@@ -3,10 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 import type { RadioChangeEvent } from 'antd';
 import { Button, Radio, Space, Input } from 'antd';
 import {addPinnedTheme, fetchUserInfo, resetPinnedThemes, setWorkingThread} from '../../../Redux/reducers/userSlice'
-import createThreadItem from '../../../APICall/old/createThreadItem';
+import createThreadItem from '../../../APICall/createThreadItem';
 import { MdBookmarkBorder } from "react-icons/md";
 import getThemesFromResp from '../../../APICall/old/getThemesFromResp';
 import { useDispatch, useSelector } from '../../../Redux/hooks';
+import getThemes from '../../../APICall/getThemes';
 
 const ThemeBox = () => {
   const [themes, setThemes] = useState([]);
@@ -14,22 +15,19 @@ const ThemeBox = () => {
   const [selected, setSelected] = useState<string>('');
   const [inputValue, setInputValue] = useState<string>('');
   const dispatch = useDispatch();
-  const uid = useSelector((state) => state.userInfo.userId)
+  const token = useSelector((state) => state.userInfo.token) as string
 
   const fetchInitThemes = useCallback(async () => {
-    if(uid != null){
-      const data = await getInitialThemes(uid);
-      console.log("THEMES: ", data)
-      // console.log("THEMES: ", data.themes.map((themeItem: { theme: string; quote: string }) => themeItem.theme))
-      setThemes(data);
-    }
-  }, [uid])
+    const data = await getThemes(token)
+    console.log("FETCHED: ", data)
+    setThemes(data)
+  }, [token])
 
-  const fetchThemesFromRef = async() => {
-    const data = await getThemesFromResp(uid!);
-    console.log("RESPTHEME: ", data)
-    setRespThemes(data)
-  }
+  // const fetchThemesFromRef = async() => {
+  //   const data = await getThemesFromResp(uid!);
+  //   console.log("RESPTHEME: ", data)
+  //   setRespThemes(data)
+  // }
 
   const handleAddPinnedTheme = (theme: string) => {
     dispatch(addPinnedTheme(theme))
@@ -50,7 +48,7 @@ const ThemeBox = () => {
 
   const onSubmit = async () => {
     // TODO: Handling when input value is empty
-    const tid = await createThreadItem(uid!, selected)
+    const tid = await createThreadItem(token, selected)
     dispatch(setWorkingThread({tid: tid, theme: selected}))
     dispatch(fetchUserInfo())
     // TODO: Dispatch working thread id
@@ -58,13 +56,11 @@ const ThemeBox = () => {
 
   useEffect(() => {
     fetchInitThemes();
-    fetchThemesFromRef();
-    console.log("RES: ", respThemes)
   },[fetchInitThemes])
 
   return (
     <div>
-      {themes.length?
+      {themes?.length?
       <div>
       <Space direction='vertical'>
       {themes.map((themeItem: { theme: string; quote: string }, index) => 

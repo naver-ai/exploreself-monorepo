@@ -1,10 +1,11 @@
-import { Http } from "../../net/http";
+import { Http } from "../net/http";
 
-const createThreadItem = async (uid: string, theme: string): Promise<string[] | null> => {
+const createThreadItem = async (token: string, theme: string): Promise<string[] | null> => {
   try {
     const response = await Http.axios.post(`/thread/createThreadItem`, {
-      uid: uid,
       theme: theme,
+    },{
+      headers: Http.makeSignedInHeader(token)
     })
     return response.data.threadid;
   } catch (err) {

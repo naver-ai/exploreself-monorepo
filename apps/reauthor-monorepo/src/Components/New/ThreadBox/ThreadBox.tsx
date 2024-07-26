@@ -68,9 +68,7 @@ const ThreadBox = (props:{
             Response: {(question as IQASetWithIds).response}
           </div>)
         })}
-        {/* {questions?.map(q => q)} */}
-        {/* {questions?.map(q => q)} */}
-        {questions?.map(q => q)}
+        {questions?.map(q => <div>{q}</div>)}
         </Card>
       </Space>
       
