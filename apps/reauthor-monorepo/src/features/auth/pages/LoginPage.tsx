@@ -5,7 +5,7 @@ import loginHandle from '../../../APICall/old/loginHandle';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { loginWithPasscode, resetPinnedThemes } from '../../../Redux/reducers/userSlice';
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useDispatch } from '../../../Redux/hooks';
@@ -15,23 +15,19 @@ const schema = yup.object({
   passcode: yup.string().trim().min(5).required()
 }).required()
 
-type FieldType = {
-  username?: string;
-  ucode?: string;
-};
 
 export const LoginPage = () => {
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit } = useForm<{passcode: string}>({
     resolver: yupResolver(schema)
   })
 
   const navigate = useNavigate();
   const dispatch = useDispatch()
 
-  const signIn = useCallback((values: {passcode: string}) => {
+  const signIn: SubmitHandler<{passcode: string}> = useCallback((values: {passcode: string}) => {
     dispatch(loginWithPasscode(values.passcode, () => {
-      navigate("/app")
+      navigate("/app/narrative")
     }))
 }, [])
 
