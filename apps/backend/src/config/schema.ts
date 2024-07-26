@@ -19,7 +19,7 @@ export interface IQASet extends Document {
 export interface IThreadItem extends Document {
   uid: mongoose.Types.ObjectId;
   theme: string;
-  questions?: IQASet[];
+  questions?: Array<mongoose.Types.ObjectId | IQASet>;
   synthesized?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -27,7 +27,7 @@ export interface IThreadItem extends Document {
 
 export interface IUserORM extends IUserBase, Document {
   _id: mongoose.Types.ObjectId
-  threadRef: Array<mongoose.Types.ObjectId>
+  threadRef: Array<mongoose.Types.ObjectId | IThreadItem>
 }
 
 export const AIGuideSchema = new Schema({
