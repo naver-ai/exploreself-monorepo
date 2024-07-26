@@ -1,71 +1,36 @@
-interface ITypeAScaffolding {
-  tried: boolean;
-  unselected_keywords?: string[];
-  selected_keywords: string[];
-  user_added_keywords?: string[],
-  selected_generated_sentence: string[];
-  // ai_synthesize: string;
+export interface IAIGuide extends Document {
+  content: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface ITypeBQASet {
-  question: string;
-  selected: string[];
-  unselected: string[];
-}
-
-interface ITypeBScaffolding{
-  tried: boolean;
-  qa_set: ITypeBQASet[];
-  ai_synthesize: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface ITypeCPrompt {
-  type: string;
-  selected: boolean;
-}
-
-interface ITypeCPromptSet {
-  tip: string;
-  prompts: ITypeCPrompt[];
-}
-
-interface ITypeCScaffolding {
-  tried: boolean;
-  prompt_set: ITypeCPromptSet[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface IScaffoldingData {
-  typeA?: ITypeAScaffolding;
-  typeB?: ITypeBScaffolding;
-  typeC?: ITypeCScaffolding;
+export interface IQASetBase {
+  question: {label?: string; content: string},
+  keywords: string[],
+  response: string,
+  aiGuides?: IAIGuide[];
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface IThreadItem {
+export interface IQASetWithIds extends IQASetBase {
+  _id: string,
+  tid: string
+}
+
+export interface IThreadBase {
   theme: string;
-  orientingInput?: string;
-  question?: string;
-  scaffoldingData?: IScaffoldingData;
-  response?: string;
-  history_information?: string;
   synthesized?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-// interface IHistoryItem {
-//   history_information: string;
-//   threadItemRef?: mongoose.Types.ObjectId;
-//   createdAt?: Date;
-//   updatedAt?: Date;
-// }
+export interface IThreadWithQuestionIds extends IThreadBase {
+  _id: string,
+  questions: Array<string | IQASetWithIds>,
+  uid: string
+}
+
 export interface IUserBase {
   alias: string;
   passcode: string;

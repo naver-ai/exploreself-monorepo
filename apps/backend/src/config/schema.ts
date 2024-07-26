@@ -1,5 +1,5 @@
-import { IUserBase } from "@core";
-import mongoose, {Schema, Document} from "mongoose";
+import { IThreadBase, IUserBase, IQASetBase } from "@core";
+import mongoose, {Schema, Document, mongo} from "mongoose";
 
 export interface IAIGuide extends Document {
   content: string;
@@ -7,26 +7,19 @@ export interface IAIGuide extends Document {
   updatedAt?: Date;
 }
 
-export interface IQASet extends Document {
-  question: {label?: string; content: string},
-  keywords: string[],
-  response: string,
-  aiGuides?: IAIGuide[];
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface IQASetORM extends IQASetBase, Document {
+  _id: mongoose.Types.ObjectId
+  tid: mongoose.Types.ObjectId
 }
-export interface IThreadItem extends Document {
-  uid: mongoose.Types.ObjectId;
-  theme: string;
-  questions?: Array<mongoose.Types.ObjectId | IQASet>;
-  synthesized?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface IThreadORM extends IThreadBase, Document {
+  _id: mongoose.Types.ObjectId
+  questions: Array<mongoose.Types.ObjectId | IQASetORM>
+  uid: mongoose.Types.ObjectId
 }
 
 export interface IUserORM extends IUserBase, Document {
   _id: mongoose.Types.ObjectId
-  threadRef: Array<mongoose.Types.ObjectId | IThreadItem>
+  threadRef: Array<mongoose.Types.ObjectId | IThreadORM>
 }
 
 export const AIGuideSchema = new Schema({
@@ -38,6 +31,7 @@ export const AIGuideSchema = new Schema({
 AIGuideSchema.set('timestamps', true)
 
 export const QASetSchema = new Schema({
+  tid: {type: Schema.Types.ObjectId, ref: 'ThreadItem', required: true},
   question: {
     type: {
       label: {type: String},
@@ -89,6 +83,6 @@ UserSchema.set('toJSON', {
   }
 })
  
-export const QASet = mongoose.model<IQASet>('QASet', QASetSchema)
-export const ThreadItem = mongoose.model<IThreadItem>('ThreadItem', ThreadItemSchema)
+export const QASet = mongoose.model<IQASetORM>('QASet', QASetSchema)
+export const ThreadItem = mongoose.model<IThreadORM>('ThreadItem', ThreadItemSchema)
 export const User = mongoose.model<IUserORM>('User', UserSchema)
