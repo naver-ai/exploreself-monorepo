@@ -1,9 +1,6 @@
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from '@langchain/core/prompts';
 import z from "zod"
 import { chatModel } from '../config/config';
-import { IInitInfo } from '../config/interface';
-import {threadItemListToSingleChatMessage} from './threadItemToLog';
-import { IThreadItem } from '../config/schema';
 import synthesizePrevInput from './synthesizePrevInput';
 
 const generateThemeScaffoldingKeywords = async (uid: string ,theme: string) => {

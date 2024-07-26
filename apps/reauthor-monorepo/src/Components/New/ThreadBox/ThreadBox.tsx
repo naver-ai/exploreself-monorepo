@@ -1,24 +1,16 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useMemo, useState } from "react"
 import getReflexiveQuestions from "../../../APICall/getReflexiveQuestions"
 import getScaffoldingKeywords from "../../../APICall/getScaffoldingKeywords"
-import getResponseFromKeyword from "../../../APICall/getResponseFromKeyword"
-import getOrientingQuestions from "../../../APICall/getOrientingQuestions"
 import getThemeScaffoldingKeywords from '../../../APICall/getThemeScaffolding'
-import { useSelector } from "react-redux"
-import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
-import { Radio, Space, Button, Input, Checkbox, Card, Anchor, Flex, Row, Divider } from "antd"
+import { Space, Button, Input, Card, Flex, Divider } from "antd"
 import { DeleteOutlined } from '@ant-design/icons';
 
-import type {RadioChangeEvent} from "antd"
-import type { GetProp } from 'antd';
-import { IThreadItem, ITypeAScaffoldingState } from "apps/reauthor-monorepo/src/Config/interface"
 import getThreadData from "../../../APICall/getThreadData"
 import saveThreadItem from "../../../APICall/saveThreadItem"
-import { resetWorkingThread } from "../../../Redux/reducers/userSlice"
-import getScaffoldingQuestions from "../../../APICall/getScaffoldingQuestions"
 import saveOrientingInput from '../../../APICall/saveOrientingInput'
 const {TextArea} = Input;
 import getOrientingInput from "../../../APICall/getOrientingInput"
+import { useSelector } from "../../../Redux/hooks"
 
 
 const OrientingInput = (props:{
@@ -29,7 +21,7 @@ const OrientingInput = (props:{
 }) => {
 
   const [input, setInput] = useState<string>('')
-  const uid= useSelector((state: IRootState) => state.userInfo.uid)
+  const uid= useSelector((state) => state.userInfo.userId)
   const [themeScaffolding, setThemeScaffolding] = useState<{item: string, rationale: string}[]>([])
   const [visibleItems, setVisibleItems] = useState<{ item: string, rationale: string }[]>([]);
   
@@ -62,7 +54,7 @@ const OrientingInput = (props:{
   }
 
   const fetchThemeScaffoldings = async() => {
-    const scaffoldingSet = await getThemeScaffoldingKeywords(uid, props.theme)
+    const scaffoldingSet = await getThemeScaffoldingKeywords(uid!, props.theme)
     if(scaffoldingSet){
       setThemeScaffolding(scaffoldingSet)
       setVisibleItems([scaffoldingSet[0]])
@@ -78,7 +70,7 @@ const OrientingInput = (props:{
       fetchOrientingInput()
     }
   },[props.phase])
-
+  
   const onDragScaffolding = (e: React.DragEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
     const value = target.getAttribute('data-value');
@@ -138,7 +130,7 @@ const QnASet = (props:{
   tid: string,
   theme: string
 }) => {
-  const uid = useSelector((state: IRootState) => state.userInfo.uid)
+  const uid = useSelector(state => state.userInfo.userId)
 
   const [selectedQ, setSelectedQ] = useState<string>('')
   const [isSetQ, setIsSetQ] = useState<boolean>(false)
@@ -168,7 +160,7 @@ const QnASet = (props:{
 
   const fetchSocraticQuestions = async() => {
     if(orienting){
-      const fetchedQuestions = await getReflexiveQuestions(props.theme, uid, orienting)
+      const fetchedQuestions = await getReflexiveQuestions(props.theme, uid!, orienting)
       if(fetchedQuestions){
         setQuestionList(fetchedQuestions)
         setSelectedQ(fetchedQuestions[tmpN])
@@ -178,7 +170,7 @@ const QnASet = (props:{
   const onSelectQuestion = async () => {
     setIsSetQ(true)
     // TODO: Add orientingInput as param of getScaffoldingKeywords
-    const fetchedKeywords = await getScaffoldingKeywords(uid, selectedQ);
+    const fetchedKeywords = await getScaffoldingKeywords(uid!, selectedQ);
     if(fetchedKeywords){
       setScaffoldingKeywords(fetchedKeywords)
       setVisibleItems([scaffoldingKeywords[0]]);
@@ -191,7 +183,7 @@ const QnASet = (props:{
   }
   const onSubmitResponse = async () => {
     // TODO: save orientingInput
-    await saveThreadItem(props.tid, uid, selectedQ, {}, response)
+    await saveThreadItem(props.tid, uid!, selectedQ, {}, response)
     props.handlePhase(3)
   }
 
@@ -269,7 +261,7 @@ const ThreadBox = (props:{
   - Phase 2-b: response <ResponseInput/>, qset: true
   - Phase 3: Finished 
   */ 
-  const workingStatus = useSelector((state: IRootState) => state.userInfo.working_thread)
+  const workingStatus = useSelector((state) => state.userInfo.working_thread)
   const [phase, setPhase] = useState<number>((props.tid===workingStatus.tid)?1:3)
   const [theme, setTheme] = useState<string>('')
   const [question, setQuestion] = useState<string>('')

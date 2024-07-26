@@ -4,10 +4,8 @@ import { ItemType } from './valueType';
 import DraggableItem from './DraggableItem';
 import DropTargetBox from './DropTargetBox';
 import update from 'immutability-helper'
-import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../Redux/store';
 import { setValueSet } from '../../Redux/reducers/userSlice';
+import { useDispatch } from '../../Redux/hooks';
 
 interface DragDropContainerProps {
   initialItems: ItemType[];

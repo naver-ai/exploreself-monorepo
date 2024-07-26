@@ -1,13 +1,12 @@
 import getInitialThemes from '../../../APICall/getInitialThemes'
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { RadioChangeEvent } from 'antd';
 import { Button, Radio, Space, Input } from 'antd';
-import {addPinnedTheme, resetPinnedThemes, setWorkingThread} from '../../../Redux/reducers/userSlice' 
-import { useDispatch, useSelector } from 'react-redux';
+import {addPinnedTheme, resetPinnedThemes, setWorkingThread} from '../../../Redux/reducers/userSlice'
 import createThreadItem from '../../../APICall/createThreadItem';
-import { IRootState } from "apps/reauthor-monorepo/src/Redux/store"
 import { MdBookmarkBorder } from "react-icons/md";
 import getThemesFromResp from '../../../APICall/getThemesFromResp';
+import { useDispatch, useSelector } from '../../../Redux/hooks';
 
 const ThemeBox = (props:{
   onThreadCreated: () => void; 
@@ -17,16 +16,19 @@ const ThemeBox = (props:{
   const [selected, setSelected] = useState<string>('');
   const [inputValue, setInputValue] = useState<string>('');
   const dispatch = useDispatch();
-  const uid = useSelector((state: IRootState) => state.userInfo.uid)
-  const fetchInitThemes = async () => {
-    const data = await getInitialThemes(uid);
-    console.log("THEMES: ", data)
-    // console.log("THEMES: ", data.themes.map((themeItem: { theme: string; quote: string }) => themeItem.theme))
-    setThemes(data);
-  };
+  const uid = useSelector((state) => state.userInfo.userId)
+
+  const fetchInitThemes = useCallback(async () => {
+    if(uid != null){
+      const data = await getInitialThemes(uid);
+      console.log("THEMES: ", data)
+      // console.log("THEMES: ", data.themes.map((themeItem: { theme: string; quote: string }) => themeItem.theme))
+      setThemes(data);
+    }
+  }, [uid])
 
   const fetchThemesFromRef = async() => {
-    const data = await getThemesFromResp(uid);
+    const data = await getThemesFromResp(uid!);
     console.log("RESPTHEME: ", data)
     setRespThemes(data)
   }
@@ -50,7 +52,7 @@ const ThemeBox = (props:{
 
   const onSubmit = async () => {
     // TODO: Handling when input value is empty
-    const tid = await createThreadItem(uid, selected)
+    const tid = await createThreadItem(uid!, selected)
     dispatch(setWorkingThread({tid: tid, theme: selected}))
     props.onThreadCreated()
     // TODO: Dispatch working thread id
@@ -60,7 +62,7 @@ const ThemeBox = (props:{
     fetchInitThemes();
     fetchThemesFromRef();
     console.log("RES: ", respThemes)
-  },[])
+  },[fetchInitThemes])
 
   return (
     <div>

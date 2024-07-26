@@ -11,4 +11,10 @@ export class Http{
         }
         return this._axiosInstance!
     }
+
+    static makeSignedInHeader(token: string): {[key:string]: string} {
+        return {
+            "Authorization": `Bearer ${token}`
+          }
+    }
 }
