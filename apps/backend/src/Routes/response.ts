@@ -1,16 +1,18 @@
 import express from 'express';
-import { IThreadItem, ThreadItem, User } from "../config/schema";
-import generateScaffoldingKeywords from '../Utils/generateScaffoldingKeywords'
+import { IThreadORM, QASet, ThreadItem, User } from "../config/schema";
+import generateScaffoldingKeywords from '../Utils/old/generateScaffoldingKeywords'
 import { IInitInfo } from "../config/interface";
-import generateSentencesFromKeywords from "../Utils/generateSentencesFromKeywords";
-import generateThemeScaffoldingKeywords from '../Utils/generateThemeScaffoldingKeywords'
-import {generateScaffoldingQuestions} from '../Utils/generateScaffoldingQuestions'
+import generateSentencesFromKeywords from "../Utils/old/generateSentencesFromKeywords";
+import generateThemeScaffoldingKeywords from '../Utils/old/generateThemeScaffoldingKeywords'
+import {generateScaffoldingQuestions} from '../Utils/old/generateScaffoldingQuestions'
+import type { RequestWithUser } from './middlewares';
 
 var router = express.Router()
 
-const saveResponse = async (req, res) => {
-  const threadItem: IThreadItem = req.body.thread_item;
-  const uid: string = req.body.uid
+const saveResponse = async (req: RequestWithUser, res) => {
+  const user = req.user;
+  const uid = user._id
+  const threadItem: IThreadORM= req.body.thread_item;
 
   try {
     await User.findByIdAndUpdate(uid, {$push: {thread: threadItem}})
@@ -22,6 +24,31 @@ const saveResponse = async (req, res) => {
       err: err.message
     })
   }
+}
+
+const saveQASet = async (req, res) => {
+  const tid = req.body.tid
+  const question = req.body.question
+  const keywords = req.body.keywords
+  const response = req.body.answer
+  const newQAset = new QASet({
+    tid: tid,
+    question: {content: question},
+    keywords: keywords,
+    response: response
+  })
+  try {
+    await newQAset.save()
+    res.json({
+      success: true
+    })
+  } catch (err) {
+    res.json({
+      err: err.message,
+      success: false
+    })
+  }
+  
 }
 
 const saveOrientingInput = async(req, res) => {
@@ -40,14 +67,10 @@ const saveOrientingInput = async(req, res) => {
   }
 }
 
-const generateKeywords = async (req, res) => {
-
+const generateKeywords = async (req: RequestWithUser, res) => {
+  const user = req.user
   const question = req.body.question; // type: object
-  const uid = req.body.uid
-  const user = await User.findById(uid)
-  if (!user) {
-    res.status(400).send("Couldn't find user");
-  }
+
   const initInfo: IInitInfo = {
     init_nar: user.initial_narrative,
     val_set: user.value_set,
@@ -62,14 +85,10 @@ const generateKeywords = async (req, res) => {
 
 }
 
-const generateSentences = async (req, res) => {
+const generateSentences = async (req: RequestWithUser, res) => {
   const question = req.body.question;
   const selected_keywords = req.body.selected_keywords;
-  const uid = req.body.uid
-  const user = await User.findById(uid)
-  if (!user) {
-    res.status(400).send("Couldn't find user");
-  }
+  const user = req.user
   const initInfo: IInitInfo = {
     init_nar: user.initial_narrative,
     val_set: user.value_set,
@@ -85,13 +104,9 @@ const generateSentences = async (req, res) => {
   })
 }
 
-const getScaffoldingQuestions = async (req, res) => {
+const getScaffoldingQuestions = async (req: RequestWithUser, res) => {
   const question = req.body.question;
-  const uid = req.body.uid
-  const user = await User.findById(uid)
-  if (!user) {
-    res.status(400).send("Couldn't find user");
-  }
+  const user = req.user
   const initInfo: IInitInfo = {
     init_nar: user.initial_narrative,
     val_set: user.value_set,
@@ -104,8 +119,9 @@ const getScaffoldingQuestions = async (req, res) => {
   })
 }
 
-const getThemeScaffoldingKeywords = async(req, res) => {
-  const uid = req.body.uid
+const getThemeScaffoldingKeywords = async(req: RequestWithUser, res) => {
+  const user = req.user
+  const uid = user._id
   const theme = req.body.theme
 
   try {
@@ -126,6 +142,7 @@ router.post('/generateSentences', generateSentences);
 router.post('/getScaffoldingQuestions', getScaffoldingQuestions);
 router.post('/saveOrientingInput', saveOrientingInput);
 router.post('/getThemeScaffoldingKeywords', getThemeScaffoldingKeywords)
+router.post('/saveQASet', saveQASet)
 
 export default router;
 

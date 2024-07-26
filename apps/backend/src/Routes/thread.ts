@@ -1,11 +1,13 @@
 import express from 'express';
-import { ThreadItem, User } from "../config/schema"
-import synthesizeSession from "../Utils/synthesizeSession";var router = express.Router()
+import { IThreadORM, ThreadItem, User, IQASetORM } from '../config/schema';
+import synthesizeSession from "../Utils/old/synthesizeSession";
+import { RequestWithUser } from './middlewares';
+var router = express.Router()
 
 
-const createThreadItem = async (req, res) => {
-  
-  const uid = req.body.uid
+const createThreadItem = async (req: RequestWithUser, res) => {
+  const user = req.user
+  const uid = user._id
   const newThreadItem = new ThreadItem({
     uid: uid,
     theme: req.body.theme
@@ -64,11 +66,10 @@ const getOrientingInput = async (req, res) => {
   }
 }
 
-const getThreadList = async (req, res) => {
-  const uid = req.body.uid
+const getThreadList = async (req: RequestWithUser, res) => {
   try {
     // const user = await User.findById(uid).populate('threadRef').exec();
-    const user = await User.findById(uid);
+    const user = req.user
     return res.json({
       threadRef: user.threadRef
     })
@@ -80,10 +81,7 @@ const getThreadList = async (req, res) => {
 const getThreadData = async (req, res) => {
   const tid = req.body.tid
   try {
-    const thread = await ThreadItem.findById(tid);
-    if (!thread) {
-      return res.status(404).json({ message: 'Thread not found' });
-    }
+    const thread = await ThreadItem.findById(tid).populate('questions') as IThreadORM & {questions: Array<IQASetORM>}
     return res.json({
       threadData: thread
     })
@@ -106,9 +104,11 @@ const getThreadTitleList = async (req, res) => {
   }
 }
 
-const synthesizeThread = async(req, res) => {
+const synthesizeThread = async(req: RequestWithUser, res) => {
+  const user = req.user
+  const uid = user._id
   const tid = req.body.tid
-  const uid = req.body.uid
+  
   console.log("THREaddata: ", tid)
   try {
     const synthesizedData = await synthesizeSession(tid, uid)

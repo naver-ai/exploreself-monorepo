@@ -1,18 +1,31 @@
 import express from 'express';
 import { User } from '../config/schema';
-import generateThemesFromNarrative from '../Utils/generateThemesFromNarrative'
-import generateThemesFromRecentResponse from '../Utils/generateThemesFromRecentResponse'
+import generateThemesFromNarrative from '../Utils/old/generateThemesFromNarrative'
+import generateThemesFromRecentResponse from '../Utils/old/generateThemesFromRecentResponse'
 import { IInitInfo } from '../config/interface';
+import generateThemes from '../Utils/generateThemes';
+import { RequestWithUser } from './middlewares';
 
 var router = express.Router()
 
-
-const generateInitialThemes = async (req, res) => {
-  const uid = req.body.uid
-  const user = await User.findById(uid);
-  if (!user) {
-    res.status(400).send('User not found');
+const generateThemesHandler = async (req: RequestWithUser, res) => {
+  const user = req.user;
+  const uid = user._id
+  try {
+    const themes = await generateThemes(uid)
+    res.json({
+      themes: themes
+    })
+  } catch (err) {
+    res.json({
+      err: err.message
+    })
   }
+  
+
+}
+const generateInitialThemes = async (req: RequestWithUser, res) => {
+  const user = req.user
   const basicInfo: IInitInfo = {
     init_nar: user.initial_narrative,
     val_set: user.value_set,
@@ -44,5 +57,6 @@ const generateThemesFromResp = async (req, res) => {
 
 router.post('/generateInitialThemes', generateInitialThemes);
 router.post('/generateThemesFromResp', generateThemesFromResp)
+router.post('/getThemes', generateThemesHandler)
 
 export default router;

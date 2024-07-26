@@ -5,11 +5,9 @@ import { RequestWithUser, signedInUserMiddleware } from './middlewares';
 var router = express.Router()
 
 // TODO: Check if uid should be wrapped by ObjectId
-const setInitialNarrative = async (req, res) => {
+const setInitialNarrative = async (req: RequestWithUser, res) => {
   const init_narrative = req.body.init_narrative;
-  const uid = req.body.uid
-  console.log("UID: ", uid)
-  console.log("NAR: ", init_narrative)
+  const uid = req.user._id
   try {
     const updatedUser = await User.findByIdAndUpdate(uid, {$set: {initial_narrative: init_narrative}})
     res.json({
@@ -24,9 +22,9 @@ const setInitialNarrative = async (req, res) => {
 
 }
 
-const setValueSet = async (req, res) => {
+const setValueSet = async (req: RequestWithUser, res) => {
   const value_set = req.body.value_set;
-  const uid = req.body.uid
+  const uid = req.user._id
   User.findByIdAndUpdate(uid, {$set: {value_set: value_set}}, (err, data) => {
     if (err) throw err;
     else {
@@ -37,9 +35,9 @@ const setValueSet = async (req, res) => {
   })
 }
 
-const setBackground = async (req, res) => {
+const setBackground = async (req: RequestWithUser, res) => {
   const background = req.body.background;
-  const uid = req.body.uid
+  const uid = req.user._id
   User.findByIdAndUpdate(uid, {$set: {background: background}}, (err, data) => {
     if (err) throw err;
     else {
