@@ -1,6 +1,6 @@
 import express from 'express';
 import { ThreadItem, User } from "../config/schema"
-import synthesizeSession from "../Utils/synthesizeSession";var router = express.Router()
+import synthesizeSession from "../newUtils/synthesizeSession";var router = express.Router()
 
 
 const createThreadItem = async (req, res) => {
@@ -52,8 +52,10 @@ const getOrientingInput = async (req, res) => {
   const tid = req.body.tid;
   try {
     const thread = await ThreadItem.findById(tid)
+    
+    //TODO fix orientingInput error
     res.json({
-      orientingInput: thread.orientingInput
+      //orientingInput: thread.orientingInput
     })
   } catch (err) {
     res.json({

@@ -1,17 +1,15 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {IThreadItem, IUser} from '../Config/interface'
 import getUserInfo from "../APICall/getUserInfo"
-import { useDispatch, useSelector } from "react-redux";
-import { IRootState } from "../Redux/store";
 import {Sheet} from 'react-modal-sheet'
 import Sidebar from "../Components/New/Sidebar/Sidebar";
 import ThemeBox from "../Components/New/ThemeBox/ThemeBox"
 import ThreadBox from "../Components/New/ThreadBox/ThreadBox";
-import { resetState } from "../Redux/reducers/userSlice";
 import getThreadList from '../APICall/getThreadList'
 import { Button, Divider } from "antd";
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { useSelector } from "../Redux/hooks";
 
 
 
@@ -21,14 +19,14 @@ const Main = () => {
   const [isOpen, setOpen] = useState(false)
   const [threadRefList, setThreadRefList] = useState<string[] | null>(null)
   const [refresh, setRefresh] = useState(false)
-  const workingThread = useSelector((state: IRootState) => state.userInfo.working_thread)
+  const workingThread = useSelector((state) => state.userInfo.working_thread)
   const workingState = workingThread.tid != ''
-  const uid = useSelector((state: IRootState) => state.userInfo.uid)
+  const uid = useSelector((state) => state.userInfo.userId)
   // console.log("WT ", workingThread)
 
   const fetchInitInfo = async () => {
     try {
-      const data = await getUserInfo(uid);
+      const data = await getUserInfo(uid!);
       console.log("UID: ", uid)
       setUserInfo(data);
       if (data){
@@ -43,16 +41,15 @@ const Main = () => {
     } 
   }
 
-  const handleThreadCreated = () => {
+  const handleThreadCreated = useCallback(() => {
     setRefresh(!refresh)
-  }
+  }, [refresh])
 
 
   useEffect(() => {
     fetchInitInfo();
   }, [refresh])
 
-  
   
   return(
     <div className="flex flex-row">

@@ -1,10 +1,10 @@
 import express from 'express';
 import { IThreadItem, ThreadItem, User } from "../config/schema";
-import generateScaffoldingKeywords from '../Utils/generateScaffoldingKeywords'
+import generateScaffoldingKeywords from '../newUtils/generateScaffoldingKeywords'
 import { IInitInfo } from "../config/interface";
-import generateSentencesFromKeywords from "../Utils/generateSentencesFromKeywords";
-import generateThemeScaffoldingKeywords from '../Utils/generateThemeScaffoldingKeywords'
-import {generateScaffoldingQuestions} from '../Utils/generateScaffoldingQuestions'
+import generateSentencesFromKeywords from "../newUtils/generateSentencesFromKeywords";
+import generateThemeScaffoldingKeywords from '../newUtils/generateThemeScaffoldingKeywords'
+import {generateScaffoldingQuestions} from '../newUtils/generateScaffoldingQuestions'
 
 var router = express.Router()
 
@@ -54,7 +54,8 @@ const generateKeywords = async (req, res) => {
     background: user.background
   }
 
-  const granularItems = await generateScaffoldingKeywords(initInfo, question, user.thread, 1)
+  //TODO fix new schema error
+  const granularItems = await generateScaffoldingKeywords(initInfo, question, user.threadRef as any, 1)
   res.json({
     granularItems: granularItems
   })
@@ -75,9 +76,10 @@ const generateSentences = async (req, res) => {
     background: user.background
   }
 
-  const thread = user.thread
+  const thread = user.threadRef
 
-  const sentences = await generateSentencesFromKeywords(initInfo, thread, question, selected_keywords)
+  //TODO fix new use schema issue
+  const sentences = await generateSentencesFromKeywords(initInfo, thread as any, question, selected_keywords)
   res.json({
     generated_sentences: sentences.plausible_answers
   })

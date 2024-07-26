@@ -1,11 +1,7 @@
-import { IThreadItem, ThreadItem } from "../config/schema"
+import { ThreadItem } from "../config/schema"
 import {ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate} from "@langchain/core/prompts"
-import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
 import { chatModel } from '../config/config';
-import { IInitInfo } from '../config/interface';
-import synthesizeProfilicInfo from "./synthesizeProfilicInfo";
-import { User } from "../config/schema";
 import synthesizePrevInput from "./synthesizePrevInput";
 
 const synthesizeSession = async (tid: string, uid: string) => {
@@ -14,9 +10,11 @@ const synthesizeSession = async (tid: string, uid: string) => {
     console.log("Err in fetching threadItdm")
   }
   const theme = threadItem.theme
-  const orientingInput = threadItem.orientingInput
-  const question = threadItem.question
-  const response = threadItem.response
+
+  //TODO fix new schema error
+  const orientingInput = "" // threadItem.orientingInput
+  const question = "" // threadItem.question
+  const response = "" // threadItem.response
 
   const system_message=`
   [Role] You are a assistant of counselor that synthesizes the counseling session. 

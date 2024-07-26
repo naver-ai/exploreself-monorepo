@@ -1,12 +1,12 @@
 import express, { Router } from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
-import userRouter from './newRoutes/user'
-import adminRouter from './newRoutes/admin'
-import questionRouter from './newRoutes/question'
-import responseRouter from './newRoutes/response'
-import threadRouter from './newRoutes/thread'
-import themeRouter from './newRoutes/theme'
+import authRouter from './routes/auth'
+import userRouter from './routes/user'
+import questionRouter from './routes/question'
+import responseRouter from './routes/response'
+import threadRouter from './routes/thread'
+import themeRouter from './routes/theme'
 
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
@@ -34,8 +34,8 @@ mongoose.connect(uri + dbName)
 app.use(express.json());
 // app.use("/", testRouter)
 const apiRouter = express.Router()
+apiRouter.use("/auth", authRouter)
 apiRouter.use("/user", userRouter)
-apiRouter.use("/admin", adminRouter)
 apiRouter.use("/question", questionRouter)
 apiRouter.use("/response", responseRouter)
 apiRouter.use("/thread", threadRouter)

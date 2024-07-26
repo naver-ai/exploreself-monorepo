@@ -1,8 +1,8 @@
 import express from 'express';
 import { User } from '../config/schema';
 import { IInitInfo } from '../config/interface';
-import { generateReflexiveQuestions } from '../Utils/generateReflexiveQuestions';
-import { generateOrientingQuestions } from '../Utils/generateOrientingQuestions';
+import { generateReflexiveQuestions } from '../newUtils/generateReflexiveQuestions';
+import { generateOrientingQuestions } from '../newUtils/generateOrientingQuestions';
 
 var router = express.Router()
 
@@ -26,7 +26,7 @@ const generateOrientincQuestionsController = async (req, res) => {
     res.status(400).send("Couldn't find user");
   }
   const selected_theme = req.body.selected_theme;
-  const threadLog = user.thread
+  const threadLog = user.threadRef
 
   // const history = user.history.map(historyItem => historyItem.history_information);
 
@@ -35,8 +35,8 @@ const generateOrientincQuestionsController = async (req, res) => {
     val_set: user.value_set,
     background: user.background
   }
-
-  const questions = await generateOrientingQuestions(basicInfo, threadLog, selected_theme)
+  //TODO fix threadlog error in new schema
+  const questions = await generateOrientingQuestions(basicInfo, threadLog as any, selected_theme)
   res.json({
     questions: questions
   })

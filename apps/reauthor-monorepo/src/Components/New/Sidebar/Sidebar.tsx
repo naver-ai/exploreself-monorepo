@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import getThreadTitleList from '../../../APICall/getThreadTitleList' 
 import { IThreadItem } from 'apps/reauthor-monorepo/src/Config/interface'
-import { useDispatch, useSelector } from 'react-redux'
-import { IRootState } from 'apps/reauthor-monorepo/src/Redux/store'
 import { Divider } from 'antd'
 import createThreadItem from '../../../APICall/createThreadItem'
 import {removePinnedTheme} from '../../../Redux/reducers/userSlice'
+import { useDispatch, useSelector } from '../../../Redux/hooks'
 
 
 const Sidebar = (props:{
@@ -21,16 +20,20 @@ const Sidebar = (props:{
       setThreadTitleList(titleList)
     }
   }
-  const uid = useSelector((state: IRootState) => state.userInfo.uid)
-  const pinnedThemes = useSelector((state: IRootState) => state.userInfo.pinned_themes)
+  const uid = useSelector((state) => state.userInfo.userId)
+  const pinnedThemes = useSelector((state) => state.userInfo.pinned_themes)
   useEffect(() => {
     fetchThreadTitleList()
   },[props.threadRef])
-  const addToThread = async (selected: string) => {
-    const tid = await createThreadItem(uid, selected)
-    dispatch(removePinnedTheme(selected))
-    props.onThreadCreated()
-  }
+
+  const addToThread = useCallback(async (selected: string) => {
+    if(uid != null){
+      const tid = await createThreadItem(uid, selected)
+      dispatch(removePinnedTheme(selected))
+      props.onThreadCreated()
+    }
+  }, [uid, props.onThreadCreated])
+  
   return (
     <div>
       <div>Outline: </div>

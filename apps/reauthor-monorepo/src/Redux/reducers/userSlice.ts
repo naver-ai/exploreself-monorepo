@@ -1,17 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IThreadItem } from "../../Config/interface";
+import { IUserBase } from "@core";
+import { AppThunk } from "../store";
+import { jwtDecode } from 'jwt-decode';
+import { Http } from "../../net/http";
 
-interface IEvent {
+export interface IEvent {
   type: string;
   message: string;
   timestamp: string;
   weight: number; // From 1~10? TODO: experiment with string (description) rather than number
 }
-interface IUserState {
-  uid: string;
-  is_logged_in: boolean;
-  initial_narrative: string;
-  is_korean: boolean;
+
+export interface IUserState {
+  isAuthorizing: boolean
+  authorizationError?: string
+  token?: string;
+  userId?: string;
+  initial_narrative?: string;
+  isKorean: boolean;
   value_set: string[];
   background: string[];
   event_history: IEvent[];
@@ -21,10 +28,12 @@ interface IUserState {
 }
 
 const initialState : IUserState = {
-  uid: "",
-  is_logged_in: false,
+  isAuthorizing: false,
+  authorizationError: undefined,
+  token: undefined,
+  userId: undefined,
   initial_narrative: '',
-  is_korean: true,
+  isKorean: true,
   value_set: [],
   background: [''],
   event_history: [], // TODO: experiment with chat-log, or plain text
@@ -44,17 +53,24 @@ const userSlice = createSlice({
   name: 'USER',
   initialState,
   reducers: {
-    loginUser: (state, action) => {
-      state.is_logged_in = true;
-      state.uid = action.payload
-      console.log("UID SET!: ", state.uid)
+    mountUser: (state, action: PayloadAction<{token: string, userId: string, userInfo: IUserBase}>) => {
+      state.token = action.payload.token
+      state.isKorean = action.payload.userInfo.isKorean
+      state.userId = action.payload.userId,
+      state.authorizationError = undefined
+      console.log("UID SET!: ", state.userId)
     },
+
+    setAuthError: (state, action: PayloadAction<string>) => {
+      state.authorizationError = action.payload
+    },
+
     setInitialNarrative: (state, action) => {
       state.initial_narrative = action.payload
     },
 
     setLanguage: (state, action) => {
-      state.is_korean = action.payload
+      state.isKorean = action.payload
     },
     // TODO: consider whether to change in Initial Narrative
     setValueSet: (state, action) => {
@@ -125,12 +141,34 @@ const userSlice = createSlice({
         theme: ''
       }
     },
-    resetState: (state) => {
-      state = initialState
-    }
+    resetState: (state) => initialState
   }
 })
 
-export {IUserState}
-export const {removePinnedTheme, addPinnedTheme, resetPinnedThemes, resetWorkingThread, resetState, setWorkingThread, loginUser, setInitialNarrative, setValueSet, updateValueSet, addBackground, updateEventHistory, addQuestionStack, popQuestionStack} = userSlice.actions;
+export function signIn(passcode: string): AppThunk {
+  return async (dispatch, getState) => {
+      try {
+        const response = await Http.axios.post(`/auth/login`, {
+          passcode
+        })
+        const { token, user } =  response.data;
+
+        const decoded = jwtDecode<{
+          sub: string,
+          iat: number,
+          exp: number
+        }>(token)
+
+        dispatch(userSlice.actions.mountUser({
+          token, userId: decoded.sub, userInfo: user
+        }))
+
+      } catch (err) {
+        console.log("Err in login: ", err);
+        return null;
+      }
+    }
+}
+
+export const {removePinnedTheme, addPinnedTheme, resetPinnedThemes, resetWorkingThread, resetState, setWorkingThread, setInitialNarrative, setValueSet, updateValueSet, addBackground, updateEventHistory, addQuestionStack, popQuestionStack} = userSlice.actions;
 export default userSlice.reducer;

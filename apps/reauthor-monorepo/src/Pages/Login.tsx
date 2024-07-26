@@ -1,12 +1,11 @@
 import React from 'react';
-import type { FormProps, RadioChangeEvent } from 'antd';
-import { Button, Checkbox, Form, Input, Radio } from 'antd';
+import type { RadioChangeEvent } from 'antd';
+import { Button, Form, Input, Radio } from 'antd';
 import loginHandle from '../APICall/loginHandle';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { loginUser, resetPinnedThemes } from '../Redux/reducers/userSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../Redux/store';
+import { resetPinnedThemes } from '../Redux/reducers/userSlice';
+import { useDispatch } from 'react-redux';
 
 
 type FieldType = {
@@ -34,7 +33,7 @@ const Login = () => {
     if (name && ucode) {
       try {
         const user = await loginHandle(name, ucode, isKorean)
-        dispatch(loginUser(user?.user._id))
+        dispatch(mountUser(user?.user._id))
         dispatch(resetPinnedThemes())
         console.log("USER: ", user)
         // const newuid = useSelector((state: IRootState) => state.userInfo.uid)

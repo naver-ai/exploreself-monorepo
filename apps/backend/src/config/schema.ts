@@ -1,3 +1,4 @@
+import { IUserBase } from "@core";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -24,16 +25,9 @@ export interface IThreadItem extends Document {
   updatedAt?: Date;
 }
 
-export interface IUser extends Document {
-  name: string;
-  ucode: string;
-  isKorean: boolean;
-  initial_narrative: string;
-  value_set: string[];
-  background: string;
-  threadRef: mongoose.Types.ObjectId[];
-  createdAt: Date;
-  updatedAt: Date;
+export interface IUserORM extends IUserBase, Document {
+  _id: mongoose.Types.ObjectId
+  threadRef: Array<mongoose.Types.ObjectId>
 }
 
 export const AIGuideSchema = new Schema({
@@ -76,19 +70,20 @@ export const ThreadItemSchema = new Schema({
 ThreadItemSchema.set('timestamps', true)
 
 export const UserSchema = new Schema({
-   name: {type: String, required: true},
-   ucode: {type: String, required: true},
-   isKorean: {type: Boolean, required: true},
-   initial_narrative: {type: String, required: true, default: ''},
-   value_set: {type: [String], required: true, default: []},
-   background: {type: String, required: true, default: ''},
-   threadRef: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
-   createdAt: {type: Date, default: Date.now},
-   updatedAt: {type: Date}
+    alias: {type: String, required: true, unique: true},
+    name: {type: String, required: false},
+    passcode: {type: String, required: true},
+    isKorean: {type: Boolean, required: true, default: true},
+    initial_narrative: {type: String, required: false, default: null},
+    value_set: {type: [String], required: true, default: []},
+    background: {type: String, required: false, default: null},
+    threadRef: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
+    createdAt: {type: Date, default: Date.now},
+    updatedAt: {type: Date}
  });
  
- UserSchema.set('timestamps', true);
+UserSchema.set('timestamps', true);
  
 export const QASet = mongoose.model<IQASet>('QASet', QASetSchema)
 export const ThreadItem = mongoose.model<IThreadItem>('ThreadItem', ThreadItemSchema)
-export const User = mongoose.model<IUser>('User', UserSchema)
+export const User = mongoose.model<IUserORM>('User', UserSchema)
