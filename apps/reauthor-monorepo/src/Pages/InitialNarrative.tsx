@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "../Redux/hooks";
 const {TextArea} = Input;
 const InitialNarrative = () => {
 
-  const uid = useSelector((state) => state.userInfo.userId) as string;
+  const token = useSelector((state) => state.userInfo.token) as string;
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ const InitialNarrative = () => {
     setNarrative(e.target.value)
   }
   const submitNarrative = useCallback(async () => {
-    const success = await setInitNarrative(uid, narrative)
+    const success = await setInitNarrative(token, narrative)
     if(success) {
       navigate('/')
     }

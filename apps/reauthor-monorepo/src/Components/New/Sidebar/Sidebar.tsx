@@ -5,18 +5,23 @@ import { Divider } from 'antd'
 import createThreadItem from '../../../APICall/old/createThreadItem'
 import {fetchUserInfo, removePinnedTheme} from '../../../Redux/reducers/userSlice'
 import { useDispatch, useSelector } from '../../../Redux/hooks'
+import { title } from 'process'
+import { IThreadWithQuestionIds } from '@core'
 
 
 const Sidebar = () => {
 
   const threadIds = useSelector(state => state.userInfo.threadRef)
+  const token = useSelector((state) => state.userInfo.token) as string
 
-  const [threadTitleList, setThreadTitleList] = useState<IThreadItem[] | null>()
+  const [threadTitleList, setThreadTitleList] = useState<IThreadWithQuestionIds[] | null>()
   const dispatch = useDispatch()
 
   const fetchThreadTitleList = useCallback(async() => {
-      const titleList = await getThreadTitleList(threadIds)
-      setThreadTitleList(titleList)
+      const titleList = await getThreadTitleList(token, threadIds)
+      if(titleList){
+        setThreadTitleList(titleList)
+      }
   }, [threadIds])
 
   const uid = useSelector((state) => state.userInfo.userId)
