@@ -1,9 +1,11 @@
-import { Http } from "../../net/http";
+import { Http } from "../net/http";
 
-const getThreadData = async (tid: string) => {
+const getThreadData = async (token: string, tid: string) => {
   try {
     const response = await Http.axios.post(`/thread/getThreadData`, {
       tid: tid
+    },{
+      headers: Http.makeSignedInHeader(token)
     })
     return response.data.threadData;
   } catch (err) {

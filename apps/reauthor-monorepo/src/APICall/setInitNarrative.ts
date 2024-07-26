@@ -1,10 +1,11 @@
-import { Http } from "../../net/http";
+import { Http } from "../net/http";
 
-const setInitNarrative = async (uid: string, narrative: string): Promise<boolean | null> => {
+const setInitNarrative = async (token: string, narrative: string): Promise<boolean | null> => {
   try {
     const response = await Http.axios.post(`/user/setInitialNarrative`, {
-      uid: uid,
       init_narrative: narrative
+    },{
+      headers: Http.makeSignedInHeader(token)
     })
     return response.data.success;
   } catch (err) {
