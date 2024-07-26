@@ -1,12 +1,14 @@
 import express from 'express';
 import { User } from "../config/schema";
-import { RequestWithUser, signedInUserMiddleware } from './middlewares';
+import { signedInUserMiddleware } from './middlewares';
+import type {RequestWithUser} from './middlewares'
 
 var router = express.Router()
 
 // TODO: Check if uid should be wrapped by ObjectId
 const setInitialNarrative = async (req: RequestWithUser, res) => {
   const init_narrative = req.body.init_narrative;
+  console.log(req.user)
   const uid = req.user._id
   try {
     const updatedUser = await User.findByIdAndUpdate(uid, {$set: {initial_narrative: init_narrative}})
@@ -52,9 +54,10 @@ router.get('/', signedInUserMiddleware, async (req: RequestWithUser, res) => {
     user: req.user.toJSON()
   })
 });
-router.post('/setInitialNarrative', setInitialNarrative)
-router.post('/setValueSet', setValueSet)
-router.post('setBackground', setBackground)
+
+router.post('/setInitialNarrative', signedInUserMiddleware, setInitialNarrative)
+router.post('/setValueSet', signedInUserMiddleware, setValueSet)
+router.post('/setBackground', signedInUserMiddleware, setBackground)
 
 
 export default router;

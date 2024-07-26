@@ -2,6 +2,8 @@ import express from 'express';
 import { IThreadORM, ThreadItem, User, IQASetORM } from '../config/schema';
 import synthesizeSession from "../Utils/old/synthesizeSession";
 import { RequestWithUser } from './middlewares';
+import { signedInUserMiddleware } from './middlewares';
+
 var router = express.Router()
 
 
@@ -139,14 +141,14 @@ const saveSynthesized = async(req, res) => {
     })
   }
 }
-router.post('/saveThreadItem', saveThreadItem);
-router.post('/createThreadItem', createThreadItem);
-router.post('/getThreadList', getThreadList);
-router.post ('/getThreadData', getThreadData);
-router.post('/getThreadTitleList', getThreadTitleList)
-router.post('/synthesizeThread', synthesizeThread)
-router.post('/saveSynthesized', saveSynthesized)
-router.post('/getOrientingInput', getOrientingInput)
+router.post('/saveThreadItem', signedInUserMiddleware, saveThreadItem);
+router.post('/createThreadItem', signedInUserMiddleware, createThreadItem);
+router.post('/getThreadList', signedInUserMiddleware, getThreadList);
+router.post ('/getThreadData', signedInUserMiddleware, getThreadData);
+router.post('/getThreadTitleList', signedInUserMiddleware, getThreadTitleList)
+router.post('/synthesizeThread', signedInUserMiddleware, synthesizeThread)
+router.post('/saveSynthesized', signedInUserMiddleware, saveSynthesized)
+router.post('/getOrientingInput', signedInUserMiddleware, getOrientingInput)
 
 export default router;
 

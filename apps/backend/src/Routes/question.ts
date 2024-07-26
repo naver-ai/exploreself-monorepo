@@ -3,13 +3,14 @@ import { User } from '../config/schema';
 import { generateReflexiveQuestions } from '../Utils/old/generateReflexiveQuestions';
 import generateQuestions from '../Utils/generateQuestions';
 import type {RequestWithUser} from './middlewares'
+import { signedInUserMiddleware } from './middlewares';
+
 
 var router = express.Router()
 
 
 const generateQuestionsHandler = async (req: RequestWithUser, res) => {
-  const user = req.user;
-  const uid = user._id
+  const uid = req.user._id;
   const tid = req.body.tid
   try {
     const questions = await generateQuestions(uid, tid)
@@ -36,8 +37,8 @@ const generateReflexiveQuestionsController = async (req: RequestWithUser, res) =
 }
 
 
-router.post('/generateReflexive', generateReflexiveQuestionsController);
-router.post('/getQuestions', generateQuestionsHandler)
+router.post('/generateReflexive', signedInUserMiddleware, generateReflexiveQuestionsController);
+router.post('/getQuestions', signedInUserMiddleware, generateQuestionsHandler)
 
 export default router;
 

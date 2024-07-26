@@ -5,6 +5,8 @@ import generateThemesFromRecentResponse from '../Utils/old/generateThemesFromRec
 import { IInitInfo } from '../config/interface';
 import generateThemes from '../Utils/generateThemes';
 import { RequestWithUser } from './middlewares';
+import { signedInUserMiddleware } from './middlewares';
+
 
 var router = express.Router()
 
@@ -55,8 +57,8 @@ const generateThemesFromResp = async (req, res) => {
   
 }
 
-router.post('/generateInitialThemes', generateInitialThemes);
-router.post('/generateThemesFromResp', generateThemesFromResp)
-router.post('/getThemes', generateThemesHandler)
+router.post('/generateInitialThemes', signedInUserMiddleware, generateInitialThemes);
+router.post('/generateThemesFromResp', signedInUserMiddleware, generateThemesFromResp)
+router.post('/getThemes', signedInUserMiddleware, generateThemesHandler)
 
 export default router;

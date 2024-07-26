@@ -6,6 +6,7 @@ import generateSentencesFromKeywords from "../Utils/old/generateSentencesFromKey
 import generateThemeScaffoldingKeywords from '../Utils/old/generateThemeScaffoldingKeywords'
 import {generateScaffoldingQuestions} from '../Utils/old/generateScaffoldingQuestions'
 import type { RequestWithUser } from './middlewares';
+import { signedInUserMiddleware } from './middlewares';
 
 var router = express.Router()
 
@@ -136,13 +137,13 @@ const getThemeScaffoldingKeywords = async(req: RequestWithUser, res) => {
   }
 }
 
-router.post('/saveResponse', saveResponse);
-router.post('/generateKeywords', generateKeywords);
-router.post('/generateSentences', generateSentences);
-router.post('/getScaffoldingQuestions', getScaffoldingQuestions);
-router.post('/saveOrientingInput', saveOrientingInput);
-router.post('/getThemeScaffoldingKeywords', getThemeScaffoldingKeywords)
-router.post('/saveQASet', saveQASet)
+router.post('/saveResponse', signedInUserMiddleware, saveResponse);
+router.post('/generateKeywords', signedInUserMiddleware, generateKeywords);
+router.post('/generateSentences', signedInUserMiddleware, generateSentences);
+router.post('/getScaffoldingQuestions', signedInUserMiddleware, getScaffoldingQuestions);
+router.post('/saveOrientingInput', signedInUserMiddleware, saveOrientingInput);
+router.post('/getThemeScaffoldingKeywords', signedInUserMiddleware, getThemeScaffoldingKeywords)
+router.post('/saveQASet', signedInUserMiddleware, saveQASet)
 
 export default router;
 
