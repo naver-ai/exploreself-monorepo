@@ -79,6 +79,13 @@ const userSlice = createSlice({
       for(const key of Object.keys(action.payload)){
         (state as any)[key] = (action.payload as any)[key]
       }
+      if(action.payload._id != null){
+        state.userId = action.payload._id
+      }
+    },
+
+    setAuthorizingFlag: (state, action: PayloadAction<boolean>) => {
+      state.isAuthorizing = action.payload
     },
 
     setLoadingUserInfoFlag: (state, action: PayloadAction<boolean>) => {
@@ -160,6 +167,7 @@ export function loginWithPasscode(
   onSuccess?: () => void
 ): AppThunk {
   return async (dispatch, getState) => {
+    dispatch(userSlice.actions.setAuthorizingFlag(true))
     try {
       const response = await Http.axios.post(`/auth/login`, {
         passcode,
@@ -183,7 +191,9 @@ export function loginWithPasscode(
       onSuccess?.();
     } catch (err) {
       console.log('Err in login: ', err);
-      return null;
+      dispatch(userSlice.actions.setAuthError(err as any))
+    } finally {
+      dispatch(userSlice.actions.setAuthorizingFlag(false))
     }
   };
 }

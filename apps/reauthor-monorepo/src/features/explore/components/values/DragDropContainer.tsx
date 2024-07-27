@@ -1,22 +1,22 @@
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ItemType } from './valueType';
 import DraggableItem from './DraggableItem';
 import DropTargetBox from './DropTargetBox';
 import update from 'immutability-helper'
-import { useDispatch } from '../../Redux/hooks';
+import { useDispatch } from '../../../../Redux/hooks';
+import { ValueItemType } from 'apps/reauthor-monorepo/src/Config/interface';
 
 interface DragDropContainerProps {
-  initialItems: ItemType[];
+  initialItems: ValueItemType[];
 }
 
 const DragDropContainer: React.FC<DragDropContainerProps> = ({ initialItems }) => {
-  const [items, setItems] = useState<ItemType[]>(initialItems);
-  const [topBoxItems, setTopBoxItems] = useState<ItemType[]>([]);
+  const [items, setItems] = useState<ValueItemType[]>(initialItems);
+  const [topBoxItems, setTopBoxItems] = useState<ValueItemType[]>([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleDrop = (item: ItemType, index: number | null) => {
+  const handleDrop = (item: ValueItemType, index: number | null) => {
     const newTopBoxItems = [...topBoxItems];
     if (index === null) {
       newTopBoxItems.push(item);
@@ -28,11 +28,11 @@ const DragDropContainer: React.FC<DragDropContainerProps> = ({ initialItems }) =
   };
 
   const handleReorder = useCallback((dragIndex: number, hoverIndex: number) => {
-    setTopBoxItems((prevCards: ItemType[]) =>
+    setTopBoxItems((prevCards: ValueItemType[]) =>
       update(prevCards, {
         $splice: [
           [dragIndex, 1],
-          [hoverIndex, 0, prevCards[dragIndex] as ItemType],
+          [hoverIndex, 0, prevCards[dragIndex] as ValueItemType],
         ],
       }),
     )

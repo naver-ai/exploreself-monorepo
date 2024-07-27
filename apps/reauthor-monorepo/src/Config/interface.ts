@@ -34,3 +34,8 @@ export interface IUser{
   createdAt: Date;
   updatedAt?: Date;
 }
+
+export interface ValueItemType {
+  id: number;
+  value: string;
+}

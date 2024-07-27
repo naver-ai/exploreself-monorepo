@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useDrop, useDrag } from 'react-dnd';
-import { ItemType } from './valueType';
+import { ItemType } from '../../../../Components/Values/valueType';
 
 interface DraggableBoxProps {
   item: ItemType;

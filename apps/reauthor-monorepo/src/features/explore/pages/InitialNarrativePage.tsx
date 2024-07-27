@@ -2,13 +2,13 @@ import { Input, Button } from "antd";
 import React, { useCallback, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import setInitNarrative from "../APICall/setInitNarrative";
+import setInitNarrative from "../../../APICall/setInitNarrative";
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from "../Redux/hooks";
+import { useDispatch, useSelector } from "../../../Redux/hooks";
 
 
 const {TextArea} = Input;
-const InitialNarrative = () => {
+export const InitialNarrativePage = () => {
 
   const token = useSelector((state) => state.userInfo.token) as string;
   const { t, i18n } = useTranslation();
@@ -35,4 +35,3 @@ const InitialNarrative = () => {
     </div>
   )
 }
-export default InitialNarrative;
