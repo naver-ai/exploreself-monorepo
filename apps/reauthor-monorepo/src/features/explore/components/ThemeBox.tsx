@@ -2,7 +2,7 @@ import getInitialThemes from '../../../APICall/old/getInitialThemes'
 import { useCallback, useEffect, useState } from "react";
 import type { RadioChangeEvent } from 'antd';
 import { Button, Radio, Space, Input } from 'antd';
-import {addPinnedTheme, fetchUserInfo, resetPinnedThemes, setWorkingThread} from '../../../Redux/reducers/userSlice'
+import {addPinnedTheme, fetchUserInfo, resetPinnedThemes, setWorkingThread} from '../reducer'
 import createThreadItem from '../../../APICall/createThreadItem';
 import { MdBookmarkBorder } from "react-icons/md";
 import getThemesFromResp from '../../../APICall/old/getThemesFromResp';
@@ -15,7 +15,7 @@ const ThemeBox = () => {
   const [selected, setSelected] = useState<string>('');
   const [inputValue, setInputValue] = useState<string>('');
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.userInfo.token) as string
+  const token = useSelector((state) => state.auth.token) as string
 
   const fetchInitThemes = useCallback(async () => {
     const data = await getThemes(token)

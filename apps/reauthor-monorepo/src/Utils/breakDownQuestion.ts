@@ -1,9 +1,9 @@
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts"
 import { chatModel } from "../config"
 import { z } from "zod";
-import { IUserState } from "../Redux/reducers/userSlice";
+import { IExploreState } from "../features/explore/reducer";
 
-const breakDownQuestion = async (userInfo: IUserState, original_question: string) => {
+const breakDownQuestion = async (userInfo: IExploreState, original_question: string) => {
   //TODO: Fill in 
   // const userInfo = useSelector((state: IRootState) => state.userInfo)
   console.log("Break down question")

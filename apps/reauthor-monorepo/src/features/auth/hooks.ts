@@ -3,7 +3,7 @@ import { useSelector } from "../../Redux/hooks"
 import { Http } from "../../net/http"
 
 export function useVerifyToken(): {verify: ()=>Promise<boolean>, isSignedIn: boolean | null} {
-    const token = useSelector(state => state.userInfo.token)
+    const token = useSelector(state => state.auth.token)
     const [isSignedIn, setIsSignedIn] = useState<boolean|null>(null)
 
     const verify = useCallback(async ()=>{

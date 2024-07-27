@@ -1,10 +1,12 @@
 import { Button, Dropdown, MenuProps } from "antd"
 import { useDispatch, useSelector } from "../../../Redux/hooks"
 import { useMemo } from "react"
-import { signOut } from "../../../Redux/reducers/userSlice"
+import { signOut } from "../../auth/reducer"
 
 export const Header = () => {
-    const userName = useSelector(state => state.userInfo.name)
+    const userName = useSelector(state => state.explore.name)
+
+    console.log(userName)
 
     const dispatch = useDispatch()
 

@@ -6,33 +6,25 @@ import ThreadBox from "../components/ThreadBox";
 import { Button, Divider, Progress, Spin } from "antd";
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from "../../../Redux/hooks";
-import { fetchUserInfo } from "../../../Redux/reducers/userSlice";
+import { fetchUserInfo } from "../reducer";
 import { Navigate } from "react-router-dom";
 
 export const ExplorerPage = () => {
 
   const [isOpen, setOpen] = useState(false)
-  const workingThread = useSelector((state) => state.userInfo.working_thread)
+  const workingThread = useSelector((state) => state.explore.working_thread)
   const workingState = workingThread.tid != ''
 
-  const isLoadingUserInfo = useSelector(state => state.userInfo.isLoadingUserInfo)
-  const userId = useSelector(state => state.userInfo.userId)
-  const initialNarrative = useSelector(state => state.userInfo.initial_narrative)
-  const threadIds = useSelector(state => state.userInfo.threadRef)
+  const isLoadingUserInfo = useSelector(state => state.explore.isLoadingUserInfo)
+  const userId = useSelector(state => state.explore.userId)
+  const initialNarrative = useSelector(state => state.explore.initial_narrative)
+  const threadIds = useSelector(state => state.explore.threadRef)
 
-
-  console.log(userId, initialNarrative)
 
   // console.log("WT ", workingThread)
-
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(fetchUserInfo());
-  }, [])
   
   // Redirect to initial narrative page if no initial narrative.
-  return isLoadingUserInfo == true ? <div className="p-10"><Spin tip="Loading..."><div/></Spin></div> : (
+  return (
     (userId != null && initialNarrative == null) ? <Navigate to="/app/narrative"/> :  <div>
       <div className="flex flex-row">
         <div className="basis-1/6">

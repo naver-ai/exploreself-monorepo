@@ -30,7 +30,7 @@ const ThreadBox = (props:{
   tid: string
 }) => {
   const [threadData, setThreadData] = useState<IThreadWithQuestionIds>();
-  const token = useSelector((state) => state.userInfo.token) as string
+  const token = useSelector((state) => state.auth.token) as string
   const [questions, setQuestions] = useState<Array<IQASetBase>>([])
   const [removedQuestions, setRemovedQuestions] = useState<Array<string>>([])
   
