@@ -31,16 +31,20 @@ const saveQASet = async (req, res) => {
   const tid = req.body.tid
   const qalist = req.body.qalist;
   try {
-    const qaPromises = qalist.map(qa => {
+    const qaPromises = qalist.map((qa, index) => {
       const newQASet = new QASet({
         tid: tid,
-        question: {content: qa.question},
+        question: {content: qa.question.content},
         keywords: qa.keywords,
-        response: qa.answer
+        response: qa.response
       })
       return newQASet.save()
     })
-    await Promise.all(qaPromises);
+    const savedQASets = await Promise.all(qaPromises);
+    const qaSetIds = savedQASets.map(qa => qa._id);
+    await ThreadItem.findByIdAndUpdate(tid, {
+      $push: { questions: { $each: qaSetIds } }
+    });
     res.json({
       success: true
     })
