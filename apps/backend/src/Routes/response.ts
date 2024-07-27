@@ -29,17 +29,18 @@ const saveResponse = async (req: RequestWithUser, res) => {
 
 const saveQASet = async (req, res) => {
   const tid = req.body.tid
-  const question = req.body.question
-  const keywords = req.body.keywords
-  const response = req.body.answer
-  const newQAset = new QASet({
-    tid: tid,
-    question: {content: question},
-    keywords: keywords,
-    response: response
-  })
+  const qalist = req.body.qalist;
   try {
-    await newQAset.save()
+    const qaPromises = qalist.map(qa => {
+      const newQASet = new QASet({
+        tid: tid,
+        question: {content: qa.question},
+        keywords: qa.keywords,
+        response: qa.answer
+      })
+      return newQASet.save()
+    })
+    await Promise.all(qaPromises);
     res.json({
       success: true
     })
@@ -49,7 +50,6 @@ const saveQASet = async (req, res) => {
       success: false
     })
   }
-  
 }
 
 const saveOrientingInput = async(req, res) => {

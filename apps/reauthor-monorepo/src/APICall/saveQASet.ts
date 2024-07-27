@@ -1,12 +1,13 @@
+import { IQASetBase } from "@core";
 import { Http } from "../net/http";
 
-const saveQASet = async (tid: string, question: string, keywords: Array<string>, answer: string) => {
+const saveQASet = async (token: string, tid: string, QAList: Array<IQASetBase>) => {
   try {
     const response = await Http.axios.post(`/response/saveQASet`, {
       tid: tid,
-      question: question,
-      keywords: keywords,
-      response: answer
+      qalist: QAList
+    },{
+      headers: Http.makeSignedInHeader(token)
     })
     return response.data.success;
   } catch (err) {
