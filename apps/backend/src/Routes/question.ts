@@ -61,10 +61,26 @@ const generateReflexiveQuestionsController = async (req: RequestWithUser, res) =
     questions: questions
   })
 }
+const selectQuestion = async(req, res) => {
+  const qid = req.params.qid
+  try {
+    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {selected: true}})
+    res.json({
+      success: true,
+      qaSet: updatedQASet._id
+    })
+  } catch (err) {
+    res.json({
+      success: false,
+      err: err.message
+    })
+  }
+}
 
 router.get('/:qid', signedInUserMiddleware, getQuestionData )
 router.post('/generateReflexive', signedInUserMiddleware, generateReflexiveQuestionsController);
 router.get('/generate/:tid', signedInUserMiddleware, generateQuestionsHandler)
+router.put('/select/:qid', signedInUserMiddleware, selectQuestion)
 
 export default router;
 

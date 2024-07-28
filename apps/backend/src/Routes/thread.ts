@@ -83,7 +83,7 @@ const getThreadList = async (req: RequestWithUser, res) => {
 
 const getThreadData = async (req: RequestWithUser, res) => {
   const uid = req.user._id
-  const tid = req.body.tid
+  const tid = req.params.tid
   try {
     const thread = await ThreadItem.findById(tid)
     if (thread?.questions.length == 0 || !thread.questions) {
@@ -169,11 +169,14 @@ const saveSynthesized = async(req, res) => {
 router.post('/saveThreadItem', signedInUserMiddleware, saveThreadItem);
 router.post('/createThreadItem', signedInUserMiddleware, createThreadItem);
 router.post('/getThreadList', signedInUserMiddleware, getThreadList);
-router.post ('/getThreadData', signedInUserMiddleware, getThreadData);
 router.post('/getThreadTitleList', signedInUserMiddleware, getThreadTitleList)
 router.post('/synthesizeThread', signedInUserMiddleware, synthesizeThread)
 router.post('/saveSynthesized', signedInUserMiddleware, saveSynthesized)
 router.post('/getOrientingInput', signedInUserMiddleware, getOrientingInput)
+
+router.get ('/:tid', signedInUserMiddleware, getThreadData);
+
+
 
 export default router;
 

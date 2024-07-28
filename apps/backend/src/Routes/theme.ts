@@ -59,6 +59,7 @@ const generateThemesFromResp = async (req, res) => {
 
 router.post('/generateInitialThemes', signedInUserMiddleware, generateInitialThemes);
 router.post('/generateThemesFromResp', signedInUserMiddleware, generateThemesFromResp)
-router.get('/getThemes', signedInUserMiddleware, generateThemesHandler)
+// The upper APIs are currently deprecated, and will delete in order
+router.get('/generate', signedInUserMiddleware, generateThemesHandler)
 
 export default router;

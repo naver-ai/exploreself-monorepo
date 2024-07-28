@@ -9,6 +9,7 @@ import type { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
 import { synthesizeThread } from '../Utils/synthesizeThread';
 import { IQASetBase, IQASetWithIds } from '@core';
+import generateKeywords from '../Utils/generateKeywords';
 
 var router = express.Router()
 
@@ -55,21 +56,6 @@ const createQASet = async (req, res) => {
   }
 }
 
-const selectQuestion = async(req, res) => {
-  const qid = req.body.qid
-  try {
-    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {selected: true}})
-    res.json({
-      success: true,
-      qaSet: updatedQASet._id
-    })
-  } catch (err) {
-    res.json({
-      success: false,
-      err: err.message
-    })
-  }
-}
 const updateKeywords = async (req, res) => {
   const qid = req.body.qid
   const keywords = req.body.keywords
@@ -88,7 +74,7 @@ const updateKeywords = async (req, res) => {
 }
 
 const updateResponse = async (req, res) => {
-  const qid = req.body.qid
+  const qid = req.params.qid
   const response = req.body.response
   try {
     const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {response: response}})
@@ -191,23 +177,6 @@ const saveOrientingInput = async(req, res) => {
   }
 }
 
-const generateKeywords = async (req: RequestWithUser, res) => {
-  const user = req.user
-  const question = req.body.question; // type: object
-
-  const initInfo: IInitInfo = {
-    init_nar: user.initial_narrative,
-    val_set: user.value_set,
-    background: user.background
-  }
-
-  //TODO fix new schema error
-  const granularItems = await generateScaffoldingKeywords(initInfo, question, user.threadRef as any, 1)
-  res.json({
-    granularItems: granularItems
-  })
-
-}
 
 const generateSentences = async (req: RequestWithUser, res) => {
   const question = req.body.question;
@@ -260,8 +229,22 @@ const getThemeScaffoldingKeywords = async(req: RequestWithUser, res) => {
   }
 }
 
+const getKeywords = async(req:RequestWithUser, res) => {
+  const user = req.user
+  const qid = req.params.qid
+  try {
+    const keywords = await generateKeywords(user, qid)
+    return res.json({
+      keywords: keywords
+    })
+  } catch (err) {
+    return res.json({
+      err: err.message
+    })
+  }
+}
+
 router.post('/saveResponse', signedInUserMiddleware, saveResponse);
-router.post('/generateKeywords', signedInUserMiddleware, generateKeywords);
 router.post('/generateSentences', signedInUserMiddleware, generateSentences);
 router.post('/getScaffoldingQuestions', signedInUserMiddleware, getScaffoldingQuestions);
 router.post('/saveOrientingInput', signedInUserMiddleware, saveOrientingInput);
@@ -269,9 +252,10 @@ router.post('/getThemeScaffoldingKeywords', signedInUserMiddleware, getThemeScaf
 router.post('/saveQASetArray', signedInUserMiddleware, saveQASetArray)
 router.post('/createQASet', signedInUserMiddleware, createQASet)
 router.post('/updateQASet', signedInUserMiddleware, updateQASet)
-router.post('/updateResponse', signedInUserMiddleware, updateResponse)
 router.post('/updateKeywords', signedInUserMiddleware, updateKeywords)
-router.post('/selectQuestion', signedInUserMiddleware, selectQuestion)
+// The upper APIs are currently deprecated, and will delete in order
+router.put('/:qid', signedInUserMiddleware, updateResponse)
+router.get('/keywords/:qid', signedInUserMiddleware, getKeywords)
 
 export default router;
 
