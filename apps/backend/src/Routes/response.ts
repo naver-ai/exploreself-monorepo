@@ -55,6 +55,54 @@ const createQASet = async (req, res) => {
   }
 }
 
+const selectQuestion = async(req, res) => {
+  const qid = req.body.qid
+  try {
+    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {selected: true}})
+    res.json({
+      success: true,
+      qaSet: updatedQASet._id
+    })
+  } catch (err) {
+    res.json({
+      success: false,
+      err: err.message
+    })
+  }
+}
+const updateKeywords = async (req, res) => {
+  const qid = req.body.qid
+  const keywords = req.body.keywords
+  try {
+    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {keywords: keywords}})
+    res.json({
+      success: true,
+      qaSet: updatedQASet._id
+    })
+  } catch (err) {
+    res.json({
+      success: false,
+      err: err.message
+    })
+  }
+}
+
+const updateResponse = async (req, res) => {
+  const qid = req.body.qid
+  const response = req.body.response
+  try {
+    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {response: response}})
+    res.json({
+      success: true,
+      qaSet: updatedQASet._id
+    })
+  } catch (err) {
+    res.json({
+      success: false,
+      err: err.message
+    })
+  }
+}
 const updateQASet = async (req, res) => {
   const qid = req.body.qid
   const keywords = req.body.keywords
@@ -221,6 +269,9 @@ router.post('/getThemeScaffoldingKeywords', signedInUserMiddleware, getThemeScaf
 router.post('/saveQASetArray', signedInUserMiddleware, saveQASetArray)
 router.post('/createQASet', signedInUserMiddleware, createQASet)
 router.post('/updateQASet', signedInUserMiddleware, updateQASet)
+router.post('/updateResponse', signedInUserMiddleware, updateResponse)
+router.post('/updateKeywords', signedInUserMiddleware, updateKeywords)
+router.post('/selectQuestion', signedInUserMiddleware, selectQuestion)
 
 export default router;
 

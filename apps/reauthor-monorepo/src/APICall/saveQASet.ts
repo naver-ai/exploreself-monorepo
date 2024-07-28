@@ -1,19 +1,48 @@
 import { IQASetBase, IQASetWithIds } from "@core";
 import { Http } from "../net/http";
 
-export const updateQASet = async (token: string, qid: string, response: string, keywords: Array<string>) => {
+export const selectQuestion = async(token: string, qid: string) => {
   try {
-    const resp = await Http.axios.post(`/response/updateQASet`, {
-      qid: qid,
-      response: response,
-      selected: true,
-      keywords: keywords
+    const resp = await Http.axios.post(`/response/selectQuestion`, {
+      qid: qid
     },{
       headers: Http.makeSignedInHeader(token)
     })
     return resp.data.qaSet
   } catch (err){
-    console.log("Err in updating QASet: ", err);
+    console.log("Err in selectQuestion: ", err);
+    return null;
+  }
+}
+
+export const updateKeywords = async(token: string, qid: string, keywords: Array<string>) => {
+  try {
+    const resp = await Http.axios.post(`/response/updateKeywords`, {
+      qid: qid,
+      keywords: keywords,
+      selected: true,
+    },{
+      headers: Http.makeSignedInHeader(token)
+    })
+    return resp.data.qaSet
+  } catch (err){
+    console.log("Err in updateKeywords: ", err);
+    return null;
+  }
+}
+
+export const updateResponse = async (token: string, qid: string, response: string) => {
+  try {
+    const resp = await Http.axios.post(`/response/updateResponse`, {
+      qid: qid,
+      response: response,
+      selected: true,
+    },{
+      headers: Http.makeSignedInHeader(token)
+    })
+    return resp.data.qaSet
+  } catch (err){
+    console.log("Err in updateResponse: ", err);
     return null;
   }
 }

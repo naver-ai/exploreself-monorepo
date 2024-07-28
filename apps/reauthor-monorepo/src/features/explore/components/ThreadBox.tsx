@@ -6,35 +6,98 @@ import saveThreadItem from "../../../APICall/old/saveThreadItem"
 const {TextArea} = Input;
 import { useSelector } from "../../../Redux/hooks"
 import { IThreadWithQuestionIds, IQASetWithIds, IQASetBase } from "@core";
-import {updateQASet, saveQASetArray} from "../../../APICall/saveQASet";
+import {updateResponse, saveQASetArray, selectQuestion} from "../../../APICall/saveQASet";
 import getQuestions from "../../../APICall/getQuestions";
 import getScaffoldingKeywords from '../../../APICall/getScaffoldingKeywords'
 import getQuestionData from "../../../APICall/getQuestionData";
 
-const SelectedQuestion = (props:{
+const Question = (props:{
   qid: string
 }) => {
   const token = useSelector((state) => state.auth.token) as string
   const [question, setQuestion] = useState<string>()
-  const [response, setResponse] = useState<string>()
+  const [response, setResponse] = useState<string>('')
   const [keywords, setKeywords] = useState<Array<string>>()
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSavedResponse, setLastSavedResponse] = useState('');
+  const [isActive, setIsActive] = useState(false);
+  const [selected, setSelected] = useState(false)
+
   const fetchQuestion = useCallback(async () => {
     const qData = await getQuestionData(token, props.qid)
     setQuestion(qData.question.content)
     setResponse(qData.response)
+    setLastSavedResponse(qData.response)
     setKeywords(qData.keywords)
+    setSelected(qData.selected)
   },[props.qid])
+
+  const saveResponse = useCallback(async () => {
+    if (response !== lastSavedResponse) {
+      setIsSaving(true);
+      try {
+        const savedQA = await updateResponse(token, props.qid, response)
+        setLastSavedResponse(response);
+      } catch (error) {
+        console.error('Failed to save content:', error);
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  }, [response, props.qid, lastSavedResponse]);
+
+  const selectQuestionHandler = useCallback(async () => {
+    try {
+      const selectedQA = await selectQuestion(token, props.qid)
+      console.log("QA: ", selectedQA)
+      setSelected(true)
+    } catch (err) {
+      console.log("Err in selecting question")
+    }
+  },[])
+
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setResponse(event.target.value);
+    setIsActive(true); 
+  };
+
+  const handleFocus = () => {
+    setIsActive(true);
+  };
+
+  const handleBlur = () => {
+    setIsActive(false); 
+  };
 
   useEffect(() => {
     fetchQuestion();
   },[])
+
+  useEffect(() => {
+    if (isActive) {
+      const handle = setTimeout(saveResponse, 1000);
+      return () => clearTimeout(handle);
+    }
+  }, [response, isActive, saveResponse]);
+
   return (
     <div>
       {question}
+      <Button onClick={() => {selectQuestionHandler()}}>Select</Button>
       <Flex vertical={false}>
         {/* // TODO: AI Feedback  */}
-        {keywords?.join(',')}
-        <TextArea value={response}/>
+        {selected && 
+        <div>
+          {keywords?.join(',')}
+          <TextArea 
+          value={response}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+          />
+        </div>
+        }
+        
       </Flex> 
     </div>
   )
@@ -77,7 +140,7 @@ const ThreadBox = (props: {
       <Card title={threadData?threadData.theme: "Theme Loading"}>
         <Flex vertical={false} className="space-x-2">
           <Flex vertical={true}>
-            {threadData?.questions?.map((question) => <SelectedQuestion qid={(question as string)}/>)}
+            {threadData?.questions?.map((question) => <Question qid={(question as string)}/>)}
           </Flex>
         </Flex>
       </Card>
