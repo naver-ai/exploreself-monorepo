@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IThreadItem } from '../../Config/interface';
+import { IThreadItem } from '../../config/interface';
 import { IUserBase, IUserWithThreadIds } from '@core';
-import { AppThunk } from '../../Redux/store';
+import { AppThunk } from '../../redux/store';
 import { jwtDecode } from 'jwt-decode';
 import { Http } from '../../net/http';
 import { updateUserInfo } from '../explore/reducer';

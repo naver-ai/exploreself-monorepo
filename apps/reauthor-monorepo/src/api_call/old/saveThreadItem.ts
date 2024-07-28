@@ -1,4 +1,4 @@
-import { IScaffoldingData } from "../../Config/interface";
+import { IScaffoldingData } from "../../config/interface";
 import synthesizeThread from "./synthesizeThread";
 import { Http } from "../../net/http";
 

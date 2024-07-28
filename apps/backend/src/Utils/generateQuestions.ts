@@ -15,7 +15,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
 
   const threadLength = userData.threadRef.length;
 
-  const systemTemplate = nunjucks.renderString(`
+  const systemTemplate = `
   [Role]
   You are a therapeutic assistant specializing in generating socratic questions to facilitate self-reflection and personal growth in clients. 
   Per each session within the system, the client brings up a Theme in one's narrative that one would like to navigate about.
@@ -25,22 +25,18 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty, and the client's background.
-  {% if threadLength > 1 %}
-    <previous_session_log>: Logs of sessions before the current session.
-  {% endif %}
+  <previous_session_log>: Logs of sessions before the current session.
   <theme_of_session/>: Theme of the current session. 
-  `, { threadLength: threadLength })
+  `
 
    // TODO: design prompt
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplate)
 
-  const humanTemplate = nunjucks.renderString(`
+  const humanTemplate = `
   <initial_information/>: {init_info}
-  {% if threadLength > 1 %}
-    <previous_session_log>: {prev_session_log}
-  {% endif %}
+  <previous_session_log>: {prev_session_log}
   <theme_of_session/>: {theme}
-  `, { threadLength: threadLength }) 
+  `
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 

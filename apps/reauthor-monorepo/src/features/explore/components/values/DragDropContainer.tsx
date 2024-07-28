@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import DraggableItem from './DraggableItem';
 import DropTargetBox from './DropTargetBox';
 import update from 'immutability-helper'
-import { useDispatch } from '../../../../Redux/hooks';
-import { ValueItemType } from 'apps/reauthor-monorepo/src/Config/interface';
+import { useDispatch } from '../../../../redux/hooks';
+import { ValueItemType } from 'apps/reauthor-monorepo/src/config/interface';
 
 interface DragDropContainerProps {
   initialItems: ValueItemType[];

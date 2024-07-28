@@ -1,15 +1,16 @@
 import { useCallback, useEffect, ChangeEvent, useState } from "react"
 import { Space, Button, Input, Card, Flex, Divider } from "antd"
 
-import getThreadData from "../../../APICall/getThreadData"
-import saveThreadItem from "../../../APICall/old/saveThreadItem"
+import getThreadData from "../../../api_call/getThreadData"
+import saveThreadItem from "../../../api_call/old/saveThreadItem"
 const {TextArea} = Input;
-import { useSelector } from "../../../Redux/hooks"
+import { useSelector } from "../../../redux/hooks"
 import { IThreadWithQuestionIds, IQASetWithIds, IQASetBase } from "@core";
-import {updateResponse, saveQASetArray, selectQuestion} from "../../../APICall/saveQASet";
-import getQuestions from "../../../APICall/getQuestions";
-import getScaffoldingKeywords from '../../../APICall/getScaffoldingKeywords'
-import getQuestionData from "../../../APICall/getQuestionData";
+import {updateResponse, saveQASetArray, selectQuestion} from "../../../api_call/saveQASet";
+import generateQuestions from "../../../api_call/generateQuestions";
+import getKeywords from '../../../api_call/getKeywords'
+import getQuestionData from "../../../api_call/getQuestionData";
+import { generate } from "@langchain/core/dist/utils/fast-json-patch";
 
 const Question = (props:{
   qid: string
@@ -46,6 +47,11 @@ const Question = (props:{
     }
   }, [response, props.qid, lastSavedResponse]);
 
+  const fetchKeywordsHandler = useCallback(async () => {
+    const keywords = await getKeywords(token, props.qid)
+    setKeywords(keywords as Array<string>)
+  },[token, props.qid])
+
   const selectQuestionHandler = useCallback(async () => {
     try {
       const selectedQA = await selectQuestion(token, props.qid)
@@ -55,6 +61,7 @@ const Question = (props:{
       console.log("Err in selecting question")
     }
   },[])
+
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setResponse(event.target.value);
@@ -88,7 +95,8 @@ const Question = (props:{
         {/* // TODO: AI Feedback  */}
         {selected && 
         <div>
-          {keywords?.join(',')}
+          <Button onClick={() => {fetchKeywordsHandler()}}>Get Keywords</Button>
+          {keywords?.join(', ')}
           <TextArea 
           value={response}
           onChange={handleChange}
@@ -119,7 +127,7 @@ const ThreadBox = (props: {
   
   const fetchQuestions = useCallback(async () => {
     try {
-      const fetchedQuestions = await getQuestions(token, props.tid)
+      const fetchedQuestions = await generateQuestions(token, props.tid)
       const data: IThreadWithQuestionIds = await getThreadData(token, props.tid);
       setThreadData(data);
       // TODO: better optimize 

@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 import { Header } from "./Header"
-import { useDispatch, useSelector } from "../../../Redux/hooks"
+import { useDispatch, useSelector } from "../../../redux/hooks"
 import { useEffect } from "react"
 import { fetchUserInfo } from "../reducer"
 import { Spin } from "antd"

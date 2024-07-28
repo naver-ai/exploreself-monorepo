@@ -1,13 +1,11 @@
-import getInitialThemes from '../../../APICall/old/getInitialThemes'
 import { useCallback, useEffect, useState } from "react";
 import type { RadioChangeEvent } from 'antd';
 import { Button, Radio, Space, Input } from 'antd';
 import {addPinnedTheme, fetchUserInfo, resetPinnedThemes, setWorkingThread} from '../reducer'
-import createThreadItem from '../../../APICall/createThreadItem';
+import createThreadItem from '../../../api_call/createThreadItem';
 import { MdBookmarkBorder } from "react-icons/md";
-import getThemesFromResp from '../../../APICall/old/getThemesFromResp';
-import { useDispatch, useSelector } from '../../../Redux/hooks';
-import getThemes from '../../../APICall/getThemes';
+import { useDispatch, useSelector } from '../../../redux/hooks';
+import generateThemes from '../../../api_call/generateThemes';
 
 const ThemeBox = () => {
   const [themes, setThemes] = useState([]);
@@ -18,16 +16,9 @@ const ThemeBox = () => {
   const token = useSelector((state) => state.auth.token) as string
 
   const fetchInitThemes = useCallback(async () => {
-    const data = await getThemes(token)
-    console.log("FETCHED: ", data)
+    const data = await generateThemes(token)
     setThemes(data)
   }, [token])
-
-  // const fetchThemesFromRef = async() => {
-  //   const data = await getThemesFromResp(uid!);
-  //   console.log("RESPTHEME: ", data)
-  //   setRespThemes(data)
-  // }
 
   const handleAddPinnedTheme = (theme: string) => {
     dispatch(addPinnedTheme(theme))

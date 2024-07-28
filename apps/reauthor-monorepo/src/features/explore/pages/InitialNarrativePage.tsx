@@ -2,7 +2,7 @@ import { Input, Button, Form } from "antd";
 import { useCallback } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from "../../../Redux/hooks";
+import { useDispatch, useSelector } from "../../../redux/hooks";
 import * as yup from 'yup'
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

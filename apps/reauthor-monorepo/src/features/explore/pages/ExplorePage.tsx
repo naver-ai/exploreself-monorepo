@@ -5,12 +5,13 @@ import ThemeBox from "../components/ThemeBox"
 import ThreadBox from "../components/ThreadBox";
 import { Button, Divider, Progress, Spin } from "antd";
 import { PlusCircleOutlined } from '@ant-design/icons';
-import { useDispatch, useSelector } from "../../../Redux/hooks";
+import { useDispatch, useSelector } from "../../../redux/hooks";
 import { fetchUserInfo } from "../reducer";
 import { Navigate } from "react-router-dom";
 
 export const ExplorerPage = () => {
 
+  // TODO: get threadIds from DB, not redux
   const [isOpen, setOpen] = useState(false)
   const workingThread = useSelector((state) => state.explore.working_thread)
   const workingState = workingThread.tid != ''
@@ -20,8 +21,6 @@ export const ExplorerPage = () => {
   const initialNarrative = useSelector(state => state.explore.initial_narrative)
   const threadIds = useSelector(state => state.explore.threadRef)
 
-
-  // console.log("WT ", workingThread)
   
   // Redirect to initial narrative page if no initial narrative.
   return (
