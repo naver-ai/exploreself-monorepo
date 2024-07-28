@@ -1,5 +1,6 @@
 import { configureStore, combineReducers, Action, ThunkAction } from "@reduxjs/toolkit";
-import userReducer, { IUserState } from './reducers/userSlice'
+import exploreReducer from '../features/explore/reducer'
+import authReducer from '../features/auth/reducer'
 import {
   persistStore,
   persistReducer,
@@ -13,11 +14,13 @@ import {
 import storage from "redux-persist/lib/storage";
 
 const rootReducer = combineReducers({
-  userInfo: persistReducer({
+  auth: persistReducer({
     key: 'root',
     storage,
     whitelist: ['token']
-  }, userReducer)
+  }, authReducer),
+
+  explore: exploreReducer
 })
 
 const store = configureStore({

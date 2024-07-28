@@ -1,6 +1,10 @@
 import { IThreadBase, IUserBase, IQASetBase } from "@core";
 import mongoose, {Schema, Document, mongo} from "mongoose";
 
+export function emptyStringToUndefinedConverter(value: string | undefined){
+  return value === '' ? undefined : value;
+}
+
 export interface IAIGuide extends Document {
   content: string;
   createdAt?: Date;
@@ -67,9 +71,9 @@ export const UserSchema = new Schema({
     name: {type: String, required: false},
     passcode: {type: String, required: true},
     isKorean: {type: Boolean, required: true, default: true},
-    initial_narrative: {type: String, required: false, default: null},
+    initial_narrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     value_set: {type: [String], required: true, default: []},
-    background: {type: String, required: false, default: null},
+    background: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     threadRef: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date}
@@ -79,6 +83,9 @@ UserSchema.set('timestamps', true);
 UserSchema.set('toJSON', {
   transform: function(doc, ret, options) {
       delete ret.passcode;
+      if(ret.initial_narrative != null && ret.initial_narrative == ''){
+        ret.initial_narrative = undefined
+      }
       return ret;
   }
 })

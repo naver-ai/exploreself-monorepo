@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import DragDropContainer from '../Components/Values/DragDropContainer';
+import DragDropContainer from '../components/values/DragDropContainer';
 
-const ValueSet: React.FC = () => {
+export const ValueSetPage: React.FC = () => {
   const initialItems = [
     { id: 1, value: 'Parenting' },
     { id: 2, value: 'Personal Growth' },
@@ -25,5 +25,3 @@ const ValueSet: React.FC = () => {
     </DndProvider>
   );
 };
-
-export default ValueSet;

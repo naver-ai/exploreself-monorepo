@@ -22,7 +22,9 @@ router.post('/login', createPasscodeValidation(), async (req: Request, res: Resp
     if(vErrors.isEmpty()){
         try {
             const passcode = req.body.passcode
+            console.log('find user with passcode - ', passcode)
             let user = await User.findOne({ passcode });
+            console.log(user)
             if (user) {  
               res.status(200).send({ token: makeUserToken(user), user: user.toJSON() })
             } else {

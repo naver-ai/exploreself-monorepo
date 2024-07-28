@@ -1,15 +1,12 @@
-import React, { useCallback } from 'react';
-import type { RadioChangeEvent } from 'antd';
-import { Button, Card, Form, Input, Radio } from 'antd';
-import loginHandle from '../../../APICall/old/loginHandle';
-import { useState } from 'react';
+import { useCallback } from 'react';
+import { Button, Card, Form, Input } from 'antd';
 import { useNavigate } from "react-router-dom";
-import { loginWithPasscode, resetPinnedThemes } from '../../../Redux/reducers/userSlice';
 import { useForm, SubmitHandler } from "react-hook-form";
 import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useDispatch } from '../../../Redux/hooks';
 import {FormItem} from 'react-hook-form-antd';
+import { loginWithPasscode } from '../reducer';
 
 const schema = yup.object({
   passcode: yup.string().trim().min(5).required()
@@ -27,7 +24,7 @@ export const LoginPage = () => {
 
   const signIn: SubmitHandler<{passcode: string}> = useCallback((values: {passcode: string}) => {
     dispatch(loginWithPasscode(values.passcode, () => {
-      navigate("/app/narrative")
+      navigate("/app")
     }))
 }, [])
 

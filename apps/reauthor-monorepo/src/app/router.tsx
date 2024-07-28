@@ -1,11 +1,11 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom"
-import {MainPage} from "../Pages/MainPage"
-import InitialNarrative from "../Pages/InitialNarrative"
-import ValueSet from "../Pages/ValueSet"
+import {ExplorerPage} from "../features/explore/pages/ExplorePage"
+import { InitialNarrativePage } from "../features/explore/pages/InitialNarrativePage"
+import {ValueSetPage} from "../features/explore/pages/ValueSetPage"
 import {LoginPage} from "../features/auth/pages/LoginPage"
 import { useVerifyToken } from "../features/auth/hooks"
 import { useEffect } from "react"
-import { SignedInScreenFrame } from "../Components/New/SignedInScreenFrame"
+import { SignedInScreenFrame } from "../features/explore/components/SignedInScreenFrame"
 
 const SignedInRoute = () => {
     const {verify, isSignedIn} = useVerifyToken()
@@ -41,15 +41,15 @@ export const MainRouter = () => {
                     <Route element={<SignedInScreenFrame/>}>
                         <Route
                         index
-                        element={<MainPage/>}
+                        element={<ExplorerPage/>}
                         />
                         <Route
                         path="narrative"
-                        element={<InitialNarrative/>}
+                        element={<InitialNarrativePage/>}
                         />
                         <Route
                         path="value"
-                        element={<ValueSet/>}
+                        element={<ValueSetPage/>}
                         />
                     </Route>
                 </Route>
