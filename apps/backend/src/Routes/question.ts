@@ -9,7 +9,7 @@ import { signedInUserMiddleware } from './middlewares';
 var router = express.Router()
 
 const getQuestionData = async(req: RequestWithUser, res) => {
-  const qid = req.body.qid
+  const qid = req.params.qid
   try {
     const qData = await QASet.findById(qid)
     return res.json({
@@ -24,7 +24,7 @@ const getQuestionData = async(req: RequestWithUser, res) => {
 
 const generateQuestionsHandler = async (req: RequestWithUser, res) => {
   const uid = req.user._id;
-  const tid = req.body.tid
+  const tid = req.params.tid
   try {
     const questions = await generateQuestions(uid, tid)
     const qaPromises = questions.map(async(question, index) => {
@@ -62,9 +62,9 @@ const generateReflexiveQuestionsController = async (req: RequestWithUser, res) =
   })
 }
 
-router.post('/getQuestionData', signedInUserMiddleware, getQuestionData)
+router.get('/:qid', signedInUserMiddleware, getQuestionData )
 router.post('/generateReflexive', signedInUserMiddleware, generateReflexiveQuestionsController);
-router.post('/getQuestions', signedInUserMiddleware, generateQuestionsHandler)
+router.get('/generate/:tid', signedInUserMiddleware, generateQuestionsHandler)
 
 export default router;
 

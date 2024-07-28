@@ -2,9 +2,7 @@ import { Http } from "../net/http";
 
 const getQuestionData = async (token: string, qid: string) => {
   try {
-    const response = await Http.axios.post(`/question/getQuestionData`,{
-      qid: qid
-    }, {
+    const response = await Http.axios.get(`/question/${qid}`,{
       headers: Http.makeSignedInHeader(token)
     })
     return response.data.qData
