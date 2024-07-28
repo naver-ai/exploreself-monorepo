@@ -1,10 +1,11 @@
 import { Http } from "../net/http";
 
-const getScaffoldingKeywords = async (uid: string, question: string): Promise<string[] | null> => {
+const getScaffoldingKeywords = async (token: string, uid: string, question: string): Promise<string[] | null> => {
   try {
     const response = await Http.axios.post(`/response/generateKeywords`, {
-      uid: uid,
       question: question,
+    },{
+      headers: Http.makeSignedInHeader(token)
     })
     return response.data.granularItems.map((obj: {item: string, rationale: string}) => obj.item);
   } catch (err) {
