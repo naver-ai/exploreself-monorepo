@@ -9,23 +9,6 @@ import { IThreadWithQuestionIds, IQASetWithIds, IQASetBase } from "@core";
 import saveQASet from "../../../APICall/saveQASet";
 import getQuestions from "../../../APICall/getQuestions";
 
-const Question = (props:{
-  tid: string,
-  question: string,
-  selected: boolean
-}) => {
-  return (
-    <div>
-      {props.question}
-      {props.selected && 
-      <div>
-        <Button>Gey keywords</Button>
-        <TextArea rows={3}/>
-      </div>}
-    </div>
-  )
-}
-
 const ThreadBox = (props:{
   tid: string
 }) => {
@@ -63,6 +46,7 @@ const ThreadBox = (props:{
   const saveQASetHandler = useCallback(async() => {
     if(questions){
       const isSaved = await saveQASet(token, props.tid, questions)
+      await fetchQuestions();
     }
   },[props.tid, questions, token])
 
@@ -94,23 +78,38 @@ const ThreadBox = (props:{
   },[questions]);
   
   useEffect(() => {
-    fetchThreadData();
-    // TODO: Resolve err in 시도때도없이 fetchQUestions() call 되는 것
-    fetchQuestions();
+    fetchThreadData();   
+    if(threadData?.questions.length == 0){
+      fetchQuestions();
+    }
   }, []);
 
   return (
     <div>
       <Space direction="vertical" className="flex">
         <Card title={threadData?threadData.theme: "Theme Loading"}>
-        {threadData?.questions?.map((question) => {
-          return (
-          <div>
-            {(question as IQASetWithIds).question.content}
-            <TextArea value={(question as IQASetWithIds).response}/>
-          </div>)
-        })}
         <Flex vertical={false} className="space-x-2">
+          <Flex vertical={true}>
+            AI와 생각해보기
+            {threadData?.questions?.map((question) => {
+              return (
+              <div>
+                {(question as IQASetWithIds).question.content}
+                <TextArea value={(question as IQASetWithIds).response}/>
+              </div>)
+            })}
+            {questions?.map((qa, index) => (
+                <div key={index}>
+                  {qa.question.content}
+                  <Button onClick={() => handleRemoveQuestion(index)}>x</Button> 
+                  <Button>Keywords</Button>
+                  <TextArea
+                    value={qa.response}
+                    onChange={(e) => handleResponseChange(index, e)}
+                  />
+                </div>
+              ))}
+          </Flex>
           <div className="border">
             질문 저장소
             {removedQuestions.map((q, index) => 
@@ -119,22 +118,9 @@ const ThreadBox = (props:{
               <Button onClick={() => handleAddRemovedQuestion(index)}>추가</Button>
             </div>)}
           </div>
-          <div>
-          AI와 생각해보기
-          {questions?.map((qa, index) => (
-            <div key={index}>
-              {qa.question.content}
-              <Button onClick={() => handleRemoveQuestion(index)}>x</Button> 
-              <TextArea
-                value={qa.response}
-                onChange={(e) => handleResponseChange(index, e)}
-              />
-            </div>
-          ))}
-          </div>
         </Flex>
         
-        <Button onClick={saveQASetHandler}>저장하기</Button>
+        <Button onClick={saveQASetHandler}>질문 더 보기</Button>
         </Card>
       </Space>
       

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { chatModel } from "../config/config";
 import { User, ThreadItem } from "../config/schema";
 import nunjucks from 'nunjucks'
-import synthesizePrevThreads from './synthesizeThread'
+import {synthesizePrevThreads} from './synthesizeThread'
 import synthesizeProfilicInfo from "./synthesizeProfilicInfo";
 import mongoose from 'mongoose';
 
@@ -41,7 +41,6 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
   {% endif %}
   <theme_of_session/>: {theme}
   `, { threadLength: threadLength }) 
-  console.log("H: ", humanTemplate)
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 

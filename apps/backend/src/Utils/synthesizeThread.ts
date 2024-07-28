@@ -37,4 +37,4 @@ const synthesizePrevThreads = async (uid: mongoose.Types.ObjectId) => {
   }
 }
 
-export default synthesizePrevThreads;
+export  {synthesizePrevThreads, synthesizeThread};

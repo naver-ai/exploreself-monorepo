@@ -8,7 +8,7 @@ import nunjucks from 'nunjucks'
 import { User, ThreadItem, IThreadORM } from '../config/schema';
 import { IUserBase } from '@core';
 import synthesizeProfilicInfo from './synthesizeProfilicInfo';
-import synthesizePrevThreads from './synthesizeThread'
+import {synthesizePrevThreads} from './synthesizeThread'
 import mongoose from 'mongoose';
 
 const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructions='') => {

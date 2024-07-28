@@ -7,6 +7,7 @@ import generateThemeScaffoldingKeywords from '../Utils/old/generateThemeScaffold
 import {generateScaffoldingQuestions} from '../Utils/old/generateScaffoldingQuestions'
 import type { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
+import { synthesizeThread } from '../Utils/synthesizeThread';
 
 var router = express.Router()
 
@@ -45,6 +46,12 @@ const saveQASet = async (req, res) => {
     await ThreadItem.findByIdAndUpdate(tid, {
       $push: { questions: { $each: qaSetIds } }
     });
+
+    const synthesis = await synthesizeThread(tid);
+    await ThreadItem.findByIdAndUpdate(tid, {
+      $set: { synthesis: synthesis }
+    });
+
     res.json({
       success: true
     })
