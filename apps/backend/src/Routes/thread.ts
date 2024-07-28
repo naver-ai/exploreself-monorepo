@@ -1,8 +1,9 @@
 import express from 'express';
-import { IThreadORM, ThreadItem, User, IQASetORM } from '../config/schema';
+import { IThreadORM, ThreadItem, User, IQASetORM, QASet } from '../config/schema';
 import synthesizeSession from "../Utils/old/synthesizeSession";
 import { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
+import generateQuestions from '../Utils/generateQuestions';
 
 var router = express.Router()
 
@@ -80,10 +81,34 @@ const getThreadList = async (req: RequestWithUser, res) => {
   }
 }
 
-const getThreadData = async (req, res) => {
+const getThreadData = async (req: RequestWithUser, res) => {
+  const uid = req.user._id
   const tid = req.body.tid
   try {
-    const thread = await ThreadItem.findById(tid).populate('questions') as IThreadORM & {questions: Array<IQASetORM>}
+    const thread = await ThreadItem.findById(tid)
+    if (thread?.questions.length == 0 || !thread.questions) {
+      const questions = await generateQuestions(uid, tid)
+      const qaPromises = questions.map(async(question, index) => {
+        const newQASet = new QASet({
+          tid: tid,
+          question: {content: question.question},
+          selected: false
+        })
+        return newQASet.save()
+      })
+      const savedQASets = await Promise.all(qaPromises);
+      const qaSetIds = savedQASets.map(qa => qa._id)
+
+      const updatedThread = await ThreadItem.findByIdAndUpdate(
+        tid, 
+        { $push: { questions: { $each: qaSetIds } } },
+        { new: true }
+      ).populate('questions') as IThreadORM & {questions: Array<IQASetORM>};
+
+      return res.json({
+        threadData: updatedThread
+      })
+    }
     return res.json({
       threadData: thread
     })

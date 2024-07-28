@@ -32,7 +32,7 @@ export const ExplorerPage = () => {
           <Divider/>
           <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>
         </div>
-        <div className="basis-2/3">
+        <div className="basis-5/6">
           <div>Self narrative</div>
           {isLoadingUserInfo? "Loading" : initialNarrative}
           
@@ -46,7 +46,6 @@ export const ExplorerPage = () => {
             <Sheet.Container>
               {/* <Sheet.Header /> */}
               <div className="flex flex-row">
-            <div className="basis-1/6"></div>
             <div className="basis-2/3">
             <button onClick={() => setOpen(false)}>Close Sheet</button>
               <Sheet.Content><ThemeBox/></Sheet.Content>

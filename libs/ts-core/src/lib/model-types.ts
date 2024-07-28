@@ -7,14 +7,16 @@ export interface IAIGuide extends Document {
 export interface IQASetBase {
   question: {label?: string; content: string},
   keywords: string[],
+  selected: boolean,
   response: string,
   aiGuides?: IAIGuide[];
   createdAt?: Date;
   updatedAt?: Date;
 }
 
+
 export interface IQASetWithIds extends IQASetBase {
-  _id: string,
+  _id?: string,
   tid: string
 }
 

@@ -43,12 +43,13 @@ export const QASetSchema = new Schema({
     },
     required: true
   },
+  selected: {type: Boolean, default: false},
   aiGuides: {
     type: [AIGuideSchema],
     default: []
   },
-  keywords: [String],
-  response: String,
+  keywords: {type: [String], default: []},
+  response: {type: String, default: ''},
   createdAt: {type: Date, default: Date.now},
   updatedAt: {type: Date}
  })

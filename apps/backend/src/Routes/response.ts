@@ -8,6 +8,7 @@ import {generateScaffoldingQuestions} from '../Utils/old/generateScaffoldingQues
 import type { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
 import { synthesizeThread } from '../Utils/synthesizeThread';
+import { IQASetBase, IQASetWithIds } from '@core';
 
 var router = express.Router()
 
@@ -28,21 +29,83 @@ const saveResponse = async (req: RequestWithUser, res) => {
   }
 }
 
-const saveQASet = async (req, res) => {
+const createQASet = async (req, res) => {
+  const tid = req.body.tid
+  const qaSet = req.body.qaSet;
+  try {
+    const newQASet = new QASet({
+      tid: tid,
+      question: {content: qaSet.question.content},
+      keywords: [],
+      response: ''
+    }) 
+    const savedQASet= await newQASet.save()
+    await ThreadItem.findByIdAndUpdate(tid, {
+      $push: { questions: savedQASet._id }
+    });
+    res.json({
+      success: true,
+      qaSet: savedQASet._id
+    })
+  } catch (err) {
+    res.json({
+      err: err.message,
+      success: false
+    })
+  }
+}
+
+const updateQASet = async (req, res) => {
+  const qid = req.body.qid
+  const keywords = req.body.keywords
+  const response = req.body.response
+  try {
+    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {keywords: keywords, response: response}})
+    res.json({
+      success: true,
+      qaSet: updatedQASet._id
+    })
+  } catch (err) {
+    res.json({
+      success: false,
+      err: err.message
+    })
+  }
+}
+
+const saveQASetArray = async (req, res) => {
   const tid = req.body.tid
   const qalist = req.body.qalist;
   try {
-    const qaPromises = qalist.map((qa, index) => {
-      const newQASet = new QASet({
-        tid: tid,
-        question: {content: qa.question.content},
-        keywords: qa.keywords,
-        response: qa.response
-      })
-      return newQASet.save()
+    const qaPromises = qalist.map(async (qa, index) => {
+      const updatedQASet = await QASet.findOneAndUpdate(
+        { tid: qa.tid, 'question.content': qa.question.content },
+        {
+          tid: qa.tid,
+          question: { content: qa.question.content },
+          selected: true,
+          keywords: qa.keywords,
+          response: qa.response
+        },
+        { new: true, upsert: true } 
+      );
+      return updatedQASet;
     })
     const savedQASets = await Promise.all(qaPromises);
-    const qaSetIds = savedQASets.map(qa => qa._id);
+    const qaSetIds = savedQASets.map(qa => qa._id.toString());
+    const threadItem = await ThreadItem.findById(tid);
+
+    const existingQaSetIds = threadItem.questions.map(id => id.toString());
+    const uniqueIds = new Set();
+    const combinedQaSetIds = [];
+
+    [...existingQaSetIds, ...qaSetIds].forEach(id => {
+      if (!uniqueIds.has(id)) {
+        uniqueIds.add(id);
+        combinedQaSetIds.push(id);
+      }
+    });
+
     await ThreadItem.findByIdAndUpdate(tid, {
       $push: { questions: { $each: qaSetIds } }
     });
@@ -53,7 +116,8 @@ const saveQASet = async (req, res) => {
     });
 
     res.json({
-      success: true
+      success: true,
+      qaIds: qaSetIds
     })
   } catch (err) {
     res.json({
@@ -154,7 +218,9 @@ router.post('/generateSentences', signedInUserMiddleware, generateSentences);
 router.post('/getScaffoldingQuestions', signedInUserMiddleware, getScaffoldingQuestions);
 router.post('/saveOrientingInput', signedInUserMiddleware, saveOrientingInput);
 router.post('/getThemeScaffoldingKeywords', signedInUserMiddleware, getThemeScaffoldingKeywords)
-router.post('/saveQASet', signedInUserMiddleware, saveQASet)
+router.post('/saveQASetArray', signedInUserMiddleware, saveQASetArray)
+router.post('/createQASet', signedInUserMiddleware, createQASet)
+router.post('/updateQASet', signedInUserMiddleware, updateQASet)
 
 export default router;
 
