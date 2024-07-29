@@ -1,4 +1,4 @@
-export interface IAIGuide extends Document {
+export interface IAIGuide {
   content: string;
   createdAt?: Date;
   updatedAt?: Date;

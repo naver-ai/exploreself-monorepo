@@ -1,16 +1,16 @@
 import { useCallback, useEffect, ChangeEvent, useState } from "react"
-import { Space, Button, Input, Card, Flex, Divider } from "antd"
+import { Space, Button, Input, Card, Flex, Divider, Row, Col } from "antd"
 
 import getThreadData from "../../../api_call/getThreadData"
 import saveThreadItem from "../../../api_call/old/saveThreadItem"
 const {TextArea} = Input;
 import { useSelector } from "../../../redux/hooks"
 import { IThreadWithQuestionIds, IQASetWithIds, IQASetBase } from "@core";
-import {updateResponse, saveQASetArray, selectQuestion} from "../../../api_call/saveQASet";
+import {updateResponse, saveQASetArray, selectQuestion, saveComment} from "../../../api_call/saveQASet";
 import generateQuestions from "../../../api_call/generateQuestions";
 import getKeywords from '../../../api_call/getKeywords'
 import getQuestionData from "../../../api_call/getQuestionData";
-import { generate } from "@langchain/core/dist/utils/fast-json-patch";
+import generateComment from "../../../api_call/generateComment";
 
 const Question = (props:{
   qid: string
@@ -22,7 +22,8 @@ const Question = (props:{
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedResponse, setLastSavedResponse] = useState('');
   const [isActive, setIsActive] = useState(false);
-  const [selected, setSelected] = useState(false)
+  const [selected, setSelected] = useState(false);
+  const [comment, setComment] = useState()
 
   const fetchQuestion = useCallback(async () => {
     const qData = await getQuestionData(token, props.qid)
@@ -32,6 +33,12 @@ const Question = (props:{
     setKeywords(qData.keywords)
     setSelected(qData.selected)
   },[props.qid])
+
+  const fetchComment = useCallback(async () => {
+    const comment = await generateComment(token, props.qid, response)
+    const isSavedComment = await saveComment(token, props.qid, comment.comment) // TODO: combine generateComment + saveComment
+    setComment(comment.comment)
+  },[])
 
   const saveResponse = useCallback(async () => {
     if (response !== lastSavedResponse) {
@@ -55,7 +62,6 @@ const Question = (props:{
   const selectQuestionHandler = useCallback(async () => {
     try {
       const selectedQA = await selectQuestion(token, props.qid)
-      console.log("QA: ", selectedQA)
       setSelected(true)
     } catch (err) {
       console.log("Err in selecting question")
@@ -91,22 +97,25 @@ const Question = (props:{
     <div>
       {question}
       <Button onClick={() => {selectQuestionHandler()}}>Select</Button>
-      <Flex vertical={false}>
         {/* // TODO: AI Feedback  */}
-        {selected && 
-        <div>
-          <Button onClick={() => {fetchKeywordsHandler()}}>Get Keywords</Button>
-          {keywords?.join(', ')}
-          <TextArea 
-          value={response}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          onFocus={handleFocus}
-          />
-        </div>
+        {selected &&
+        <Row>
+          <Col span={20}>
+            <Button onClick={() => {fetchKeywordsHandler()}}>Get Keywords</Button>
+            {keywords?.join(', ')}
+            <TextArea 
+            value={response}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onFocus={handleFocus}
+            />
+          </Col>
+          <Col span={4}>
+            <Button onClick={() => fetchComment()}>Comment</Button>
+            {"Comment: " && comment}
+          </Col>
+        </Row> 
         }
-        
-      </Flex> 
     </div>
   )
 }

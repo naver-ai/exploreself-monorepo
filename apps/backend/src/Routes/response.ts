@@ -8,7 +8,7 @@ import {generateScaffoldingQuestions} from '../Utils/old/generateScaffoldingQues
 import type { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
 import { synthesizeThread } from '../Utils/synthesizeThread';
-import { IQASetBase, IQASetWithIds } from '@core';
+import { IAIGuide, IQASetBase, IQASetWithIds } from '@core';
 import generateKeywords from '../Utils/generateKeywords';
 
 var router = express.Router()
@@ -25,6 +25,21 @@ const saveResponse = async (req: RequestWithUser, res) => {
     })
   } catch (err) {
     res.json({
+      err: err.message
+    })
+  }
+}
+
+const saveComment = async(req: RequestWithUser, res) => {
+  const qid = req.params.qid
+  const comment: IAIGuide = {content: req.body.comment as string}
+  try {
+    await QASet.findByIdAndUpdate(qid, {$push: {aiGuides: comment}})
+    return res.json({
+      success: true
+    })
+  } catch (err) {
+    return res.json({
       err: err.message
     })
   }
@@ -256,6 +271,7 @@ router.post('/updateKeywords', signedInUserMiddleware, updateKeywords)
 // The upper APIs are currently deprecated, and will delete in order
 router.put('/:qid', signedInUserMiddleware, updateResponse)
 router.get('/keywords/:qid', signedInUserMiddleware, getKeywords)
+router.put('/comment/:qid', signedInUserMiddleware, saveComment)
 
 export default router;
 
