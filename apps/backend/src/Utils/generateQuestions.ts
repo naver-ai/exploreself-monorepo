@@ -58,7 +58,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
   const init_info = synthesizeProfilicInfo(userData.initial_narrative, userData.value_set, userData.background)
   
   try {
-    const prev_session_log = await synthesizePrevThreads(uid)
+    const prev_session_log = await synthesizePrevThreads(uid, "question")
     const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: threadData.theme})
     return result.questions;
   } catch (err){

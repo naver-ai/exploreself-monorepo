@@ -13,8 +13,15 @@ const synthesizeThread = async (tid: string, option='default') => {
         Q: {{ set.question.content }}\n
         {% if option == "keyword" and set.keywords %}
           Provided Keywords: {{ set.keywords.join(', ')}}\n
+        {% elif option == "comment" and set.aiGuides %}
+          Previously provided comments: {{ set.aiGuides.join('| ')}}\n
         {% endif %}
         A: {{ set.response }}\n
+      {% endif %}
+      {% if not set.selected %}
+        {% if option == "question" %}
+          [Unselected question] set.question.content
+        {% endif %}
       {% endif %}
     {% endfor %}
   {% else %}

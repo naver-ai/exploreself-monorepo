@@ -80,7 +80,7 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
   const chain = finalPromptTemplate.pipe(structuredLlm)
   const init_info = synthesizeProfilicInfo(user.initial_narrative, user.value_set, user.background)
 
-  const prev_log = await synthesizePrevThreads(user._id)
+  const prev_log = await synthesizePrevThreads(user._id, "comment")
   
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question, current_response_status: response_stat})
   return result
