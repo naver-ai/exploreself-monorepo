@@ -7,6 +7,7 @@ export function emptyStringToUndefinedConverter(value: string | undefined){
 
 export interface IAIGuide extends Document {
   content: string;
+  rateGood?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,6 +29,7 @@ export interface IUserORM extends IUserBase, Document {
 
 export const AIGuideSchema = new Schema({
   content: {type: String},
+  rateGood: {type: Boolean},
   createdAt: {type: Date, default: Date.now},
   updatedAt: {type: Date}
  })

@@ -1,6 +1,5 @@
 import express from 'express';
 import { IThreadORM, QASet, ThreadItem, User } from "../config/schema";
-import generateScaffoldingKeywords from '../Utils/old/generateScaffoldingKeywords'
 import { IInitInfo } from "../config/interface";
 import generateSentencesFromKeywords from "../Utils/old/generateSentencesFromKeywords";
 import generateThemeScaffoldingKeywords from '../Utils/old/generateThemeScaffoldingKeywords'
@@ -8,8 +7,7 @@ import {generateScaffoldingQuestions} from '../Utils/old/generateScaffoldingQues
 import type { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
 import { synthesizeThread } from '../Utils/synthesizeThread';
-import { IAIGuide, IQASetBase, IQASetWithIds } from '@core';
-import generateKeywords from '../Utils/generateKeywords';
+import { IAIGuide } from '@core';
 
 var router = express.Router()
 
@@ -244,20 +242,7 @@ const getThemeScaffoldingKeywords = async(req: RequestWithUser, res) => {
   }
 }
 
-const getKeywords = async(req:RequestWithUser, res) => {
-  const user = req.user
-  const qid = req.params.qid
-  try {
-    const keywords = await generateKeywords(user, qid)
-    return res.json({
-      keywords: keywords
-    })
-  } catch (err) {
-    return res.json({
-      err: err.message
-    })
-  }
-}
+
 
 router.post('/saveResponse', signedInUserMiddleware, saveResponse);
 router.post('/generateSentences', signedInUserMiddleware, generateSentences);
@@ -270,7 +255,6 @@ router.post('/updateQASet', signedInUserMiddleware, updateQASet)
 router.post('/updateKeywords', signedInUserMiddleware, updateKeywords)
 // The upper APIs are currently deprecated, and will delete in order
 router.put('/:qid', signedInUserMiddleware, updateResponse)
-router.get('/keywords/:qid', signedInUserMiddleware, getKeywords)
 router.put('/comment/:qid', signedInUserMiddleware, saveComment)
 
 export default router;

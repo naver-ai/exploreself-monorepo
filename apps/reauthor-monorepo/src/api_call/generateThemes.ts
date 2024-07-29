@@ -2,7 +2,7 @@ import { Http } from "../net/http";
 
 const generateThemes = async (token: string) => {
   try {
-    const response = await Http.axios.get(`/theme/generate`,{
+    const response = await Http.axios.get(`/generate/themes`,{
       headers: Http.makeSignedInHeader(token)
     })
     return response.data.themes

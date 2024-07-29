@@ -3,29 +3,12 @@ import { User } from '../config/schema';
 import generateThemesFromNarrative from '../Utils/old/generateThemesFromNarrative'
 import generateThemesFromRecentResponse from '../Utils/old/generateThemesFromRecentResponse'
 import { IInitInfo } from '../config/interface';
-import generateThemes from '../Utils/generateThemes';
 import { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
 
 
 var router = express.Router()
 
-const generateThemesHandler = async (req: RequestWithUser, res) => {
-  const user = req.user;
-  const uid = user._id
-  try {
-    const themes = await generateThemes(uid)
-    res.json({
-      themes: themes
-    })
-  } catch (err) {
-    res.json({
-      err: err.message
-    })
-  }
-  
-
-}
 const generateInitialThemes = async (req: RequestWithUser, res) => {
   const user = req.user
   const basicInfo: IInitInfo = {
@@ -60,6 +43,5 @@ const generateThemesFromResp = async (req, res) => {
 router.post('/generateInitialThemes', signedInUserMiddleware, generateInitialThemes);
 router.post('/generateThemesFromResp', signedInUserMiddleware, generateThemesFromResp)
 // The upper APIs are currently deprecated, and will delete in order
-router.get('/generate', signedInUserMiddleware, generateThemesHandler)
 
 export default router;

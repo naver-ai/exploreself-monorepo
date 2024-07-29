@@ -1,5 +1,6 @@
 export interface IAIGuide {
   content: string;
+  rateGood: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
