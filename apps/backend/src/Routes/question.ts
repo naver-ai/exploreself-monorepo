@@ -22,33 +22,6 @@ const getQuestionData = async(req: RequestWithUser, res) => {
   }
 }
 
-const generateQuestionsHandler = async (req: RequestWithUser, res) => {
-  const uid = req.user._id;
-  const tid = req.params.tid
-  try {
-    const questions = await generateQuestions(uid, tid)
-    const qaPromises = questions.map(async(question, index) => {
-      const newQASet = new QASet({
-        tid: tid,
-        question: {content: question},
-        selected: false
-      })
-      return newQASet.save()
-    })
-    const savedQASets = await Promise.all(qaPromises);
-    const qaSetIds = savedQASets.map(qa => qa._id)
-    const threadItem = await ThreadItem.findByIdAndUpdate(tid, 
-      {$push: {$each: qaSetIds}}
-    )
-    res.json({
-      questions: savedQASets
-    })
-  } catch (err) {
-    res.json({
-      err: err.message
-    })
-  }
-}
 const generateReflexiveQuestionsController = async (req: RequestWithUser, res) => {
   const user = req.user;
   const uid = user._id
@@ -79,7 +52,6 @@ const selectQuestion = async(req, res) => {
 
 router.get('/:qid', signedInUserMiddleware, getQuestionData )
 router.post('/generateReflexive', signedInUserMiddleware, generateReflexiveQuestionsController);
-router.get('/generate/:tid', signedInUserMiddleware, generateQuestionsHandler)
 router.put('/select/:qid', signedInUserMiddleware, selectQuestion)
 
 export default router;
