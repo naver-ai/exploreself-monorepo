@@ -22,7 +22,7 @@ const generateKeywords = async (user: IUserORM, qid: string) => {
   The user is given a socratic question to think about. However, it's not cogitively easy to answer those questions.
   Therefore, your task is to provide 'keywords' or 'short phrases' that might be useful for user to answer the given question.
   These keywords might act as 1) cognitive scaffolding 2) activate what might have been blind spot of the user 3) what might be relevant to users background and core values 4) and so on.
-  Be aware that these keywords should be user friendly, and be in Korean.
+  Be aware that these keywords should be user friendly, and be in Korean, and try not to overlap with the keyword already provided in this question. 
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty, and the client's background.
@@ -56,9 +56,9 @@ const generateKeywords = async (user: IUserORM, qid: string) => {
   const chain = finalPromptTemplate.pipe(structuredLlm)
   const init_info = synthesizeProfilicInfo(user.initial_narrative, user.value_set, user.background)
 
-  const prev_log = await synthesizePrevThreads(user._id)
-  
+  const prev_log = await synthesizePrevThreads(user._id, "keyword")
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question})
+
   return (result as any).keywords
 
 }

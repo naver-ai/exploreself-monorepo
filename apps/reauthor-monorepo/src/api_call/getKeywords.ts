@@ -2,7 +2,7 @@ import { Http } from "../net/http";
 
 const getKeywords = async (token: string, qid: string): Promise<string[] | null> => {
   try {
-    const response = await Http.axios.get(`/response/keywords/${qid}`,{
+    const response = await Http.axios.get(`/generate/keywords/${qid}`,{
       headers: Http.makeSignedInHeader(token)
     })
     return response.data.keywords.map((item: {keyword: string, rationale: string}) => item.keyword)

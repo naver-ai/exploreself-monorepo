@@ -55,8 +55,8 @@ const Question = (props:{
   }, [response, props.qid, lastSavedResponse]);
 
   const fetchKeywordsHandler = useCallback(async () => {
-    const keywords = await getKeywords(token, props.qid)
-    setKeywords(keywords as Array<string>)
+    const newKeywords = await getKeywords(token, props.qid)
+    setKeywords((prevKeywords) => [...(prevKeywords || []), ...newKeywords as string[]]);
   },[token, props.qid])
 
   const selectQuestionHandler = useCallback(async () => {
