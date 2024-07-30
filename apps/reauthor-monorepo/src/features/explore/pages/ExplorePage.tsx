@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {Sheet} from 'react-modal-sheet'
-import Sidebar from "../components/sidebar";
+import Sidebar from "../components/Sidebar";
 import ThemeBox from "../components/ThemeBox"
 import ThreadBox from "../components/ThreadBox";
-import { Button, Divider, Progress, Spin } from "antd";
+import { Button, Divider, Progress, Spin, Card } from "antd";
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from "../../../redux/hooks";
 import { fetchUserInfo } from "../reducer";
@@ -24,22 +24,22 @@ export const ExplorerPage = () => {
   
   // Redirect to initial narrative page if no initial narrative.
   return (
-    (userId != null && initialNarrative == null) ? <Navigate to="/app/narrative"/> :  <div>
-      <div className="flex flex-row">
-        <div className="basis-1/6">
+    (userId != null && initialNarrative == null) ? <Navigate to="/app/narrative"/> :  
+      <div className="flex flex-row px-4">
+        <div className="basis-1/6  px-4 h-screen">
           <Sidebar/>
-          <Divider/>
           <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>
         </div>
-        <div className="basis-5/6">
-          <div>Self narrative</div>
-          {isLoadingUserInfo? "Loading" : initialNarrative}
+        <div className="basis-5/6 overflow-y-auto h-screen px-4 pb-10">
+          <div className="">
+            <Card title="내 고민">
+              {isLoadingUserInfo? "Loading" : initialNarrative}
+            </Card>            
+          </div>
+          
           
           {/* <SelectedThemes/> */}
-          <div>
-            {threadIds? threadIds.map(threadRef => <div key={threadRef} className="py-1"><ThreadBox /*TODO theme={workingThread.theme}*/ tid={threadRef}/></div>): <div>Loading</div>}
-          </div>
-          {!workingState? <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>: <div></div>}
+          {threadIds? threadIds.map(threadRef => <div key={threadRef} className="py-1"><ThreadBox /*TODO theme={workingThread.theme}*/ tid={threadRef}/></div>): <div>Loading</div>}
           
           <Sheet isOpen={isOpen} onClose={() => setOpen(false)} detent='content-height'>
             <Sheet.Container>
@@ -60,6 +60,5 @@ export const ExplorerPage = () => {
         
         
       </div>
-    </div>
   )
 }

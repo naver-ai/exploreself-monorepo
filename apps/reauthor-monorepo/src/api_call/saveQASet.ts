@@ -3,7 +3,19 @@ import { Http } from "../net/http";
 
 export const selectQuestion = async(token: string, qid: string) => {
   try {
-    const resp = await Http.axios.put(`/question/select/${qid}`, {
+    const resp = await Http.axios.put(`/question/select/${qid}`, {}, {
+      headers: Http.makeSignedInHeader(token)
+    })
+    return resp.data.qaSet
+  } catch (err){
+    console.log("Err in selectQuestion: ", err);
+    return null;
+  }
+}
+
+export const unSelectQuestion = async(token: string, qid: string) => {
+  try {
+    const resp = await Http.axios.put(`/question/unselect/${qid}`, {}, {
       headers: Http.makeSignedInHeader(token)
     })
     return resp.data.qaSet

@@ -40,7 +40,8 @@ export const InitialNarrativePage = () => {
  
   return userId != null && initial_narrative != null && initial_narrative.length > 0 ? <Navigate to="/app"/> : (
     <div>
-      Enter initial narrative: 
+      Each and everyone has their own challenges. Could be things such as conflict with an old friend, being obsessed in diet, etc. 
+      Do you have any story of yours that you would like to understand better? Please write down below! 
       <br/>
       <br/>
       <Form onFinish={handleSubmit(submitNarrative)}>

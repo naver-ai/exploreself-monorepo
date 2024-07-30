@@ -15,5 +15,16 @@ export const SignedInScreenFrame = () => {
         dispatch(fetchUserInfo());
     }, [])
 
-    return <div><Header />{isLoadingUserInfo == true ? <div className="p-10"><Spin tip="Loading..."><div /></Spin></div> : <Outlet />}</div>
+    return (
+    <div>
+        <Header />
+        <div className="pt-14">
+        {isLoadingUserInfo == true ? 
+            <div className="p-10"><Spin tip="Loading..."><div /></Spin></div> : 
+            <Outlet />
+            }
+        </div>
+        
+    </div>
+    )
 }
