@@ -29,7 +29,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty narrative, and the client's background.
   {% if threadLength > 0 %}
-    <previous_session_log>: Logs of sessions before the current session.
+    <previous_session_log>: Logs of sessions before the current session. Try not to overlap with the previously selected themes.
   {% endif %}
 
   `,{threadLength: themeList.length})
