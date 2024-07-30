@@ -17,7 +17,7 @@ const generateQuestionsHandler = async (req: RequestWithUser, res) => {
     const qaPromises = questions.map(async(question, index) => {
       const newQASet = new QASet({
         tid: tid,
-        question: {content: question},
+        question: {content: question.question},
         selected: false
       })
       return newQASet.save()
@@ -25,9 +25,9 @@ const generateQuestionsHandler = async (req: RequestWithUser, res) => {
     const savedQASets = await Promise.all(qaPromises);
     const qaSetIds = savedQASets.map(qa => qa._id)
     const threadItem = await ThreadItem.findByIdAndUpdate(tid, 
-      {$push: {$each: qaSetIds}}
+      {$push: { questions: { $each: qaSetIds } }}
     )
-    res.json({
+    return res.json({
       questions: savedQASets
     })
   } catch (err) {
@@ -41,7 +41,6 @@ const generateGuidelineHandler = async (req: RequestWithUser, res) => {
   const user = req.user
   const qid = req.params.qid
   const response = req.body.response
-  console.log("QID: ", qid)
   try {
     const comments = await generateComment(user, qid, response)
     return res.json({

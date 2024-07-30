@@ -21,11 +21,11 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
   Per each session within the system, the client brings up a Theme in one's narrative that one would like to navigate about.
   
   [Task]
-  Given a client's personal narrative, your task is to generate list of 5 sequential socratic questions and intention of the question in Korean. 
+  Given a client's personal narrative and context, your task is to generate list of "just 3" socratic questions and intention of the question in KOREAN. 
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty, and the client's background.
-  <previous_session_log>: Logs of sessions before the current session.
+  <previous_session_log>: Logs of sessions before the current session. Don't overlap with the previously selected questions!
   <theme_of_session/>: Theme of the current session. 
   `
 
