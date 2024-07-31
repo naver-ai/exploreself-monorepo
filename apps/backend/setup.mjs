@@ -100,7 +100,7 @@ async function setup(){
 
     fs.writeFileSync(envPath, envFileContent, {encoding:'utf-8'})
 
-    fs.copyFileSync(envPath, path.join(process.cwd(), "apps/reauthor-monorepo", ".env"))
+    fs.copyFileSync(envPath, path.join(process.cwd(), "apps/frontend-web", ".env"))
 }
 
 setup().then()
