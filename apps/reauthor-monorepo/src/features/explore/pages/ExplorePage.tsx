@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { OutlinePanel, PinnedThemesPanel } from "../components/sidebar-views";
 import ThemeBox from "../components/ThemeBox"
-import ThreadBox from "../components/ThreadBox";
+import { ThreadBox } from "../components/ThreadBox";
 import { Card, FloatButton, Drawer, Button } from "antd";
 import { BulbOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from "../../../redux/hooks";
@@ -12,6 +12,7 @@ import { LightBulbIcon } from "@heroicons/react/24/solid";
 import { useInView } from "react-intersection-observer";
 import { PartialDarkThemeProvider } from "../../../styles";
 import tailwindColors from 'tailwindcss/colors'
+import { ShortcutManager } from "../../../services/shortcut";
 
 const SidePanel = () => {
 
@@ -44,6 +45,26 @@ export const ExplorerPage = () => {
     dispatch(setThemeSelectorOpen(true))
   }, [])
 
+  const scrollViewRef = useRef<HTMLDivElement>(null)
+
+  const narrativeCardRef = useRef<HTMLDivElement>(null)
+
+
+  useEffect(()=>{
+    const focusRequestSubscription = ShortcutManager.instance.onFocusRequestedEvent.subscribe(event => {
+      switch(event.type){
+        case "narrative":
+          {
+            scrollViewRef.current?.scrollTo({top: 0, behavior: 'smooth'})  
+          }break;
+      }
+    })
+
+    return () => {
+      focusRequestSubscription.unsubscribe()
+    }
+  }, [])
+
   if (userName == null || userName.length == 0) {
     return <Navigate to="/app/profile" />
   } else if (initialNarrative == null || initialNarrative.length == 0) {
@@ -53,10 +74,10 @@ export const ExplorerPage = () => {
       <SidePanel />
     </div>
     <div className="flex-1 relative">
-      <div className="overflow-y-scroll h-screen overflow-x-hidden">
+      <div className="overflow-y-scroll h-screen overflow-x-hidden" ref={scrollViewRef}>
         <ThemeBox />
         <div className="container px-4 md:px-8 py-4 md:py-8 relative">
-          <Card title="처음 적었던 고민">
+          <Card ref={narrativeCardRef} title="처음 적었던 고민">
             <span className="text-gray-600 leading-7">
               {initialNarrative}
             </span>

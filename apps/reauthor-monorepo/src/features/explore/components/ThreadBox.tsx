@@ -1,4 +1,4 @@
-import { useCallback, useEffect, ChangeEvent, useState } from "react"
+import { useCallback, useEffect, ChangeEvent, useState, useRef } from "react"
 import { Space, Button, Input, Card, Flex, Divider, Row, Col, Collapse } from "antd"
 import { PlusOutlined, DeleteOutlined, ReloadOutlined} from '@ant-design/icons';
 import getThreadData from "../../../api_call/getThreadData"
@@ -13,6 +13,7 @@ import generateComment from "../../../api_call/generateComment";
 import { getSelectedQuestionList, getUnselectedQuestionList } from "../../../api_call/get_question_list";
 import getCommentList from "../../../api_call/getCommentList";
 import { current } from "@reduxjs/toolkit";
+import { ShortcutManager } from "../../../services/shortcut";
 
 const SelectedQuestionItem = (props:{
   qid: string
@@ -257,7 +258,7 @@ const UnselectedQuestionList = (props: {
   )
 }
 
-const ThreadBox = (props: {
+export const ThreadBox = (props: {
   tid: string
 }) => {
   const token = useSelector((state) => state.auth.token) as string
@@ -271,18 +272,29 @@ const ThreadBox = (props: {
     }
   }, [props.tid]);
 
-  useEffect(() => {
+  const scrollAnchorRef = useRef<HTMLDivElement>(null)
+
+  useEffect(()=>{
+
     fetchThreadData();   
-  }, []);
+
+    const focusRequestSubscription = ShortcutManager.instance.onFocusRequestedEvent.subscribe(event => {
+      if(event.type == 'thread' && event.id == props.tid)
+      {
+        scrollAnchorRef.current?.scrollIntoView({behavior: 'smooth'})
+      }
+    })
+
+    return () => {
+      focusRequestSubscription.unsubscribe()
+    }
+  }, [props.tid])
 
   return (
-    <div>
-      <Card title={threadData?threadData.theme: "Theme Loading"} className="mt-4">
+      <Card title={threadData?threadData.theme: "Theme Loading"} className="mt-4 relative">
+        <div ref={scrollAnchorRef} className="scroll-anchor absolute -top-6 w-10 h-10"/>
         <SelectedQuestionList tid={props.tid}/>
         <UnselectedQuestionList tid={props.tid}/>
       </Card>
-    </div>
   )
 }
-
-export default ThreadBox;

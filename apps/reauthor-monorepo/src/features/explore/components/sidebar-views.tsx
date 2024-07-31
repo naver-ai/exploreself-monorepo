@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from '../../../redux/hooks'
 import { IThreadWithQuestionIds } from '@core'
 import { ListBulletIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid'
 import { PanelGroup } from '../../../components/PanelGroup'
+import { ShortcutManager } from '../../../services/shortcut'
+
+const OUTLINE_PANEL_CLASS = 'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer'
 
 export const OutlinePanel = () => {
 
@@ -24,10 +27,13 @@ export const OutlinePanel = () => {
   }, [threadIds])
 
   const themeListTimelineItems = useMemo(()=>{
+    
     const timelineItems = threadTitleList?.map(thread => {
-      return {children: thread.theme}
+      return {children: <div className={OUTLINE_PANEL_CLASS} onClick={()=>{
+        ShortcutManager.instance.requestFocus({id: thread._id, type: 'thread'})
+      }}>{thread.theme}</div>}
     }) || []
-    return [{children: '처음 적었던 고민'}].concat(timelineItems)
+    return [{children: <div className={OUTLINE_PANEL_CLASS} onClick={()=>{ShortcutManager.instance.requestFocus({type: 'narrative'})}}>{'처음 적었던 고민'}</div> }].concat(timelineItems as any)
   } ,[threadTitleList])
 
   useEffect(() => {
