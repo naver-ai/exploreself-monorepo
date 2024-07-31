@@ -17,14 +17,16 @@ export const ExplorerPage = () => {
   const workingState = workingThread.tid != ''
 
   const isLoadingUserInfo = useSelector(state => state.explore.isLoadingUserInfo)
-  const userId = useSelector(state => state.explore.userId)
   const initialNarrative = useSelector(state => state.explore.initial_narrative)
+  const userName = useSelector(state => state.explore.name)
   const threadIds = useSelector(state => state.explore.threadRef)
 
-  
-  // Redirect to initial narrative page if no initial narrative.
-  return (
-    (userId != null && initialNarrative == null) ? <Navigate to="/app/narrative"/> :  
+  if(userName == null || userName.length == 0){
+    return <Navigate to="/app/profile"/>
+  }else if(initialNarrative == null || initialNarrative.length == 0){
+    return <Navigate to="/app/narrative"/>
+  } else return (
+    (initialNarrative == null) ? <Navigate to="/app/narrative"/> :  
       <div className="flex flex-row px-4">
         <div className="basis-1/6  px-4 h-screen">
           <Sidebar/>

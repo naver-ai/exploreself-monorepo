@@ -39,14 +39,25 @@ router.get('/', signedInUserMiddleware, async (req: RequestWithUser, res) => {
 
 router.post('/narrative', signedInUserMiddleware, body("init_narrative").exists().trim(), async (req: RequestWithUser, res) => {
   const init_narrative = req.body.init_narrative;
-  console.log(req.user)
   const uid = req.user._id
   const updatedUser = await User.findByIdAndUpdate(uid, {$set: {initial_narrative: init_narrative}})
   res.json({
     initial_narrative: updatedUser.initial_narrative
   })
-
 })
+
+
+router.post('/profile', signedInUserMiddleware, body("name").exists().trim(), async (req: RequestWithUser, res) => {
+  const name = req.body.name;
+  const uid = req.user._id
+  const updatedUser = await User.findByIdAndUpdate(uid, {$set: { name }})
+  console.log('Update User: ', updatedUser)
+  res.json({
+    name: updatedUser.name
+  })
+})
+
+
 router.post('/setValueSet', signedInUserMiddleware, setValueSet)
 router.post('/setBackground', signedInUserMiddleware, setBackground)
 

@@ -6,6 +6,7 @@ import {LoginPage} from "../features/auth/pages/LoginPage"
 import { useVerifyToken } from "../features/auth/hooks"
 import { useEffect } from "react"
 import { SignedInScreenFrame } from "../features/explore/components/SignedInScreenFrame"
+import { ProfilePage } from "../features/explore/pages/ProfilePage"
 
 const SignedInRoute = () => {
     const {verify, isSignedIn} = useVerifyToken()
@@ -46,6 +47,9 @@ export const MainRouter = () => {
                         <Route
                         path="narrative"
                         element={<InitialNarrativePage/>}
+                        />
+                        <Route path="profile"
+                        element={<ProfilePage/>}
                         />
                         <Route
                         path="value"

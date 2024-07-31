@@ -36,19 +36,16 @@ export const InitialNarrativePage = () => {
     }))
   },[])
 
-  console.log(userId, initial_narrative)
- 
   return userId != null && initial_narrative != null && initial_narrative.length > 0 ? <Navigate to="/app"/> : (
-    <div>
-      Each and everyone has their own challenges. Could be things such as conflict with an old friend, being obsessed in diet, etc. 
-      Do you have any story of yours that you would like to understand better? Please write down below! 
-      <br/>
-      <br/>
+    <div className="container-narrow !px-4 !sm:px-8">
+      <p className="mb-2 px-2 font-light">Each and everyone has their own challenges. Could be things such as conflict with an old friend, being obsessed in diet, etc. Do you have any story of yours that you would like to understand better? Please write down below!</p>
       <Form onFinish={handleSubmit(submitNarrative)}>
-          <FormItem control={control} name="narrative">
-            <TextArea rows={4}/>
+          <FormItem control={control} name="narrative" className="mb-4">
+            <TextArea rows={4} placeholder="Describe your challenges."/>
           </FormItem>
-          <Button disabled={!isValid} htmlType="submit">Submit</Button>
+          <div className="flex justify-end">
+            <Button disabled={!isValid} htmlType="submit" type="primary">Submit</Button>
+          </div>
       </Form>
       
     </div>
