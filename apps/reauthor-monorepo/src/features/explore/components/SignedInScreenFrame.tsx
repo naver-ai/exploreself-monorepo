@@ -5,7 +5,7 @@ import { useEffect } from "react"
 import { fetchUserInfo } from "../reducer"
 import { Spin } from "antd"
 
-export const SignedInScreenFrame = () => {
+export const SignedInScreenFrame = (props: {withHeader: boolean}) => {
 
     const dispatch = useDispatch()
 
@@ -15,16 +15,17 @@ export const SignedInScreenFrame = () => {
         dispatch(fetchUserInfo());
     }, [])
 
-    return (
-    <div>
+    return props.withHeader === true ? (
+    <div className="h-screen flex flex-col">
         <Header />
-        <div className="pt-14">
-        {isLoadingUserInfo == true ? 
-            <div className="p-10"><Spin tip="Loading..."><div /></Spin></div> : 
-            <Outlet />
+        <div className="flex-1 overflow-y-hidden relative">
+            {isLoadingUserInfo == true ? 
+                <div className="p-10"><Spin tip="Loading..."><div /></Spin></div> : 
+                <Outlet />
             }
         </div>
-        
     </div>
-    )
+    ) : (isLoadingUserInfo == true ? 
+            <div className="p-10"><Spin tip="Loading..."><div /></Spin></div> : 
+            <Outlet />)
 }

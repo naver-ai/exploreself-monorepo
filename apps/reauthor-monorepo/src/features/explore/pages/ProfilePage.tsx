@@ -35,18 +35,20 @@ export const ProfilePage = () => {
   },[])
 
   return userId != null && userName != null && userName.length > 0 ? <Navigate to="/app"/> : (
-    <div className="container-narrow !px-4 !sm:px-8">
-        <Card title="Please complete your profile.">
-            <Form onFinish={handleSubmit(submitProfile)}>
-                <FormItem control={control} name="name" className="mb-4 h-auto" required label="Please provide the name you would like AI to call you:" 
-                    labelCol={{ span: 24 }}>
-                    <Input id="field-name" placeholder="Your nickname" autoFocus/>
-                </FormItem>
-                <Form.Item className="mb-0 flex justify-end">
-                    <Button disabled={!isValid} htmlType="submit" type="primary">Apply</Button>
-                </Form.Item>
-            </Form>
-        </Card>
+    <div className="h-full overflow-y-scroll">
+        <div className="container-narrow !px-4 !sm:px-8 py-8">
+            <Card title="Please complete your profile.">
+                <Form onFinish={handleSubmit(submitProfile)}>
+                    <FormItem control={control} name="name" className="mb-4 h-auto" required label="Please provide the name you would like AI to call you:" 
+                        labelCol={{ span: 24 }}>
+                        <Input id="field-name" placeholder="Your nickname" autoFocus/>
+                    </FormItem>
+                    <Form.Item className="mb-0 flex justify-end">
+                        <Button disabled={!isValid} htmlType="submit" type="primary">Apply</Button>
+                    </Form.Item>
+                </Form>
+            </Card>
+        </div>
     </div>
   )
 }

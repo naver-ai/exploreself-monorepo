@@ -39,11 +39,13 @@ export const MainRouter = () => {
                     element={<LoginPage/>}
                 />
                 <Route element={<SignedInRoute/>}>
-                    <Route element={<SignedInScreenFrame/>}>
+                    <Route element={<SignedInScreenFrame withHeader={false}/>}>
                         <Route
                         index
                         element={<ExplorerPage/>}
                         />
+                    </Route>
+                    <Route element={<SignedInScreenFrame withHeader={true}/>}>
                         <Route
                         path="narrative"
                         element={<InitialNarrativePage/>}

@@ -37,8 +37,9 @@ export const InitialNarrativePage = () => {
   },[])
 
   return userId != null && initial_narrative != null && initial_narrative.length > 0 ? <Navigate to="/app"/> : (
-    <div className="container-narrow !px-4 !sm:px-8">
-      <p className="mb-2 px-2 font-light">Each and everyone has their own challenges. Could be things such as conflict with an old friend, being obsessed in diet, etc. Do you have any story of yours that you would like to understand better? Please write down below!</p>
+    <div className="h-full overflow-y-scroll">
+    <div className="container-narrow !px-4 !sm:px-8 py-8">
+      <p className="mb-4 px-2 font-light">Each and everyone has their own challenges. Could be things such as conflict with an old friend, being obsessed in diet, etc. Do you have any story of yours that you would like to understand better? Please write down below!</p>
       <Form onFinish={handleSubmit(submitNarrative)}>
           <FormItem control={control} name="narrative" className="mb-4">
             <TextArea rows={4} placeholder="Describe your challenges."/>
@@ -48,6 +49,7 @@ export const InitialNarrativePage = () => {
           </div>
       </Form>
       
+    </div>
     </div>
   )
 }
