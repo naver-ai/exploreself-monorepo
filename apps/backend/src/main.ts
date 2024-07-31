@@ -39,7 +39,7 @@ mongoose.connect(uri + dbName)
       console.log("Create test user...")
       const newUser = await new User({
         alias: "test",
-        name: "송인화",
+        name: undefined,
         passcode: "12345",
         isKorean: true
       }).save()

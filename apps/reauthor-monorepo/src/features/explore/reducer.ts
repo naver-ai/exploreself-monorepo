@@ -187,6 +187,38 @@ export function submitInitialNarrative(
   };
 }
 
+
+
+export function submitUserProfile(
+  profile:{ name: string },
+  onSuccess?: () => void
+): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState();
+
+    if (state.auth.token) {
+      dispatch(exploreSlice.actions.setLoadingUserInfoFlag(true));
+      try {
+        const response = await Http.axios.post(
+          `/user/profile`,
+          profile,
+          {
+            headers: Http.makeSignedInHeader(state.auth.token),
+          }
+        )
+
+        dispatch(exploreSlice.actions.updateUserInfo(response.data))
+
+        onSuccess?.();
+      } catch (err) {
+        console.log('Err in setting profile: ', err);
+      } finally {
+        dispatch(exploreSlice.actions.setLoadingUserInfoFlag(false));
+      }
+    }
+  };
+}
+
 export const {
   updateUserInfo,
   removePinnedTheme,

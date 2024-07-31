@@ -41,7 +41,7 @@ export const InitialNarrativePage = () => {
       <p className="mb-2 px-2 font-light">Each and everyone has their own challenges. Could be things such as conflict with an old friend, being obsessed in diet, etc. Do you have any story of yours that you would like to understand better? Please write down below!</p>
       <Form onFinish={handleSubmit(submitNarrative)}>
           <FormItem control={control} name="narrative" className="mb-4">
-            <TextArea rows={4} placeholder="Describe your challenges." autoFocus/>
+            <TextArea rows={4} placeholder="Describe your challenges."/>
           </FormItem>
           <div className="flex justify-end">
             <Button disabled={!isValid} htmlType="submit" type="primary">Submit</Button>
