@@ -54,7 +54,7 @@ export const ExplorerPage = () => {
             getContainer={false}
             rootStyle={{ position: 'absolute', height: '100vh' }}
           >
-            <ThemeBox/>
+            <ThemeBox setOpen={setOpen}/>
           </Drawer>
           <div className="container px-4 md:px-8 py-4 md:py-8">
             

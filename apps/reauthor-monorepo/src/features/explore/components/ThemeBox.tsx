@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import type { RadioChangeEvent } from 'antd';
-import { Button, Radio, Space, Input } from 'antd';
+import { Button, Row, Space, Col } from 'antd';
 import {addPinnedTheme, fetchUserInfo, resetPinnedThemes, setWorkingThread} from '../reducer'
 import createThreadItem from '../../../api_call/createThreadItem';
 import { MdBookmarkBorder } from "react-icons/md";
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import generateThemes from '../../../api_call/generateThemes';
+import { CloseOutlined} from '@ant-design/icons';
 
-const ThemeBox = () => {
+const ThemeBox = (props:{
+  setOpen: (open: boolean) => void
+}) => {
   const [themes, setThemes] = useState([]);
   const [respThemes, setRespThemes] = useState([]);
   const [selected, setSelected] = useState<string>('');
@@ -53,35 +56,28 @@ const ThemeBox = () => {
     <div>
       {themes?.length?
       <div>
-      <Space direction='vertical'>
-      {themes.map((themeItem: { theme: string; quote: string }, index) => 
-        <div key={index} className="flex items-center space-x-2">
-          <div 
-            onClick={() => onChangeSelect(themeItem.theme)}
-            className={`cursor-pointer ${selected === themeItem.theme ? 'bg-blue-500 text-white' : ''}`}
-          >
-            {themeItem.theme}
-          </div>
-          <MdBookmarkBorder onClick={() => handleAddPinnedTheme(themeItem.theme)} className="cursor-pointer"/>
+        <div className="w-full flex justify-end">
+          <Button type="text" icon={<CloseOutlined/>} onClick={() => props.setOpen(false)}/>
         </div>
-        )}
-      </Space>
-      {/* <Radio.Group onChange={onChange} value={selected}>
-        <Space direction="vertical">
+        <Space direction='vertical' className="w-full pt-3">
+        
         {themes.map((themeItem: { theme: string; quote: string }, index) => 
-        <div>
-          <Radio value={themeItem.theme}>{themeItem.theme}</Radio>
-          <MdBookmarkBorder onClick={() => handleAddPinnedTheme(themeItem.theme)}/>
-        </div>
-        )}
+          <Col className="border-2 border-slate-300 w-full rounded-lg p-3">
+            <Row key={index} className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md" onClick={() => onChangeSelect(themeItem.theme)} justify="space-between">
+              <Col className="pl-2">
+                {themeItem.theme}
+              </Col>
+              <Col>
+              <Button icon={<MdBookmarkBorder/>}onClick={() => handleAddPinnedTheme(themeItem.theme)} size="small" type="text" className="text-[10px]"> 저장해두기</Button>
+                {/* <MdBookmarkBorder onClick={() => handleAddPinnedTheme(themeItem.theme)} className="cursor-pointer"/> */}
+              </Col>
+            </Row>
+            <Row className="w-full">
+              <Button className="w-full mt-2 text-gray-500 text-xs"type="text" size="small">+ 다른 표현 보기</Button>
+            </Row>
+          </Col>
+          )}
         </Space>
-        <Space direction="vertical">
-        {respThemes.map((themeItem: { theme: string; quote: string }) => 
-        <Radio value={themeItem.theme}>{themeItem.theme}</Radio>)}
-        <Radio value={inputValue}><Input style={{ width: 100, marginLeft: 10 }} onChange={onInputChange}/></Radio>
-        </Space>
-      </Radio.Group> */}
-      <Button onClick={onSubmit}>Selected</Button>
       </div>
       
       :"Loading themes"}

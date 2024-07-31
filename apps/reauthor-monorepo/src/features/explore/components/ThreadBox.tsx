@@ -278,8 +278,8 @@ const ThreadBox = (props: {
   return (
     <div>
       <Card title={threadData?threadData.theme: "Theme Loading"} className="mt-4">
-        <UnselectedQuestionList tid={props.tid}/>
         <SelectedQuestionList tid={props.tid}/>
+        <UnselectedQuestionList tid={props.tid}/>
       </Card>
     </div>
   )
