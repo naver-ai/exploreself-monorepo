@@ -47,8 +47,8 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
 
   const questionSchema = z.object({
     questions: z.array(z.object({
-      question: z.string().describe('Socratic question to be provided to the user.'),
-      intention: z.string().describe('Therapeutic intention of asking the question to the client.')
+      question: z.string().describe('Socratic question to be provided to the user. (in Korean)'),
+      intention: z.string().describe('Therapeutic intention of asking the question to the client. (in Korean)')
     }))
   })
   
