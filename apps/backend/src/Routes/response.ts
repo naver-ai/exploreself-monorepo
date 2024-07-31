@@ -206,7 +206,7 @@ const generateSentences = async (req: RequestWithUser, res) => {
   //TODO fix new use schema issue
   const sentences = await generateSentencesFromKeywords(initInfo, thread as any, question, selected_keywords)
   res.json({
-    generated_sentences: sentences.plausible_answers
+    generated_sentences: (sentences as any).plausible_answers
   })
 }
 

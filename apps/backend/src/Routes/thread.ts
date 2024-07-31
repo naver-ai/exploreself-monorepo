@@ -104,7 +104,6 @@ const getThreadData = async (req: RequestWithUser, res) => {
         { $push: { questions: { $each: qaSetIds } } },
         { new: true }
       ).populate('questions') as IThreadORM & {questions: Array<IQASetORM>};
-      
 
       return res.json({
         threadData: updatedThread
