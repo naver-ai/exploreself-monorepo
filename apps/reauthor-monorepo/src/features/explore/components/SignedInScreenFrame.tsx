@@ -16,12 +16,12 @@ export const SignedInScreenFrame = () => {
     }, [])
 
     return (
-    <div>
+    <div className="h-screen flex flex-col">
         <Header />
-        <div className="pt-14">
-        {isLoadingUserInfo == true ? 
-            <div className="p-10"><Spin tip="Loading..."><div /></Spin></div> : 
-            <Outlet />
+        <div className="flex-1 overflow-y-hidden relative">
+            {isLoadingUserInfo == true ? 
+                <div className="p-10"><Spin tip="Loading..."><div /></Spin></div> : 
+                <Outlet />
             }
         </div>
         

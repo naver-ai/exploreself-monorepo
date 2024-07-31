@@ -8,14 +8,16 @@ import store from '../redux/store';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n/i18n';
 import { MainRouter } from './router';
+import { ConfigProvider } from 'antd';
+import { theme } from '../styles';
 
 const App: FC = () => {
 
-  return <I18nextProvider i18n={i18n}>
+  return <ConfigProvider theme={theme}><I18nextProvider i18n={i18n}>
     <Provider store={store}>
       <MainRouter/>
     </Provider>
-  </I18nextProvider>
+  </I18nextProvider></ConfigProvider>
 }
 
 export default App;

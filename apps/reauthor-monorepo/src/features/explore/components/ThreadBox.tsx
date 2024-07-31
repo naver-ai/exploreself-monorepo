@@ -157,7 +157,7 @@ const UnselectedQuestionItem = (props:{
   },[])
 
   return (
-    <Flex vertical={false} align="center" justify="space-between" className="border-2 border-[#B9DBDC]-600 rounded px-5 py-2 my-2">
+    <Flex vertical={false} align="center" justify="space-between" className="border-[1px] shadow border-[#B9DBDC]-600 rounded-lg px-5 py-2 my-2">
       {question}
       <Flex>
       <Button onClick={() => selectQuestionHandler()} icon={<PlusOutlined/>} shape="circle"/>
@@ -248,7 +248,7 @@ const ThreadBox = (props: {
 
   return (
     <div>
-      <Card title={threadData?threadData.theme: "Theme Loading"}>
+      <Card title={threadData?threadData.theme: "Theme Loading"} className="mt-4">
         <UnselectedQuestionList tid={props.tid}/>
         <SelectedQuestionList tid={props.tid}/>
       </Card>

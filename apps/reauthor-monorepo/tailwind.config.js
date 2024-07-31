@@ -17,7 +17,14 @@ module.exports = {
       },
       container: {
         padding: 0,
-        center: true
+        center: true,
+        screens: {
+          sm: '640px',
+          md: '720px',
+          lg: '720px',
+          xl: '840px',
+          '2xl': '840px',
+        },
       }
     },
   },

@@ -27,40 +27,40 @@ export const ExplorerPage = () => {
     return <Navigate to="/app/narrative"/>
   } else return (
     (initialNarrative == null) ? <Navigate to="/app/narrative"/> :  
-      <div className="flex flex-row px-4">
-        <div className="basis-1/6  px-4 h-screen">
+      <div className="h-full flex flex-row flex-1 justify-stretch">
+        <div className="basis-1/6 min-w-[200px]  px-4 overflow-y-auto bg-white border-r-[1px]">
           <Sidebar/>
           <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>
         </div>
-        <div className="basis-5/6 overflow-y-auto h-screen px-4 pb-10">
-          <div className="">
-            <Card title="내 고민">
-              {isLoadingUserInfo? "Loading" : initialNarrative}
-            </Card>            
+        <div className="flex-1 overflow-y-auto">
+          <div className="container px-4 md:px-8 py-4 md:py-8">
+              <Card title="내 고민">
+                {isLoadingUserInfo? "Loading" : initialNarrative}
+              </Card>
+            
+            
+            {/* <SelectedThemes/> */}
+            {threadIds? threadIds.map(threadRef => <div key={threadRef} className="py-1"><ThreadBox /*TODO theme={workingThread.theme}*/ tid={threadRef}/></div>): <div>Loading</div>}
+            
+            <Sheet isOpen={isOpen} onClose={() => setOpen(false)} detent='content-height'>
+              <Sheet.Container>
+                {/* <Sheet.Header /> */}
+                <div className="flex flex-row">
+              <div className="basis-2/3">
+              <button onClick={() => setOpen(false)}>Close Sheet</button>
+                <Sheet.Content><ThemeBox/></Sheet.Content>
+                </div>
+              <div className="basis-1/6"></div>
+              </div>
+              </Sheet.Container>
+              <Sheet.Backdrop />
+            </Sheet>       
           </div>
           
+          {/* <div className="basis-1/6">Value Set: {userInfo? userInfo.value_set.join(', '): ""}</div> */}
           
-          {/* <SelectedThemes/> */}
-          {threadIds? threadIds.map(threadRef => <div key={threadRef} className="py-1"><ThreadBox /*TODO theme={workingThread.theme}*/ tid={threadRef}/></div>): <div>Loading</div>}
           
-          <Sheet isOpen={isOpen} onClose={() => setOpen(false)} detent='content-height'>
-            <Sheet.Container>
-              {/* <Sheet.Header /> */}
-              <div className="flex flex-row">
-            <div className="basis-2/3">
-            <button onClick={() => setOpen(false)}>Close Sheet</button>
-              <Sheet.Content><ThemeBox/></Sheet.Content>
-              </div>
-            <div className="basis-1/6"></div>
-            </div>
-            </Sheet.Container>
-            <Sheet.Backdrop />
-          </Sheet>       
         </div>
-        
-        {/* <div className="basis-1/6">Value Set: {userInfo? userInfo.value_set.join(', '): ""}</div> */}
-        
-        
       </div>
   )
 }
