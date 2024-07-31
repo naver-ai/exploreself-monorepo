@@ -1,7 +1,7 @@
 import express from 'express';
 import { User } from '../config/schema';
-import generateThemesFromNarrative from '../Utils/old/generateThemesFromNarrative'
-import generateThemesFromRecentResponse from '../Utils/old/generateThemesFromRecentResponse'
+import generateThemesFromNarrative from '../utils/old/generateThemesFromNarrative'
+import generateThemesFromRecentResponse from '../utils/old/generateThemesFromRecentResponse'
 import { IInitInfo } from '../config/interface';
 import { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';

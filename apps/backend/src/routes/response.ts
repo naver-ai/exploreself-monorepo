@@ -1,12 +1,12 @@
 import express from 'express';
 import { IThreadORM, QASet, ThreadItem, User } from "../config/schema";
 import { IInitInfo } from "../config/interface";
-import generateSentencesFromKeywords from "../Utils/old/generateSentencesFromKeywords";
-import generateThemeScaffoldingKeywords from '../Utils/old/generateThemeScaffoldingKeywords'
-import {generateScaffoldingQuestions} from '../Utils/old/generateScaffoldingQuestions'
+import generateSentencesFromKeywords from "../utils/old/generateSentencesFromKeywords";
+import generateThemeScaffoldingKeywords from '../utils/old/generateThemeScaffoldingKeywords'
+import {generateScaffoldingQuestions} from '../utils/old/generateScaffoldingQuestions'
 import type { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
-import { synthesizeThread } from '../Utils/synthesizeThread';
+import { synthesizeThread } from '../utils/synthesizeThread';
 import { IAIGuide } from '@core';
 
 var router = express.Router()
@@ -206,7 +206,7 @@ const generateSentences = async (req: RequestWithUser, res) => {
   //TODO fix new use schema issue
   const sentences = await generateSentencesFromKeywords(initInfo, thread as any, question, selected_keywords)
   res.json({
-    generated_sentences: sentences.plausible_answers
+    generated_sentences: (sentences as any).plausible_answers
   })
 }
 

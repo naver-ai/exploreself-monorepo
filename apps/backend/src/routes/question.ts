@@ -1,7 +1,6 @@
 import express from 'express';
 import { IQASetORM, IThreadORM, QASet, ThreadItem, User } from '../config/schema';
-import { generateReflexiveQuestions } from '../Utils/old/generateReflexiveQuestions';
-import generateQuestions from '../Utils/generateQuestions';
+import { generateReflexiveQuestions } from '../utils/old/generateReflexiveQuestions';
 import type {RequestWithUser} from './middlewares'
 import { signedInUserMiddleware } from './middlewares';
 

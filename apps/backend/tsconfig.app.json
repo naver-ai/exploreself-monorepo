@@ -9,11 +9,5 @@
     "esModuleInterop": true
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": [
-    "src/**/*.ts",
-    "src/oldUtils/questionChain/generateThemes.ts",
-    "src/Utils/hcx/hcxChatCompletionExecutor.ts", 
-    "src/oldControllers/themeController.ts",
-    "src/oldControllers/hcxChatCompletion.ts", 
-    "src/routes/testRoute.ts"]
+  "include": ["src/**/*.ts"]
 }

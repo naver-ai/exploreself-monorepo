@@ -1,9 +1,9 @@
 import express from 'express';
 import { IThreadORM, ThreadItem, User, IQASetORM, QASet } from '../config/schema';
-import synthesizeSession from "../Utils/old/synthesizeSession";
+import synthesizeSession from "../utils/old/synthesizeSession";
 import { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
-import generateQuestions from '../Utils/generateQuestions';
+import generateQuestions from '../utils/generateQuestions';
 
 var router = express.Router()
 
