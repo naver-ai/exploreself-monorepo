@@ -29,3 +29,7 @@ body{
 .ant-card{
     @apply shadow-xl
 }
+
+.ant-timeline-item-content{
+    @apply text-[0.85rem];
+}

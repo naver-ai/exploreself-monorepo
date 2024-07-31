@@ -17,7 +17,6 @@ export const ExplorerPage = () => {
   const workingThread = useSelector((state) => state.explore.working_thread)
   const workingState = workingThread.tid != ''
 
-  const isLoadingUserInfo = useSelector(state => state.explore.isLoadingUserInfo)
   const initialNarrative = useSelector(state => state.explore.initial_narrative)
   const userName = useSelector(state => state.explore.name)
   const threadIds = useSelector(state => state.explore.threadRef)
@@ -40,8 +39,10 @@ export const ExplorerPage = () => {
         </div>
         <div className="flex-1 overflow-y-auto">
           <div className="container px-4 md:px-8 py-4 md:py-8">
-              <Card title="내 고민">
-                {isLoadingUserInfo? "Loading" : initialNarrative}
+              <Card title="나의 고민">
+                <span className="text-gray-600 leading-7">
+                  {initialNarrative}
+                </span>
               </Card>
             
             

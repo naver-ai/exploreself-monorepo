@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
-import getThreadTitleList from '../../../api_call/old/getThreadTitleList' 
-import { IThreadItem } from 'apps/reauthor-monorepo/src/config/interface'
-import { Divider } from 'antd'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import getThreadTitleList from '../../../api_call/old/getThreadTitleList'
+import { Divider, Timeline } from 'antd'
 import createThreadItem from '../../../api_call/createThreadItem'
 import {fetchUserInfo, removePinnedTheme} from '../reducer'
 import { useDispatch, useSelector } from '../../../redux/hooks'
@@ -25,6 +24,12 @@ const Sidebar = () => {
       }
   }, [threadIds])
 
+  const themeListTimelineItems = useMemo(()=>{
+    return threadTitleList?.map(thread => {
+      return {children: thread.theme}
+    }) || []
+  } ,[threadTitleList])
+
   const uid = useSelector((state) => state.explore.userId)
   const pinnedThemes = useSelector((state) => state.explore.pinned_themes)
   
@@ -42,8 +47,8 @@ const Sidebar = () => {
   
   return (
     <div className='m-2'>
-      <div className='font-bold text-sm my-3 flex items-center gap-1'><ListBulletIcon className='w-4 h-4'/><span>목차</span></div>
-      {threadTitleList?.map((item, i) => <div key={i}>- {item.theme}</div>)}
+      <div className='font-bold text-sm my-3 flex items-center gap-1 mb-5'><ListBulletIcon className='w-4 h-4'/><span>개요</span></div>
+      <Timeline className='px-1' items={themeListTimelineItems}/>
       <Divider/>
       <div>Pinned themes: </div>
       {pinnedThemes?.map((theme, i) => 
