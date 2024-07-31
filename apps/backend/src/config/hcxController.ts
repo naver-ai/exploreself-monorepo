@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { ChatCompletionRequest, CompletionRequest } from './interface';
-import hcxCompExecutor from '../Utils/hcx/hcxCompExecutor';
-import hcxChatCompletionExecutor from '../Utils/hcx/hcxChatCompletionExecutor';
+import hcxCompExecutor from '../utils/hcx/hcxCompExecutor';
+import hcxChatCompletionExecutor from '../utils/hcx/hcxChatCompletionExecutor';
 
 const hcxCompletion = async (req: Request, res: Response) => {
 
