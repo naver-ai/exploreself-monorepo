@@ -6,11 +6,7 @@ import { signOut } from "../../auth/reducer"
 export const UserAvatar = (props:{
     buttonClassName?: string
 }) => {
-
-
     const userName = useSelector(state => state.explore.name)
-
-    console.log(userName)
 
     const dispatch = useDispatch()
 
@@ -19,7 +15,7 @@ export const UserAvatar = (props:{
             items: [{
                 key: 'logout',
                 danger: true,
-                label: "Sign Out"
+                label: "로그아웃"
             }],
             onClick: (ev) => {
                 switch (ev.key) {

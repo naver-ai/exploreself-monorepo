@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IThreadItem } from '../../config/interface';
+import { IThreadItem } from '../../config/types';
 import { IUserBase, IUserWithThreadIds } from '@core';
-import { AppThunk } from '../../redux/store';
 import { jwtDecode } from 'jwt-decode';
 import { Http } from '../../net/http';
+import { AppThunk } from '../../redux/store';
 
 export interface IEvent {
   type: string;
@@ -19,6 +19,7 @@ export type IExploreState = {
   question_stack: string[];
   pinned_themes: string[];
   working_thread: IThreadItem;
+  isThemeSelectorOpen: boolean
 } & Omit<
   IUserWithThreadIds,
   '_id' | 'passcode' | 'alias' | 'createdAt' | 'updatedAt'
@@ -33,6 +34,7 @@ const initialState: IExploreState = {
   value_set: [],
   background: undefined,
   threadRef: [],
+  isThemeSelectorOpen: false,
 
   event_history: [], // TODO: experiment with chat-log, or plain text
   // History type: typical Q&A log, memo, active update (change in response), keyword selection,
@@ -61,6 +63,10 @@ const exploreSlice = createSlice({
       if (action.payload._id != null) {
         state.userId = action.payload._id;
       }
+    },
+
+    setThemeSelectorOpen: (state, action: PayloadAction<boolean>) => {
+      state.isThemeSelectorOpen = action.payload
     },
 
     setLoadingUserInfoFlag: (state, action: PayloadAction<boolean>) => {
@@ -230,5 +236,6 @@ export const {
   updateEventHistory,
   addQuestionStack,
   popQuestionStack,
+  setThemeSelectorOpen
 } = exploreSlice.actions;
 export default exploreSlice.reducer;

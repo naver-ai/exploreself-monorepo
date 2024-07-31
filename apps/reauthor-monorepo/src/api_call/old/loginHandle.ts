@@ -1,4 +1,4 @@
-import { IUser } from "../../config/interface";
+import { IUser } from "../../config/types";
 import { Http } from "../../net/http";
 
 const loginHandle = async (name: string, ucode: string, isKorean: boolean): Promise<{success: boolean, user: IUser, new: boolean} | null> => {

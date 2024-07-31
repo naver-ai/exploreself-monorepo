@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import type { RadioChangeEvent } from 'antd';
-import { Button, Row, Space, Col } from 'antd';
-import {addPinnedTheme, fetchUserInfo, resetPinnedThemes, setWorkingThread} from '../reducer'
+import { Button, Row, Space, Col, Drawer } from 'antd';
+import {addPinnedTheme, fetchUserInfo, resetPinnedThemes, setThemeSelectorOpen, setWorkingThread} from '../reducer'
 import createThreadItem from '../../../api_call/createThreadItem';
 import { MdBookmarkBorder } from "react-icons/md";
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import generateThemes from '../../../api_call/generateThemes';
 import { CloseOutlined} from '@ant-design/icons';
 
-const ThemeBox = (props:{
-  setOpen: (open: boolean) => void
-}) => {
+const ThemeBox = () => {
+
+  const isOpen = useSelector(state=>state.explore.isThemeSelectorOpen)
+
   const [themes, setThemes] = useState([]);
   const [respThemes, setRespThemes] = useState([]);
   const [selected, setSelected] = useState<string>('');
@@ -48,16 +49,27 @@ const ThemeBox = (props:{
     // TODO: Dispatch working thread id
   }
 
+  const onCloseThemeSelector = useCallback(()=>{
+    dispatch(setThemeSelectorOpen(false))
+  }, [])
+
   useEffect(() => {
     fetchInitThemes();
   },[fetchInitThemes])
 
-  return (
+  return (<Drawer
+    placement="left"
+    closable={false}
+    onClose={onCloseThemeSelector}
+    open={isOpen}
+    getContainer={false}
+    rootStyle={{ position: 'absolute', height: '100vh' }}
+  >
     <div>
       {themes?.length?
       <div>
         <div className="w-full flex justify-end">
-          <Button type="text" icon={<CloseOutlined/>} onClick={() => props.setOpen(false)}/>
+          <Button type="text" icon={<CloseOutlined/>} onClick={onCloseThemeSelector}/>
         </div>
         <Space direction='vertical' className="w-full pt-3">
         
@@ -81,7 +93,7 @@ const ThemeBox = (props:{
       </div>
       
       :"Loading themes"}
-    </div>
+    </div></Drawer>
   )
 }
 
