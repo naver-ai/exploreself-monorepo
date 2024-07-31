@@ -38,9 +38,13 @@ const SelectedQuestionItem = (props:{
   const fetchCommentList = useCallback(async() => {
     const commentList = await getCommentList(token, props.qid)
     setCommentList(commentList)
-    if (commentList){
+    if (commentList && commentList.length > 0){
       const currentComment = commentList[commentList.length-1]
       setComment(currentComment)
+    } else {
+      const comment = await generateComment(token, props.qid, response)
+      const isSavedComment = await saveComment(token, props.qid, comment.comment)
+      await fetchCommentList();
     }
   },[])
 

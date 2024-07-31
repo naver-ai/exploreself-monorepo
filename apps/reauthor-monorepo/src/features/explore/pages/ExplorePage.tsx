@@ -3,17 +3,18 @@ import {Sheet} from 'react-modal-sheet'
 import Sidebar from "../components/Sidebar";
 import ThemeBox from "../components/ThemeBox"
 import ThreadBox from "../components/ThreadBox";
-import { Button, Divider, Progress, Spin, Card } from "antd";
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { Button, Divider, Progress, Spin, Card, FloatButton, Drawer } from "antd";
+import { PlusCircleOutlined, BulbOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from "../../../redux/hooks";
 import { fetchUserInfo } from "../reducer";
 import { Navigate } from "react-router-dom";
 import { UserAvatar } from "../components/UserAvatar";
 
+
 export const ExplorerPage = () => {
 
   // TODO: get threadIds from DB, not redux
-  const [isOpen, setOpen] = useState(false)
+  const [isOpen, setOpen] = useState<boolean>(false)
   const workingThread = useSelector((state) => state.explore.working_thread)
   const workingState = workingThread.tid != ''
 
@@ -35,33 +36,35 @@ export const ExplorerPage = () => {
           </div>
           <hr/>
           <Sidebar/>
-          <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>
+          <FloatButton
+            icon={<BulbOutlined />}
+            description="주제들 보기"
+            shape="square"
+            className="fixed left-6 bottom-6 w-20 p-3"
+            type="primary"
+            onClick={() => setOpen(true)}
+            />
         </div>
         <div className="flex-1 overflow-y-auto">
-          <div className="container px-4 md:px-8 py-4 md:py-8">
-              <Card title="나의 고민">
-                <span className="text-gray-600 leading-7">
-                  {initialNarrative}
-                </span>
-              </Card>
-            
-            
-            {/* <SelectedThemes/> */}
+
+          <div className="container px-4 md:px-8 py-4 md:py-8 relative">
+            <Drawer
+              placement="left"
+              closable={false}
+              onClose={() => setOpen(false)}
+              open={isOpen}
+              getContainer={false}
+              rootStyle={{ position: 'absolute', height: '100vh' }}
+            >
+              <ThemeBox/>
+            </Drawer>
+            <Card title="처음 적었던 고민">
+              <span className="text-gray-600 leading-7">
+                {initialNarrative}
+              </span>
+            </Card>
             {threadIds? threadIds.map(threadRef => <div key={threadRef} className="py-1"><ThreadBox /*TODO theme={workingThread.theme}*/ tid={threadRef}/></div>): <div>Loading</div>}
-            
-            <Sheet isOpen={isOpen} onClose={() => setOpen(false)} detent='content-height'>
-              <Sheet.Container>
-                {/* <Sheet.Header /> */}
-                <div className="flex flex-row">
-              <div className="basis-2/3">
-              <button onClick={() => setOpen(false)}>Close Sheet</button>
-                <Sheet.Content><ThemeBox/></Sheet.Content>
-                </div>
-              <div className="basis-1/6"></div>
-              </div>
-              </Sheet.Container>
-              <Sheet.Backdrop />
-            </Sheet>       
+
           </div>
           
           {/* <div className="basis-1/6">Value Set: {userInfo? userInfo.value_set.join(', '): ""}</div> */}
