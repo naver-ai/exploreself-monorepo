@@ -45,19 +45,19 @@ export const ExplorerPage = () => {
             onClick={() => setOpen(true)}
             />
         </div>
-        <div className="flex-1 overflow-y-auto">
-
-          <div className="container px-4 md:px-8 py-4 md:py-8 relative">
-            <Drawer
-              placement="left"
-              closable={false}
-              onClose={() => setOpen(false)}
-              open={isOpen}
-              getContainer={false}
-              rootStyle={{ position: 'absolute', height: '100vh' }}
-            >
-              <ThemeBox/>
-            </Drawer>
+        <div className="flex-1 overflow-y-auto relative">
+          <Drawer
+            placement="left"
+            closable={false}
+            onClose={() => setOpen(false)}
+            open={isOpen}
+            getContainer={false}
+            rootStyle={{ position: 'absolute', height: '100vh' }}
+          >
+            <ThemeBox/>
+          </Drawer>
+          <div className="container px-4 md:px-8 py-4 md:py-8">
+            
             <Card title="처음 적었던 고민">
               <span className="text-gray-600 leading-7">
                 {initialNarrative}
