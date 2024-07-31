@@ -28,7 +28,7 @@ export const Header = () => {
     }, [])
     
     return <div className="bg-white shadow-sm shadow-slate-600/20 flex justify-between items-center fixed w-full max-w-full">
-        <div className="ml-2 font-bold text-gray-600">MeScape</div>
+        <div className="ml-2 font-bold text-gray-600">MeSense</div>
         <Dropdown menu={menuData}>
             <Button className="my-1 mr-1 rounded-full border-none">{userName}</Button>
         </Dropdown>

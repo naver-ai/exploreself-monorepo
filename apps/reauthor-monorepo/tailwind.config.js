@@ -14,6 +14,10 @@ module.exports = {
     extend: {
       colors: {
         'border': '#B9DBDC'
+      },
+      container: {
+        padding: 0,
+        center: true
       }
     },
   },
