@@ -18,6 +18,10 @@ html{
     background: #f5f4f4;
 }
 
+body{
+    @apply text-gray-600;
+}
+
 .container-narrow{
     @apply container max-w-[640px];
 }

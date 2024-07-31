@@ -7,6 +7,7 @@ import {fetchUserInfo, removePinnedTheme} from '../reducer'
 import { useDispatch, useSelector } from '../../../redux/hooks'
 import { title } from 'process'
 import { IThreadWithQuestionIds } from '@core'
+import { ListBulletIcon } from '@heroicons/react/20/solid'
 
 
 const Sidebar = () => {
@@ -40,8 +41,8 @@ const Sidebar = () => {
   }, [uid])
   
   return (
-    <div>
-      <div>Outline: </div>
+    <div className='m-2'>
+      <div className='font-bold text-sm my-3 flex items-center gap-1'><ListBulletIcon className='w-4 h-4'/><span>목차</span></div>
       {threadTitleList?.map((item, i) => <div key={i}>- {item.theme}</div>)}
       <Divider/>
       <div>Pinned themes: </div>

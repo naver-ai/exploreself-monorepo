@@ -8,6 +8,7 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from "../../../redux/hooks";
 import { fetchUserInfo } from "../reducer";
 import { Navigate } from "react-router-dom";
+import { UserAvatar } from "../components/UserAvatar";
 
 export const ExplorerPage = () => {
 
@@ -27,8 +28,13 @@ export const ExplorerPage = () => {
     return <Navigate to="/app/narrative"/>
   } else return (
     (initialNarrative == null) ? <Navigate to="/app/narrative"/> :  
-      <div className="h-full flex flex-row flex-1 justify-stretch">
-        <div className="basis-1/6 min-w-[200px]  px-4 overflow-y-auto bg-white border-r-[1px]">
+      <div className="h-screen flex justify-stretch">
+        <div className="basis-1/6 min-w-[200px] lg:min-w-[300px] overflow-y-auto bg-white border-r-[1px]">
+          <div className="flex justify-between p-2 items-center">
+            <span className="text-sm font-bold">MeSense</span>
+            <UserAvatar buttonClassName=""/>
+          </div>
+          <hr/>
           <Sidebar/>
           <Button shape="circle" icon={<PlusCircleOutlined />} onClick={() => setOpen(true)}/>
         </div>

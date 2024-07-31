@@ -9,6 +9,7 @@
   },
   "private": true,
   "dependencies": {
+    "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
     "@langchain/core": "^0.2.18",
     "@langchain/openai": "^0.1.3",
