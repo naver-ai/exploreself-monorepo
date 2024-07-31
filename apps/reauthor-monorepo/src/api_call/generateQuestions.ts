@@ -1,8 +1,8 @@
 import { Http } from "../net/http";
 
-const generateQuestions = async (token: string, tid: string) => {
+const generateQuestions = async (token: string, tid: string, opt: number=1) => {
   try {
-    const response = await Http.axios.get(`/generate/question/${tid}`,{
+    const response = await Http.axios.get(`/generate/question/${tid}?opt=${opt}`,{
       headers: Http.makeSignedInHeader(token)
     })
     return response.data.questions

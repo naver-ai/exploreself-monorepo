@@ -1,16 +1,18 @@
 import { useCallback, useEffect, ChangeEvent, useState } from "react"
 import { Space, Button, Input, Card, Flex, Divider, Row, Col, Collapse } from "antd"
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, ReloadOutlined} from '@ant-design/icons';
 import getThreadData from "../../../api_call/getThreadData"
 const {TextArea} = Input;
 import { useSelector } from "../../../redux/hooks"
 import { IThreadWithQuestionIds, IQASetWithIds, IQASetBase } from "@core";
 import {updateResponse, saveQASetArray, selectQuestion, saveComment, unSelectQuestion} from "../../../api_call/saveQASet";
 import generateQuestions from "../../../api_call/generateQuestions";
-import getKeywords from '../../../api_call/getKeywords'
+import generateKeywords from '../../../api_call/generateKeywords'
 import getQuestionData from "../../../api_call/getQuestionData";
 import generateComment from "../../../api_call/generateComment";
 import { getSelectedQuestionList, getUnselectedQuestionList } from "../../../api_call/get_question_list";
+import getCommentList from "../../../api_call/getCommentList";
+import { current } from "@reduxjs/toolkit";
 
 const SelectedQuestionItem = (props:{
   qid: string
@@ -22,7 +24,8 @@ const SelectedQuestionItem = (props:{
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedResponse, setLastSavedResponse] = useState('');
   const [isActive, setIsActive] = useState(false);
-  const [comment, setComment] = useState()
+  const [comment, setComment] = useState<string>()
+  const [commentList, setCommentList] = useState<Array<string> | null>()
 
   const fetchQuestion = useCallback(async () => {
     const qData = await getQuestionData(token, props.qid)
@@ -32,11 +35,21 @@ const SelectedQuestionItem = (props:{
     setKeywords(qData.keywords)
   },[props.qid])
 
-  const fetchComment = useCallback(async () => {
+  const fetchCommentList = useCallback(async() => {
+    const commentList = await getCommentList(token, props.qid)
+    setCommentList(commentList)
+    if (commentList){
+      const currentComment = commentList[commentList.length-1]
+      setComment(currentComment)
+    }
+  },[])
+
+  const fetchNewComment = useCallback(async () => {
     const comment = await generateComment(token, props.qid, response)
     const isSavedComment = await saveComment(token, props.qid, comment.comment) // TODO: combine generateComment + saveComment
-    setComment(comment.comment)
-  },[])
+    await fetchCommentList();
+  },[fetchCommentList])
+
 
   const saveResponse = useCallback(async () => {
     if (response !== lastSavedResponse) {
@@ -53,7 +66,8 @@ const SelectedQuestionItem = (props:{
   }, [response, props.qid, lastSavedResponse]);
 
   const fetchKeywordsHandler = useCallback(async () => {
-    const newKeywords = await getKeywords(token, props.qid)
+    const newKeywords = await generateKeywords(token, props.qid, 3)
+    console.log("NEW: ", newKeywords)
     setKeywords((prevKeywords) => [...(prevKeywords || []), ...newKeywords as string[]]);
   },[token, props.qid])
 
@@ -88,6 +102,7 @@ const SelectedQuestionItem = (props:{
 
   useEffect(() => {
     fetchQuestion();
+    fetchCommentList(); // TODO: fetchComment is sometimes called without any event
   },[])
 
   useEffect(() => {
@@ -101,8 +116,8 @@ const SelectedQuestionItem = (props:{
   return (
     <div className="border-2 border-[#B9DBDC]-600 p-3 rounded-lg my-3">
       <div className="pb-2 pl-1"> {question} </div>
-        <Row>
-          <Col span={16}>
+        <Row justify="space-between">
+          <Col span={15}>
             <TextArea 
             value={response}
             onChange={handleChange}
@@ -110,16 +125,26 @@ const SelectedQuestionItem = (props:{
             onFocus={handleFocus}
             placeholder="자유롭게 적어보아요"
             />
-            <div>생각 도우미 단어들 보기</div>
-            <Button onClick={() => {fetchKeywordsHandler()}}>Get Keywords</Button>
-            <Flex wrap gap="small">
-              {keywords?.map((keyword, i) => <div key={i} className="border-2 border-[#B9DBDC]-600 px-2 py-1 rounded-lg">{keyword}</div>)}
+          </Col>
+          <Col span={8} className="">
+            {/* <Button onClick={() => fetchComment()}>Comment</Button> */}
+            <div className="bg-[#F1F8F8] p-3 rounded-lg text-xs flex flex-col">
+              <div className="pb-3">{comment}</div>
+              {comment? <Button type="text" icon={<ReloadOutlined />} onClick={() => fetchNewComment()}size="small" className="text-xs self-end">새로운 도움말 보기</Button>:"Loading comment"}
+            </div>
+          </Col>
+        </Row>
+        <Row className="mt-2">
+          <div className={"border-dashed border-2 rounded-lg p-2 w-full"}>
+            <div className="text-xs pb-2">관련있는 단어가 있다면 눌러보아요</div>
+            {(!keywords || keywords?.length == 0)?
+            <Button type="text" size="small" onClick={() => {fetchKeywordsHandler()}}>생각 도우미 단어들 보기</Button>:
+            <Flex wrap gap="small"  className="flex justify-center">
+                {keywords && (keywords as string[]).map((keyword, i) => <div key={i} className="border border-[#B9DBDC]-600 px-2 py-1 rounded-lg">{keyword}</div>)}
+                <Button type="text" className="px-2 py-1 text-black text-opacity-50" onClick={() => {fetchKeywordsHandler()}}>단어 더보기</Button>
             </Flex>
-          </Col>
-          <Col span={8}>
-            <Button onClick={() => fetchComment()}>Comment</Button>
-            {comment}
-          </Col>
+            }
+          </div>
         </Row>
     </div>
   )
@@ -201,7 +226,7 @@ const UnselectedQuestionList = (props: {
   },[])
 
   const fetchMoreQuestionHandler = useCallback(async () => {
-    const fetchedQuestions = await generateQuestions(token, props.tid)
+    const fetchedQuestions = await generateQuestions(token, props.tid,1)
     await fetchUnselectedQuestionList();
   },[])
 

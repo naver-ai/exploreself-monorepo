@@ -9,9 +9,8 @@ import synthesizeProfilicInfo from './synthesizeProfilicInfo';
 import { synthesizePrevThreads } from './synthesizeThread';
 
 
-const generateKeywords = async (user: IUserORM, qid: string) => {
+const generateKeywords = async (user: IUserORM, qid: string, opt:number=1) => {
   const qData = await QASet.findById(qid)
-  const threadData = await ThreadItem.findById(qData.tid)
   const question = qData.question.content
 
   const systemTemplae = `
@@ -20,7 +19,7 @@ const generateKeywords = async (user: IUserORM, qid: string) => {
 
   [Task]
   The user is given a socratic question to think about. However, it's not cogitively easy to answer those questions.
-  Therefore, your task is to provide 'keywords' or 'short phrases' that might be useful for user to answer the given question.
+  Therefore, your task is to provide "just ${opt}" 'keywords' or 'short phrases' that might be useful for user to answer the given question.
   These keywords might act as 1) cognitive scaffolding 2) activate what might have been blind spot of the user 3) what might be relevant to users background and core values 4) and so on.
   Be aware that these keywords should be user friendly, and be in KOREAN, and try not to overlap with the keyword already provided in this question. 
 

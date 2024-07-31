@@ -1,8 +1,8 @@
 import { Http } from "../net/http";
 
-const getKeywords = async (token: string, qid: string): Promise<string[] | null> => {
+const generateKeywords = async (token: string, qid: string, opt: number=1): Promise<string[] | null> => {
   try {
-    const response = await Http.axios.get(`/generate/keywords/${qid}`,{
+    const response = await Http.axios.get(`/generate/keywords/${qid}?opt=${opt}`,{
       headers: Http.makeSignedInHeader(token)
     })
     return response.data.keywords.map((item: {keyword: string, rationale: string}) => item.keyword)
@@ -12,4 +12,4 @@ const getKeywords = async (token: string, qid: string): Promise<string[] | null>
   }
 }
 
-export default getKeywords;
+export default generateKeywords;

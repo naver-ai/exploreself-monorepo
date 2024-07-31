@@ -95,12 +95,27 @@ const unSelectQuestion = async(req: RequestWithUser, res) => {
   }
 }
 
+const getComment = async(req: RequestWithUser, res) => {
+  const qid = req.params.qid
+  try {
+    const qaSet = await QASet.findById(qid)
+    const commentList = qaSet.aiGuides
+    return res.json({
+      commentList: commentList
+    })
+  } catch (err) {
+    return res.json({
+      err: err.message
+    })
+  }
+}
+router.post('/generateReflexive', signedInUserMiddleware, generateReflexiveQuestionsController);
 router.get('/unselected/:tid', signedInUserMiddleware, getUnselectedQuestionList )
 router.get('/selected/:tid', signedInUserMiddleware, getSelectedQuestionList )
 router.get('/:qid', signedInUserMiddleware, getQuestionData )
-router.post('/generateReflexive', signedInUserMiddleware, generateReflexiveQuestionsController);
 router.put('/select/:qid', signedInUserMiddleware, selectQuestion)
 router.put('/unselect/:qid', signedInUserMiddleware, unSelectQuestion)
+router.get('/comment/:qid', signedInUserMiddleware, getComment)
 
 export default router;
 

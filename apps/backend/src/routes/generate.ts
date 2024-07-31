@@ -11,9 +11,10 @@ var router = express.Router()
 
 const generateQuestionsHandler = async (req: RequestWithUser, res) => {
   const uid = req.user._id;
-  const tid = req.params.tid
+  const tid = req.params.tid;
+  const opt = parseInt(req.query.opt as string, 10)
   try {
-    const questions = await generateQuestions(uid, tid)
+    const questions = await generateQuestions(uid, tid, opt)
     const qaPromises = questions.map(async(question, index) => {
       const newQASet = new QASet({
         tid: tid,
@@ -57,8 +58,9 @@ const generateKeywordsHandler = async(req:RequestWithUser, res) => {
   const user = req.user
   const uid = user._id
   const qid = req.params.qid
+  const opt = parseInt(req.query.opt as string, 10)
   try {
-    const keywords = await generateKeywords(user, qid)
+    const keywords = await generateKeywords(user, qid, opt)
     const updatedQuestion = await QASet.findByIdAndUpdate(qid, {$push: {keywords: {$each: keywords.map(item => item.keyword)}}})
     return res.json({
       keywords: keywords

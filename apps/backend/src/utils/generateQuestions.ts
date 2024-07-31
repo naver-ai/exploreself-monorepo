@@ -8,7 +8,7 @@ import synthesizeProfilicInfo from "./synthesizeProfilicInfo";
 import mongoose from 'mongoose';
 
 
-const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
+const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:number=1) => {
 
   const userData = await User.findById(uid);
   const threadData = await ThreadItem.findById(tid);
@@ -21,7 +21,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
   Per each session within the system, the client brings up a Theme in one's narrative that one would like to navigate about.
   
   [Task]
-  Given a client's personal narrative and context, your task is to generate list of "just 3" socratic questions and intention of the question in KOREAN. 
+  Given a client's personal narrative and context, your task is to generate list of "just ${opt}" socratic questions and intention of the question in KOREAN. 
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty, and the client's background.
@@ -60,7 +60,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string) => {
   try {
     const prev_session_log = await synthesizePrevThreads(uid, "question")
     const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: threadData.theme})
-    return result.questions;
+    return (result as any).questions;
   } catch (err){
     throw err;
   }

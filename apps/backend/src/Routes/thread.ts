@@ -87,7 +87,7 @@ const getThreadData = async (req: RequestWithUser, res) => {
   try {
     const thread = await ThreadItem.findById(tid)
     if (thread?.questions.length == 0 || !thread.questions) {
-      const questions = await generateQuestions(uid, tid)
+      const questions = await generateQuestions(uid, tid, 3)
       const qaPromises = questions.map(async(question, index) => {
         const newQASet = new QASet({
           tid: tid,
@@ -173,7 +173,6 @@ router.post('/getThreadTitleList', signedInUserMiddleware, getThreadTitleList)
 router.post('/synthesizeThread', signedInUserMiddleware, synthesizeThread)
 router.post('/saveSynthesized', signedInUserMiddleware, saveSynthesized)
 router.post('/getOrientingInput', signedInUserMiddleware, getOrientingInput)
-
 router.get ('/:tid', signedInUserMiddleware, getThreadData);
 
 
