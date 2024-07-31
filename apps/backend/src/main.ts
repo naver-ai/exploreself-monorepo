@@ -1,13 +1,13 @@
 import express, { Router } from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
-import userRouter from './routes/user'
-import authRouter from './routes/auth'
-import questionRouter from './routes/question'
-import responseRouter from './routes/response'
-import threadRouter from './routes/thread'
-import themeRouter from './routes/theme'
-import generateRouter from './routes/generate'
+import userRouter from './router/user'
+import authRouter from './router/auth'
+import questionRouter from './router/question'
+import responseRouter from './router/response'
+import threadRouter from './router/thread'
+import themeRouter from './router/theme'
+import generateRouter from './router/generate'
 
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
