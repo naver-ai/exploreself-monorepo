@@ -29,6 +29,7 @@ export type IExploreState = {
   threadQuestionCreationLoadingFlags: {[key: string] : boolean | undefined}
 
   isThemeSelectorOpen: boolean;
+  floatingHeader: string | undefined
 } & Omit<
   IUserWithThreadIds,
   '_id' | 'passcode' | 'threads' | 'alias' | 'createdAt' | 'updatedAt'
@@ -52,6 +53,7 @@ const initialState: IExploreState = {
   questionEntityState: initialQuestionEneityState,
 
   isThemeSelectorOpen: false,
+  floatingHeader: undefined
 };
 
 const exploreSlice = createSlice({
@@ -85,6 +87,10 @@ const exploreSlice = createSlice({
 
     setThemeSelectorOpen: (state, action: PayloadAction<boolean>) => {
       state.isThemeSelectorOpen = action.payload;
+    },
+
+    setFloatingHeader: (state, action: PayloadAction<string|undefined>) => {
+      state.floatingHeader = action.payload
     },
 
     setLoadingUserInfoFlag: (state, action: PayloadAction<boolean>) => {
@@ -312,5 +318,6 @@ export const {
   resetPinnedThemes,
   resetState,
   setThemeSelectorOpen,
+  setFloatingHeader
 } = exploreSlice.actions;
 export default exploreSlice.reducer;

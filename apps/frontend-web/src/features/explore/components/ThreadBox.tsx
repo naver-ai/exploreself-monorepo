@@ -14,9 +14,10 @@ import {
 const { TextArea } = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ShortcutManager } from '../../../services/shortcut';
-import { questionSelectors, selectedQuestionIdsSelector, selectQuestion, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
+import { questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeader, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
 import { useInView } from 'react-intersection-observer';
 import { QuestionBox } from './QuestionBox';
+import { usePrevious } from "@uidotdev/usehooks";
 
 
 const UnselectedQuestionItem = (props: { qid: string }) => {
@@ -115,6 +116,8 @@ const UnselectedQuestionList = (props: { tid: string }) => {
 
 export const ThreadBox = (props: { tid: string }) => {
 
+  const dispatch = useDispatch()
+
   const thread = useSelector(state => threadSelectors.selectById(state, props.tid))
 
   const isCreatingQuestions = useSelector(state => state.explore.threadQuestionCreationLoadingFlags[props.tid] || false)
@@ -140,15 +143,15 @@ export const ThreadBox = (props: { tid: string }) => {
   }, [props.tid]);
 
   const isIntersectingTop = entry?.isIntersecting && entry.boundingClientRect && entry.boundingClientRect.top <= 0;
+  const prevIsIntersectingTop = usePrevious(isIntersectingTop)
+  useEffect(()=>{
+    if(isIntersectingTop != prevIsIntersectingTop){
+      dispatch(setFloatingHeader(isIntersectingTop ? thread.theme : undefined))
+    }
+  }, [isIntersectingTop, prevIsIntersectingTop, thread.theme])
 
-  return (
-    <div ref={ref} className='relative'>
-      {isIntersectingTop && (
-        <div className="fixed top-0 w-full bg-white z-50 border-b border-gray-200 text-black py-3 pl-3 ">
-          <div className="text-lg font-medium pl-3">{thread.theme}</div>
-        </div>
-      )}
-      <Card
+  return (<Card
+        ref={ref}
         title={thread.theme}
         className="mt-4 relative"
       >
@@ -163,8 +166,5 @@ export const ThreadBox = (props: { tid: string }) => {
             <UnselectedQuestionList tid={props.tid} />
           </>
         }
-      </Card>
-    </div>
-    
-  );
+      </Card>)
 };

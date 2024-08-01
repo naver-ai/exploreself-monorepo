@@ -28,8 +28,13 @@ module.exports = {
       },
 
       keyframes: {
-        slideIn: {
+        slideInUp: {
           '0%': { opacity: 0.5, transform: 'translateY(120%)' },
+          '100%': { opacity: 1, transform: 'translateY(0)' },
+        },
+
+        slideInDown: {
+          '0%': { opacity: 0.5, transform: 'translateY(-120%)' },
           '100%': { opacity: 1, transform: 'translateY(0)' },
         },
 
@@ -39,7 +44,8 @@ module.exports = {
         },
       },
       animation: {
-        slidein: 'slideIn .25s ease-out',
+        "slidein-up": 'slideInUp .25s ease-out',
+        "slidein-down": 'slideInDown .1s ease-out',
         fadein: 'fadeIn, 5s',
       },
     },
