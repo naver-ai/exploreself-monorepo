@@ -26,6 +26,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
   For each main_theme, also provide the referred part/quote of user input of the previous session "in Korean". 
   Try not do 'inference' in generating cards, and go ahead by assuming, but stick to the user's expression. Being synced with user's language/expression is important. 
   For each elicited main_theme (sticking to user's expression), come up with diverse different expressions of the main_theme. It could be altered in diverse ways expression-wise.  
+  (Only if there is a good metaphoric expression, or in a therapeutically meaningful way), you can also feel free to fetch some metaphoric expressions, too
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty narrative, and the client's background.

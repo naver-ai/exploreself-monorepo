@@ -64,7 +64,7 @@ export const updateResponse = async (
 ) => {
   try {
     const resp = await Http.axios.put(
-      `/response/${qid}}`,
+      `/response/${qid}`,
       {
         response: response,
       },
