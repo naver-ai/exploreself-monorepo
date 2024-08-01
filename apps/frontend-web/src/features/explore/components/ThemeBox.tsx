@@ -83,19 +83,19 @@ const ThemeBox = () => {
             </div>
             <Space direction="vertical" className="w-full pt-3">
               {themes.map(
-                (themeItem: { theme: string; quote: string }, index) => (
+                (themeItem: { main_theme: string; expressions: string[], quote: string }, index) => (
                   <Col className="border-2 border-slate-300 w-full rounded-lg p-3">
                     <Row
-                      key={index}
+                      key={index*10}
                       className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md"
-                      onClick={() => onChangeSelect(themeItem.theme)}
+                      onClick={() => onChangeSelect(themeItem.main_theme)}
                       justify="space-between"
                     >
-                      <Col className="pl-2">{themeItem.theme}</Col>
+                      <Col className="pl-2">{themeItem.main_theme}</Col>
                       <Col>
                         <Button
                           icon={<MdBookmarkBorder />}
-                          onClick={() => handleAddPinnedTheme(themeItem.theme)}
+                          onClick={() => handleAddPinnedTheme(themeItem.main_theme)}
                           size="small"
                           type="text"
                           className="text-[10px]"
@@ -106,6 +106,30 @@ const ThemeBox = () => {
                         {/* <MdBookmarkBorder onClick={() => handleAddPinnedTheme(themeItem.theme)} className="cursor-pointer"/> */}
                       </Col>
                     </Row>
+                    {themeItem?.expressions?.map((exp, i) => {
+                      return (
+                        <Row
+                          key={index*10 + i}
+                          className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md my-1"
+                          onClick={() => onChangeSelect(exp)}
+                          justify="space-between"
+                        >
+                          <Col className="pl-2">{exp}</Col>
+                          <Col>
+                            <Button
+                              icon={<MdBookmarkBorder />}
+                              onClick={() => handleAddPinnedTheme(exp)}
+                              size="small"
+                              type="text"
+                              className="text-[10px]"
+                            >
+                              {' '}
+                              저장해두기
+                            </Button>
+                          </Col>
+                        </Row>
+                      )
+                    })}
                     <Row className="w-full">
                       <Button
                         className="w-full mt-2 text-gray-500 text-xs"

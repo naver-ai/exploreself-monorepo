@@ -23,8 +23,9 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
 
   [Task] 
   Your specific task is to identify new themes that the client can navigate on. 
-  For each theme, also provide the referred part/quote of user input of the previous session "in Korean". 
+  For each main_theme, also provide the referred part/quote of user input of the previous session "in Korean". 
   Try not do 'inference' in generating cards, and go ahead by assuming, but stick to the user's expression. Being synced with user's language/expression is important. 
+  For each elicited main_theme (sticking to user's expression), come up with diverse different expressions of the main_theme. It could be altered in diverse ways expression-wise.  
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty narrative, and the client's background.
@@ -53,12 +54,20 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
     }))
   })
 
+  const edgeSchema2 = z.object({
+    themes: z.array(z.object({
+      main_theme: z.string().describe("Each theme from the user's initial narrative and previous log. (in Korean). This main theme should directly borrow expression/language of the user."),
+      expressions: z.array(z.string()).describe("An array of diverse different expressions of the main_theme (in Korean)."),
+      quote: z.string().describe("Most relevant part of the user's narrative to the theme")
+    }))
+  })
+
   const finalPromptTemplate = ChatPromptTemplate.fromMessages([
     systemMessage,
     humanMessage
   ])
 
-  const structuredLlm = chatModel.withStructuredOutput(edgeSchema);
+  const structuredLlm = chatModel.withStructuredOutput(edgeSchema2);
 
   const chain = finalPromptTemplate.pipe(structuredLlm);
   const init_info = synthesizeProfilicInfo(userData.initial_narrative, userData.value_set, userData.background)
