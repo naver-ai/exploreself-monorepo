@@ -3,6 +3,9 @@ import { ThreadItem, User } from "../config/schema"
 import nunjucks from 'nunjucks'
 
 const synthesizeThread = async (tid: string, option='default') => {
+  /*
+  
+  */
   const threadItem = await ThreadItem.findById(tid).populate('questions')
   
   const synthesis = nunjucks.renderString(`
