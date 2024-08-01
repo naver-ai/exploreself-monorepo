@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import getThreadTitleList from '../../../api_call/old/getThreadTitleList';
 import { Timeline } from 'antd';
-import createThreadItem from '../../../api_call/createThreadItem';
-import { fetchUserInfo, removePinnedTheme } from '../reducer';
+import { populateNewThread, removePinnedTheme, threadSelectors } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { IThreadWithQuestionIds } from '@core';
 import { ListBulletIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid';
@@ -13,24 +11,12 @@ const OUTLINE_PANEL_CLASS =
   'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer';
 
 export const OutlinePanel = () => {
-  const threadIds = useSelector((state) => state.explore.threads);
+  const threads = useSelector(threadSelectors.selectAll);
+
   const token = useSelector((state) => state.auth.token) as string;
 
-  const [threadTitleList, setThreadTitleList] = useState<
-    IThreadWithQuestionIds[] | null
-  >();
-  const dispatch = useDispatch();
-
-  const fetchThreadTitleList = useCallback(async () => {
-    const titleList = await getThreadTitleList(token, threadIds);
-    if (titleList) {
-      setThreadTitleList(titleList);
-    }
-  }, [threadIds]);
-
   const themeListTimelineItems = useMemo(() => {
-    const timelineItems =
-      threadTitleList?.map((thread) => {
+    const timelineItems = threads?.map((thread) => {
         return {
           children: (
             <div
@@ -61,11 +47,7 @@ export const OutlinePanel = () => {
         ),
       },
     ].concat(timelineItems as any);
-  }, [threadTitleList]);
-
-  useEffect(() => {
-    fetchThreadTitleList();
-  }, [threadIds]);
+  }, [threads]);
 
   return (
     <PanelGroup
@@ -89,9 +71,8 @@ export const PinnedThemesPanel = () => {
   const addToThread = useCallback(
     async (selected: string) => {
       if (uid != null) {
-        const tid = await createThreadItem(token, selected);
-        dispatch(removePinnedTheme(selected));
-        dispatch(fetchUserInfo());
+        dispatch(removePinnedTheme(selected))
+        dispatch(populateNewThread(selected))
       }
     },
     [uid]

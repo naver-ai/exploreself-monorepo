@@ -1,12 +1,13 @@
+import { IThreadWithQuestionIds } from 'libs/ts-core/src/lib/model-types';
 import { Http } from '../net/http';
 
 const createThreadItem = async (
   token: string,
   theme: string
-): Promise<string[] | null> => {
+): Promise<IThreadWithQuestionIds | null> => {
   try {
     const response = await Http.axios.post(
-      `/thread/createThreadItem`,
+      `/thread/new`,
       {
         theme: theme,
       },
@@ -14,7 +15,7 @@ const createThreadItem = async (
         headers: Http.makeSignedInHeader(token),
       }
     );
-    return response.data.threadid;
+    return response.data;
   } catch (err) {
     console.log('Err in fetching questions: ', err);
     return null;

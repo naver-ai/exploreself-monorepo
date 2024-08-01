@@ -1,18 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { OutlinePanel, PinnedThemesPanel } from '../components/sidebar-views';
 import ThemeBox from '../components/ThemeBox';
 import { ThreadBox } from '../components/ThreadBox';
-import { Card, FloatButton, Drawer, Button } from 'antd';
-import { BulbOutlined } from '@ant-design/icons';
+import { Card,  Button } from 'antd';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
-import { setThemeSelectorOpen } from '../reducer';
+import { setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
-import { PartialDarkThemeProvider } from '../../../styles';
-import tailwindColors from 'tailwindcss/colors';
 import { ShortcutManager } from '../../../services/shortcut';
+import useScrollbarSize from 'react-scrollbar-size';
 
 const SidePanel = () => {
   return (
@@ -37,7 +35,9 @@ export const ExplorerPage = () => {
     (state) => state.explore.initial_narrative
   );
   const userName = useSelector((state) => state.explore.name);
-  const threadIds = useSelector((state) => state.explore.threads);
+  const threadIds = useSelector(threadSelectors.selectIds);
+
+  const floatingHeader = useSelector(state => state.explore.floatingHeader)
 
   const { ref, inView, entry } = useInView({
     /* Optional options */
@@ -71,6 +71,12 @@ export const ExplorerPage = () => {
     };
   }, []);
 
+  const {width: scrollBarWidth} = useScrollbarSize()
+
+  const scrollbarSafeRightStyle = useMemo(()=>{
+    return {right: scrollBarWidth}
+  }, [scrollBarWidth])
+
   if (userName == null || userName.length == 0) {
     return <Navigate to="/app/profile" />;
   } else if (initialNarrative == null || initialNarrative.length == 0) {
@@ -82,6 +88,13 @@ export const ExplorerPage = () => {
           <SidePanel />
         </div>
         <div className="flex-1 relative">
+          {(floatingHeader != null) && (
+          <div className="absolute top-0 left-0 z-50 animate-slidein-down" style={scrollbarSafeRightStyle}>
+            <div className="container px-4 md:px-8">
+              <div className="px-6 border-b  bg-white/80 border-gray-200 text-black py-4 text-lg font-bold shadow-lg backdrop-blur-sm">{floatingHeader}</div>
+            </div>
+          </div>
+        )}
           <div
             className="overflow-y-scroll h-screen overflow-x-hidden"
             ref={scrollViewRef}
@@ -93,13 +106,11 @@ export const ExplorerPage = () => {
                   {initialNarrative}
                 </span>
               </Card>
-              {threadIds.map((threadId) => (
-                <div key={threadId} className="py-1">
-                  <ThreadBox
-                    /*TODO theme={workingThread.theme}*/ tid={threadId}
-                  />
-                </div>
-              ))}
+              {
+                threadIds.map((threadId) => (
+                  <ThreadBox key={threadId} tid={threadId}/>
+                ))
+              }
               <Button
                 key={'new-theme-btn-bottom'}
                 ref={ref}
@@ -113,11 +124,11 @@ export const ExplorerPage = () => {
             </div>
 
             {inView === false ? (
-              <div className="absolute bottom-0 left-0 right-0 px-4 mx:px-8 bg-gradient-to-t from-white to-white/0 py-8">
+              <div className="absolute bottom-0 left-0 px-4 mx:px-8 bg-gradient-to-t from-white to-white/0 py-8" style={scrollbarSafeRightStyle}>
                 <div className="container">
                   <Button
                     type="primary"
-                    className="w-full border-none h-12 mt-4 shadow-lg shadow-rose-900/50 animate-slidein"
+                    className="w-full border-none h-12 mt-4 shadow-lg shadow-teal-900/50 animate-slidein-up"
                     icon={<LightBulbIcon className="w-5 h-5" />}
                     onClick={onThemeSelectionButtonClick}
                   >

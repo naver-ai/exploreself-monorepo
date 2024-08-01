@@ -1,51 +1,59 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IThreadItem } from '../../config/types';
-import { IUserBase, IUserWithThreadIds } from '@core';
-import { jwtDecode } from 'jwt-decode';
+import { createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds } from '@core';
 import { Http } from '../../net/http';
-import { AppThunk } from '../../redux/store';
+import { AppState, AppThunk } from '../../redux/store';
+import createThreadItem from '../../api_call/createThreadItem';
+import { selectQuestionById } from '../../api_call/saveQASet';
 
-export interface IEvent {
-  type: string;
-  message: string;
-  timestamp: string;
-  weight: number; // From 1~10? TODO: experiment with string (description) rather than number
-}
+const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>({
+  selectId: (model: IThreadWithQuestionIds) => model._id
+})
+
+const questionEntityAdapter = createEntityAdapter<IQASetWithIds, string>({
+  selectId: (model) => model._id
+})
+
+const initialThreadEntityState = threadEntityAdapter.getInitialState()
+const initialQuestionEneityState = questionEntityAdapter.getInitialState()
 
 export type IExploreState = {
   isLoadingUserInfo: boolean;
+  isCreatingNewThread: boolean;
+
   userId?: string;
-  event_history: IEvent[];
-  question_stack: string[];
-  pinned_themes: string[];
+  pinned_themes: Array<string>; // This should be part of user orm and retrieved from server.
+
+  threadEntityState: typeof initialThreadEntityState,
+  questionEntityState: typeof initialQuestionEneityState,
+
+  threadQuestionCreationLoadingFlags: {[key: string] : boolean | undefined}
+
   isThemeSelectorOpen: boolean;
+  floatingHeader: string | undefined
 } & Omit<
   IUserWithThreadIds,
-  '_id' | 'passcode' | 'alias' | 'createdAt' | 'updatedAt'
+  '_id' | 'passcode' | 'threads' | 'alias' | 'createdAt' | 'updatedAt'
 >;
 
 const initialState: IExploreState = {
   isLoadingUserInfo: false,
+  isCreatingNewThread: false,
+
   userId: undefined,
   name: undefined,
   isKorean: true,
   initial_narrative: undefined,
   value_set: [],
   background: undefined,
-  threads: [],
-  isThemeSelectorOpen: false,
-
-  event_history: [], // TODO: experiment with chat-log, or plain text
-  // History type: typical Q&A log, memo, active update (change in response), keyword selection,
-  // TODO: set interface per history type
-  // TODO: Change update 하려면 id가 필요하고, 이건 db랑 직접 소통하는게 나을 것 같기도
-  // TODO: some schema might be beneficial to be unified with DB, some not --- 언제 DB/redux를 sync하고, 언제 DB에서 가져오고 redux에서 가져올지 결정
-  question_stack: [],
   pinned_themes: [],
-  working_thread: {
-    tid: '',
-    theme: '',
-  } as IThreadItem,
+
+  threadQuestionCreationLoadingFlags : {},
+
+  threadEntityState: initialThreadEntityState,
+  questionEntityState: initialQuestionEneityState,
+
+  isThemeSelectorOpen: false,
+  floatingHeader: undefined
 };
 
 const exploreSlice = createSlice({
@@ -54,10 +62,23 @@ const exploreSlice = createSlice({
   reducers: {
     updateUserInfo: (
       state,
-      action: PayloadAction<Partial<IUserWithThreadIds>>
+      action: PayloadAction<Partial<IUserAllPopulated>>
     ) => {
       for (const key of Object.keys(action.payload)) {
-        (state as any)[key] = (action.payload as any)[key];
+        if(key == 'threads'){
+          const questions = action.payload.threads?.reduce((prev: Array<IQASetWithIds>, curr) => prev.concat(curr.questions), []) || []
+          // Handle threads
+          const threadMapped: Array<IThreadWithQuestionIds> = action.payload.threads?.map(thread => ({
+            ...thread,
+            questions: thread.questions.map(q => q._id)
+          })) || []
+          threadEntityAdapter.setAll(state.threadEntityState, threadMapped)
+          questionEntityAdapter.setAll(state.questionEntityState, questions)
+
+        }else {
+          (state as any)[key] = (action.payload as any)[key];
+        }
+        
       }
       if (action.payload._id != null) {
         state.userId = action.payload._id;
@@ -68,8 +89,20 @@ const exploreSlice = createSlice({
       state.isThemeSelectorOpen = action.payload;
     },
 
+    setFloatingHeader: (state, action: PayloadAction<string|undefined>) => {
+      state.floatingHeader = action.payload
+    },
+
     setLoadingUserInfoFlag: (state, action: PayloadAction<boolean>) => {
       state.isLoadingUserInfo = action.payload;
+    },
+
+    setCreatingNewThreadFlag: (state, action: PayloadAction<boolean>) => {
+      state.isCreatingNewThread = action.payload;
+    },
+
+    setCreatingThreadQuestionsFlag: (state, action: PayloadAction<{tid: string, flag: boolean}>) => {
+      state.threadQuestionCreationLoadingFlags[action.payload.tid] = action.payload.flag;
     },
 
     addPinnedTheme: (state, action) => {
@@ -83,59 +116,55 @@ const exploreSlice = createSlice({
         (theme) => theme !== action.payload
       );
     },
-    deleteBackground: (state, action) => {
-      // TODO: fill in
-    },
-    updateBackground: (state, action) => {
-      // TODO: fill in
-    },
-    updateEventHistory: (state, action) => {
-      // TODO: variation per event type -- switch
-      // TODO: Think of all possible events (update in memo/response, get suggestion, open suggestion, select suggestion --- refer to Mina Lee's CoAuthor paper)
-      // TODO: Think of granularity and weight of events
-      // addThemeToBookmark; activateTheme; deleteTheme; deactivateTheme; updateMemo; updateResponse;
-      state.event_history = [...state.event_history, action.payload.event];
-    },
-    // addTheme: (state, action) => {
-    //   state.themes = [...state.themes, action.payload]
-    // },
-    // activateTheme: (state, action) => {
-    //   state.themes = state.themes.map(theme => theme.theme === action.payload ? {...theme, activated: true}: theme)
-    // },
-    // inActivateTheme: (state, action) => {
-    //   state.themes = state.themes.map(theme => theme.theme === action.payload ? {...theme, activated: false}: theme)
-    // },
-    // removeTheme: (state, action) => {
-    //   // TODO: error handling
 
-    //   state.themes = state.themes.filter(theme => {
-    //     console.log("THEME!: ", theme.theme)
-    //     console.log("PAyloSD: ", action.payload)
-    //     console.log(theme.theme! == action.payload ? "DIF": "SAME")
-    //     return theme.theme !== action.payload
-    //   })
-    // },
-    addQuestionStack: (state, action) => {
-      state.question_stack = [...state.question_stack, action.payload];
+    setAllThreads: (state, action: PayloadAction<Array<IThreadWithQuestionIds>>) => {
+      threadEntityAdapter.setAll(state.threadEntityState, action.payload)
     },
-    popQuestionStack: (state, action) => {
-      // TODO: error handling
-      state.question_stack = state.question_stack.filter(
-        (question) => question != action.payload
-      );
+
+    updateThread: (state, action: PayloadAction<IThreadWithQuestionIds>) => {
+      threadEntityAdapter.upsertOne(state.threadEntityState, action.payload)
     },
-    setWorkingThread: (state, action) => {
-      state.working_thread = action.payload;
+    
+    appendThread: (state, action: PayloadAction<IThreadWithQuestionIds>) => {
+      threadEntityAdapter.addOne(state.threadEntityState, action.payload)
     },
-    resetWorkingThread: (state) => {
-      state.working_thread = {
-        tid: '',
-        theme: '',
-      };
+
+    setQuestions: (state, action: PayloadAction<Array<IQASetWithIds>>) => {
+      questionEntityAdapter.setMany(state.questionEntityState, action.payload)
     },
+
+    appendQuestion: (state, action: PayloadAction<IQASetWithIds>) => {
+      questionEntityAdapter.addOne(state.questionEntityState, action.payload)
+    },
+
+    updateQuestion: (state, action: PayloadAction<IQASetWithIds>) => {
+      questionEntityAdapter.upsertOne(state.questionEntityState, action.payload)
+    },
+
     resetState: (state) => initialState,
   },
 });
+
+// Entity adapter methods
+export const threadSelectors = threadEntityAdapter.getSelectors((state: AppState) => state.explore.threadEntityState)
+export const questionSelectors = questionEntityAdapter.getSelectors((state: AppState) => state.explore.questionEntityState)
+
+export const selectedQuestionsSelector = createSelector([questionSelectors.selectAll, (state: AppState, tid: string) => tid], (questions, tid) => {
+  return questions.filter(q => q.tid == tid && q.selected == true)
+} )
+
+
+export const selectedQuestionIdsSelector = createSelector([selectedQuestionsSelector], (questions) => {
+  return questions.map(q => q._id)
+} )
+
+export const unSelectedQuestionsSelector = createSelector([questionSelectors.selectAll, (state: AppState, tid: string) => tid], (questions, tid) => {
+  return questions.filter(q => q.tid == tid && q.selected == false)
+} )
+
+export const unSelectedQuestionIdsSelector = createSelector([unSelectedQuestionsSelector], (questions) => {
+  return questions.map(q => q._id)
+} )
 
 // User Info ====================================================================
 
@@ -222,17 +251,73 @@ export function submitUserProfile(
   };
 }
 
+export function populateNewThread(theme: string): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState();
+
+    if (state.auth.token) {
+      dispatch(exploreSlice.actions.setCreatingNewThreadFlag(true))
+
+      try {
+        const newThread = await createThreadItem(state.auth.token, theme)
+        if(newThread){
+          dispatch(exploreSlice.actions.appendThread(newThread))
+
+          dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: true}))
+
+          try {
+            const response = await Http.axios.post(
+              `/thread/${newThread._id}/questions/generate`, null,
+              {
+                headers: Http.makeSignedInHeader(state.auth.token),
+              }
+            );
+            const { questions } = response.data
+            if(questions){
+              dispatch(exploreSlice.actions.setQuestions(questions))
+            }
+          } catch (err) {
+            console.log('Err in fetching questions: ', err);
+          } finally {
+            dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: false}))
+          }
+
+
+        }
+      }catch( ex) {
+        console.log(ex)
+      }finally{
+        dispatch(exploreSlice.actions.setCreatingNewThreadFlag(false))
+      }
+    }
+  }
+}
+
+export function selectQuestion(qid: string): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState()
+    if (state.auth.token) {
+      try {
+        const updatedQuestion = await selectQuestionById(state.auth.token, qid)
+        if(updatedQuestion){
+          dispatch(exploreSlice.actions.updateQuestion(updatedQuestion))
+        }
+      }catch(ex){
+        console.log(ex)
+      }finally{
+
+      }
+    }
+  }
+}
+
 export const {
   updateUserInfo,
   removePinnedTheme,
   addPinnedTheme,
   resetPinnedThemes,
-  resetWorkingThread,
   resetState,
-  setWorkingThread,
-  updateEventHistory,
-  addQuestionStack,
-  popQuestionStack,
   setThemeSelectorOpen,
+  setFloatingHeader
 } = exploreSlice.actions;
 export default exploreSlice.reducer;

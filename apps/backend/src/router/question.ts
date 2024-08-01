@@ -21,36 +21,6 @@ const getQuestionData = async(req: RequestWithUser, res) => {
   }
 }
 
-const getUnselectedQuestionList = async (req: RequestWithUser, res) => {
-  const tid = req.params.tid
-  try {
-    const thread = await ThreadItem.findById(tid).populate('questions').exec() as IThreadORM & {questions: Array<IQASetORM>}
-    const unSelectedQuestionList = thread.questions.filter((question: IQASetORM) => !question.selected).map(q => q._id)
-    return res.json({
-      unSelectedQuestionList: unSelectedQuestionList
-    })
-  } catch (err) {
-    return res.json({
-      err: err.message
-    })
-  }
-}
-
-const getSelectedQuestionList = async (req: RequestWithUser, res) => {
-  const tid = req.params.tid
-  try {
-    const thread = await ThreadItem.findById(tid).populate('questions').exec() as IThreadORM & {questions: Array<IQASetORM>}
-    const selectedQuestionList = thread.questions.filter((question: IQASetORM) => question.selected).map(q => q._id)
-    return res.json({
-      selectedQuestionList: selectedQuestionList
-    })
-  } catch (err) {
-    return res.json({
-      err: err.message
-    })
-  }
-}
-
 const generateReflexiveQuestionsController = async (req: RequestWithUser, res) => {
   const user = req.user;
   const uid = user._id
@@ -66,10 +36,10 @@ const generateReflexiveQuestionsController = async (req: RequestWithUser, res) =
 const selectQuestion = async(req: RequestWithUser, res) => {
   const qid = req.params.qid
   try {
-    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {selected: true}})
+    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {selected: true}}, {new: true})
     res.json({
       success: true,
-      qaSet: updatedQASet._id
+      qaSet: updatedQASet
     })
   } catch (err) {
     res.json({
@@ -82,10 +52,10 @@ const selectQuestion = async(req: RequestWithUser, res) => {
 const unSelectQuestion = async(req: RequestWithUser, res) => {
   const qid = req.params.qid
   try {
-    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {selected: false}})
+    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {selected: false}}, {new: true})
     res.json({
       success: true,
-      qaSet: updatedQASet._id
+      qaSet: updatedQASet
     })
   } catch (err) {
     res.json({
@@ -109,13 +79,12 @@ const getComment = async(req: RequestWithUser, res) => {
     })
   }
 }
+
 router.post('/generateReflexive', signedInUserMiddleware, generateReflexiveQuestionsController);
-router.get('/unselected/:tid', signedInUserMiddleware, getUnselectedQuestionList )
-router.get('/selected/:tid', signedInUserMiddleware, getSelectedQuestionList )
 router.get('/:qid', signedInUserMiddleware, getQuestionData )
-router.put('/select/:qid', signedInUserMiddleware, selectQuestion)
-router.put('/unselect/:qid', signedInUserMiddleware, unSelectQuestion)
-router.get('/comment/:qid', signedInUserMiddleware, getComment)
+router.put('/:qid/select', signedInUserMiddleware, selectQuestion)
+router.put('/:qid/unselect', signedInUserMiddleware, unSelectQuestion)
+router.get('/:qid/comment', signedInUserMiddleware, getComment)
 
 export default router;
 

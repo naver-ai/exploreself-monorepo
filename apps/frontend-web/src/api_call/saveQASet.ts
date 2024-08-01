@@ -1,10 +1,10 @@
 import { IQASetBase, IQASetWithIds } from '@core';
 import { Http } from '../net/http';
 
-export const selectQuestion = async (token: string, qid: string) => {
+export async function selectQuestionById(token: string, qid: string): Promise<IQASetWithIds | null> {
   try {
     const resp = await Http.axios.put(
-      `/question/select/${qid}`,
+      `/question/${qid}/select`,
       {},
       {
         headers: Http.makeSignedInHeader(token),
@@ -17,10 +17,10 @@ export const selectQuestion = async (token: string, qid: string) => {
   }
 };
 
-export const unSelectQuestion = async (token: string, qid: string) => {
+export async function unSelectQuestion(token: string, qid: string): Promise<IQASetWithIds | null> {
   try {
     const resp = await Http.axios.put(
-      `/question/unselect/${qid}`,
+      `/question/${qid}/unselect`,
       {},
       {
         headers: Http.makeSignedInHeader(token),

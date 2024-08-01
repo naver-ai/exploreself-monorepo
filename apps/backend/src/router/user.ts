@@ -33,7 +33,12 @@ const setBackground = async (req: RequestWithUser, res) => {
 }
 router.get('/', signedInUserMiddleware, async (req: RequestWithUser, res) => {
   res.json({
-    user: req.user.toJSON()
+    user: (await req.user.populate({
+      path: "threads",
+      populate: {
+        path: "questions"
+      }
+    })).toJSON()
   })
 });
 
@@ -61,7 +66,7 @@ router.get('/thread_ids', signedInUserMiddleware, body("threadRef").exists().tri
   const uid = req.user._id
   const user = await User.findById(uid)
   res.json({
-    threadRef: user.threads
+    threads: user.threads
   })
 })
 
