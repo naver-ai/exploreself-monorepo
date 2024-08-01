@@ -27,10 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.options("*", cors());
 
-const uri = 'mongodb://localhost:27017/';
-const dbName = 'reauthor';
-
-mongoose.connect(uri + dbName)
+mongoose.connect(process.env.MONGODB_URL+process.env.MONGODB_DBNAME)
   .then(async () => {
     console.log('MongoDB connected!')
   
@@ -66,7 +63,7 @@ app.use("/api/v1", apiRouter)
 
 const port = process.env.BACKEND_PORT || 3000;
 const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`);
+  console.log(`Listening at ${process.env.BACKEND_HOST}:${port}`);
 });
 
 server.on('error', console.error);

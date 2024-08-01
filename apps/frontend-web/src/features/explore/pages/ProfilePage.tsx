@@ -44,21 +44,21 @@ export const ProfilePage = () => {
   ) : (
     <div className="h-full overflow-y-scroll">
       <div className="container-narrow !px-4 !sm:px-8 py-8">
-        <Card title="Please complete your profile.">
+        <Card title={t("Profile.Title")}>
           <Form onFinish={handleSubmit(submitProfile)}>
             <FormItem
               control={control}
               name="name"
               className="mb-4 h-auto"
               required
-              label="Please provide the name you would like AI to call you:"
+              label={t("Profile.Name.Prompt")}
               labelCol={{ span: 24 }}
             >
-              <Input id="field-name" placeholder="Your nickname" autoFocus />
+              <Input id="field-name" placeholder={t("Profile.Name.Placeholder")} autoFocus />
             </FormItem>
             <Form.Item className="mb-0 flex justify-end">
               <Button disabled={!isValid} htmlType="submit" type="primary">
-                Apply
+                {t("Labels.Apply")}
               </Button>
             </Form.Item>
           </Form>

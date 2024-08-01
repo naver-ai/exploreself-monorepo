@@ -8,6 +8,8 @@ import translationKR from './kr/translation.json';
 // import translationEN from './translations/translationEN.json';
 // import translationKR from './translations/translationKR.json';
 
+console.log(translationEN)
+
 const resources = {
   en: {
     translation: translationEN,
@@ -28,6 +30,10 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    resources,
+    react: {
+      useSuspense: true
+    }
     // backend: {
     //   loadPath: '/locales/{{lng}}/{{ns}}.json',
     // },

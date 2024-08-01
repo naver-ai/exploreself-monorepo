@@ -26,6 +26,12 @@
       "options": {
         "command": "node apps/backend/setup.mjs"
       }
+    },
+    "admin": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node apps/backend/admin.mjs"
+      }
     }
   }
 }

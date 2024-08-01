@@ -3,7 +3,7 @@ import tailwindColors from 'tailwindcss/colors';
 
 export const theme: ThemeConfig = {
   token: {
-    colorPrimary: tailwindColors.rose[500],
+    colorPrimary: tailwindColors.emerald[500],
     fontFamily:
       "'NanumSquareNeo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol','Noto Color Emoji'",
   },
@@ -25,9 +25,7 @@ export const PartialDarkThemeProvider = (props: { children: any }) => {
       theme={{
         algorithm: AntdTheme.darkAlgorithm,
         token: {
-          colorPrimary: 'white',
-          colorBgContainer: tailwindColors.rose[500],
-          colorBgContainerDisabled: tailwindColors.rose[300],
+          colorPrimary: 'white'
         },
         components: {
           Progress: {

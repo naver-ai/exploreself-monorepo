@@ -1,4 +1,10 @@
 {
-  "narrative_input": "Please give your narrative",
-  "description": "This is an example description"
+  "Profile": {
+    "Name": {
+      "Prompt": "Each and everyone has their own challenges. Could be things such as conflict with an old friend, being obsessed in diet, etc. Do you have any story of yours that you would like to understand better? Please write down below!"
+    }
+  },
+  "Labels": {
+    "Apply": "Apply"
+  }
 }

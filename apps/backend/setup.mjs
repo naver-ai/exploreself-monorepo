@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import dotenv from 'dotenv'
 import path from 'path'
-import inquirer from 'inquirer'
+import { input } from '@inquirer/prompts';
 
 const envPath = path.resolve(process.cwd(), ".env")
 console.log(envPath)
@@ -20,81 +20,69 @@ function makeExistingValidator(message) {
     }
 }
 
-const VITE_BLACKLISTS = [/*"OPENAI_API_KEY",*/ "AUTH_SECRET"]
+const VITE_BLACKLISTS = [/*"OPENAI_API_KEY",*/ "AUTH_SECRET", "MONGODB_URL", "MONGODB_DBNAME"]
 
 async function setup(){
-    const env = dotenv.config({path: envPath})
+    const env = dotenv.config({path: envPath})?.parsed || {}
+ 
 
-    const questions = []
+    console.log(env, env["BACKEND_PORT"])
 
-    if(env.parsed?.["BACKEND_PORT"] == null){
-        questions.push({
-                type: 'input',
-                name: 'BACKEND_PORT',
-                default: '3000',
-                message: 'Insert Backend port number:',
-                validate: (input) =>  {
-                    const pass = makeExistingValidator("Please enter a valid port number.")(input)
-                    if(pass !== true){
-                        return pass
-                    }
-
-                    try{
-                        Number.parseInt(input)
-                        return true
-                    }catch(ex){
-                        return "The port number must be an integer."
-                    }
+    const answers = {
+        "BACKEND_PORT": env["BACKEND_PORT"] || await input({
+            default: '3000',
+            message: 'Insert Backend port number:',
+            required: true,
+            validate: (input) =>  {
+                const pass = makeExistingValidator("Please enter a valid port number.")(input)
+                if(pass !== true){
+                    return pass
                 }
-            })
+
+                try{
+                    Number.parseInt(input)
+                    return true
+                }catch(ex){
+                    return "The port number must be an integer."
+                }
+            }
+        }),
+        "BACKEND_HOSTNAME": env["BACKEND_HOSTNAME"] || await input({
+            default: '0.0.0.0',
+            message: 'Insert Backend hostname WITHOUT protocol and port (e.g., 0.0.0.0, naver.com):',
+            required: true,
+            validate: makeExistingValidator("Please enter a valid hostname.")
+        }),
+        "AUTH_SECRET": env["AUTH_SECRET"] || await input({
+            default: 'NaverAILabHCIELMI',
+            message: 'Insert any random string to be used as an auth secret:',
+            required: true,
+            validate: makeExistingValidator("Please enter any text.")
+        }),
+        "MONGODB_URL": env["MONGODB_URL"] || await input({
+            default: 'mongodb://localhost:27017/',
+            message: "Insert a full URL to connect to MongoDB on the system.",
+            required: true
+        }),
+        "MONGODB_DBNAME": env["MONGODB_DBNAME"] || await input({
+            default: "reauthor",
+            message: "Insert a DB name to store the app data.",
+            required: true
+        }),
+        "OPENAI_API_KEY": env["OPENAI_API_KEY"] || await input({
+            message: 'Insert OpenAI API Key:',
+            required: true,
+            validate: makeExistingValidator("Please enter a valid API key.")
+        })
     }
 
-    if(env.parsed?.["BACKEND_HOSTNAME"] == null){
-        questions.push({
-                type: 'input',
-                name: 'BACKEND_HOSTNAME',
-                default: '0.0.0.0',
-                message: 'Insert Backend hostname WITHOUT protocol and port (e.g., 0.0.0.0, naver.com):',
-                validate: makeExistingValidator("Please enter a valid hostname.")
-            })
-    }
-
-    if(env.parsed?.["AUTH_SECRET"] == null){
-        questions.push({
-                type: 'input',
-                name: 'AUTH_SECRET',
-                default: 'NaverAILabHCIELMI',
-                message: 'Insert any random string to be used as an auth secret:',
-                validate: makeExistingValidator("Please enter any text.")
-            })
-    }
-
-    if(env.parsed?.["OPENAI_API_KEY"] == null){
-        questions.push({
-                type: 'input',
-                name: 'OPENAI_API_KEY',
-                message: 'Insert OpenAI API Key:',
-                validate: makeExistingValidator("Please enter a valid API key.")
-            })
-    }
-
-
-    const newObj = env.parsed
-
-    if(questions.length > 0){
-        const answers = await inquirer.prompt(questions)
-        for(const key of Object.keys(answers)){
-            newObj[key] = answers[key]
-        }
-    }
-
-    for(const key of Object.keys(newObj)){
+    for(const key of Object.keys(answers)){
         if(key.startsWith("VITE_") == false && VITE_BLACKLISTS.indexOf(key) === -1){
-            newObj[`VITE_${key}`] = newObj[key]
+            answers[`VITE_${key}`] = answers[key]
         }
     }
 
-    const envFileContent = Object.entries(newObj)
+    const envFileContent = Object.entries(answers)
         .map(([key, value]) => `${key}=${value}`)
         .join('\n');
 

@@ -1,4 +1,20 @@
 {
-  "narrative_input": "이야기 입력하기",
-  "description": "This is an example description"
+  "Profile": {
+    "Title": "사용자 정보 입력하기",
+    "Name": {
+      "Prompt": "AI가 당신을 지칭하기 원하는 이름 또는 별명을 알려주세요. 예를 들어, '송인화' 라고 적을 경우 '송인화님', '인화'라고 적을 경우 '인화님'이라고 AI가 부르게 됩니다.",
+      "Placeholder": "이름 또는 별명"
+    }
+  },
+
+  "Narrative": {
+    "Title": "고민 이야기 작성하기",
+    "Prompt": "사람들은 각자의 고민이 있습니다. 옛 친구와의 갈등, 다이어트에 집착하는 것 등... 좀 더 이해하고 싶은 당신의 이야기가 있나요? 아래에 적어 주세요!",
+    "Placeholder": "당신의 고민 이야기를 적어주세요.",
+    "Complete": "고민 탐색 시작하기"
+  },
+  "Labels": {
+    "Apply": "적용",
+    "Submit": "제출"
+  }
 }

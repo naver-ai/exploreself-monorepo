@@ -37,3 +37,8 @@ body {
 .ant-card {
   @apply shadow-xl;
 }
+
+label.ant-form-item-required {
+  @apply leading-7;
+  height: initial !important;
+}

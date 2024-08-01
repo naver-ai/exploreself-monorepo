@@ -1,4 +1,4 @@
-import { Input, Button, Form } from 'antd';
+import { Input, Button, Form, Card } from 'antd';
 import { useCallback } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -50,22 +50,17 @@ export const InitialNarrativePage = () => {
   ) : (
     <div className="h-full overflow-y-scroll">
       <div className="container-narrow !px-4 !sm:px-8 py-8">
-        <p className="mb-4 px-2 font-light">
-          Each and everyone has their own challenges. Could be things such as
-          conflict with an old friend, being obsessed in diet, etc. Do you have
-          any story of yours that you would like to understand better? Please
-          write down below!
-        </p>
-        <Form onFinish={handleSubmit(submitNarrative)}>
-          <FormItem control={control} name="narrative" className="mb-4">
-            <TextArea rows={4} placeholder="Describe your challenges." />
-          </FormItem>
-          <div className="flex justify-end">
-            <Button disabled={!isValid} htmlType="submit" type="primary">
-              Submit
-            </Button>
-          </div>
-        </Form>
+        <Card title={t("Narrative.Title")}>
+          <p className="mb-4 px-2 font-light">{t("Narrative.Prompt")}</p>
+          <Form onFinish={handleSubmit(submitNarrative)}>
+            <FormItem control={control} name="narrative" className="mb-4">
+              <TextArea rows={4} placeholder={t("Narrative.Placeholder")} autoFocus/>
+            </FormItem>
+            <div className="flex justify-end">
+              <Button disabled={!isValid} htmlType="submit" type="primary">{t("Narrative.Complete")}</Button>
+            </div>
+          </Form>
+        </Card>
       </div>
     </div>
   );
