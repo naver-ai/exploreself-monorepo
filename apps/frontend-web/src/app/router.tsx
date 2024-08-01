@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom';
 import { ExplorerPage } from '../features/explore/pages/ExplorePage';
 import { InitialNarrativePage } from '../features/explore/pages/InitialNarrativePage';
-import { ValueSetPage } from '../features/explore/pages/ValueSetPage';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { useVerifyToken } from '../features/auth/hooks';
 import { useEffect } from 'react';
@@ -48,7 +47,6 @@ export const MainRouter = () => {
             <Route element={<SignedInScreenFrame withHeader={true} />}>
               <Route path="narrative" element={<InitialNarrativePage />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="value" element={<ValueSetPage />} />
             </Route>
           </Route>
         </Route>

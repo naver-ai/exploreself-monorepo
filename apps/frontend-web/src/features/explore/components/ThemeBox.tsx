@@ -1,14 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { RadioChangeEvent } from 'antd';
 import { Button, Row, Space, Col, Drawer } from 'antd';
 import {
   addPinnedTheme,
-  fetchUserInfo,
-  resetPinnedThemes,
   setThemeSelectorOpen,
-  setWorkingThread,
 } from '../reducer';
-import createThreadItem from '../../../api_call/createThreadItem';
 import { MdBookmarkBorder } from 'react-icons/md';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import generateThemes from '../../../api_call/generateThemes';
@@ -33,25 +28,9 @@ const ThemeBox = () => {
     dispatch(addPinnedTheme(theme));
   };
 
-  const onChange = (e: RadioChangeEvent) => {
-    setSelected(e.target.value);
-  };
-
   const onChangeSelect = (theme: string) => {
     // dispatch(resetPinnedThemes())
     setSelected(theme);
-  };
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    setSelected(e.target.value);
-  };
-
-  const onSubmit = async () => {
-    // TODO: Handling when input value is empty
-    const tid = await createThreadItem(token, selected);
-    dispatch(setWorkingThread({ tid: tid, theme: selected }));
-    dispatch(fetchUserInfo());
-    // TODO: Dispatch working thread id
   };
 
   const onCloseThemeSelector = useCallback(() => {

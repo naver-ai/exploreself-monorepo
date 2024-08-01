@@ -5,7 +5,7 @@ const getCommentList = async (
   qid: string
 ): Promise<string[] | null> => {
   try {
-    const response = await Http.axios.get(`/question/comment/${qid}`, {
+    const response = await Http.axios.get(`/question/${qid}/comment`, {
       headers: Http.makeSignedInHeader(token),
     });
     return response.data.commentList?.map((comment: any) => comment.content);

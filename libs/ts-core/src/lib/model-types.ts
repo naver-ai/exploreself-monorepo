@@ -17,7 +17,7 @@ export interface IQASetBase {
 
 
 export interface IQASetWithIds extends IQASetBase {
-  _id?: string,
+  _id: string,
   tid: string
 }
 
@@ -30,9 +30,17 @@ export interface IThreadBase {
 
 export interface IThreadWithQuestionIds extends IThreadBase {
   _id: string,
-  questions: Array<string | IQASetWithIds>,
+  questions: Array<string>,
   uid: string
 }
+
+
+export interface IThreadAllPopulated extends IThreadBase {
+  _id: string,
+  questions: Array<IQASetWithIds>,
+  uid: string
+}
+
 
 export interface IUserBase {
   alias: string;
@@ -49,4 +57,9 @@ export interface IUserBase {
 export interface IUserWithThreadIds extends IUserBase {
   _id: string,
   threads: Array<string>
+}
+
+export interface IUserAllPopulated extends IUserBase {
+  _id: string,
+  threads: Array<IThreadAllPopulated>
 }

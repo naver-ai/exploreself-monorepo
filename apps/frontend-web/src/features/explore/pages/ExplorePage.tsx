@@ -6,7 +6,7 @@ import { Card,  Button } from 'antd';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
-import { setThemeSelectorOpen } from '../reducer';
+import { setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
@@ -34,7 +34,7 @@ export const ExplorerPage = () => {
     (state) => state.explore.initial_narrative
   );
   const userName = useSelector((state) => state.explore.name);
-  const threadIds = useSelector((state) => state.explore.threads);
+  const threadIds = useSelector(threadSelectors.selectIds);
 
   const { ref, inView, entry } = useInView({
     /* Optional options */
@@ -92,11 +92,7 @@ export const ExplorerPage = () => {
               </Card>
               {
                 threadIds.map((threadId) => (
-                  <div key={threadId} className="py-1">
-                    <ThreadBox
-                      /*TODO theme={workingThread.theme}*/ tid={threadId}
-                    />
-                  </div>
+                  <ThreadBox key={threadId} tid={threadId}/>
                 ))
               }
               <Button
