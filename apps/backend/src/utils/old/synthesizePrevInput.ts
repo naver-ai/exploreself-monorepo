@@ -10,8 +10,8 @@ const synthesizePrevInput = async (uid: mongoose.Types.ObjectId) => {
     console.log("Err in fetching user")
   }
   const synthesizedProfilic = synthesizeProfilicInfo(userInfo.initial_narrative, userInfo.value_set, userInfo.background);
-  const threadRef = userInfo.threadRef
-  const synthesizedThreadList = await ThreadItem.find({_id: {$in: threadRef}}).select('synthesized')
+  const threads = userInfo.threads
+  const synthesizedThreadList = await ThreadItem.find({_id: {$in: threads}}).select('synthesized')
   if (!synthesizedThreadList){
     console.log("Err in fetching synthesizedThreadList")
   }

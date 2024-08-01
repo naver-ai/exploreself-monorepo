@@ -10,7 +10,8 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "backend:build"      },
+        "buildTarget": "backend:build"
+      },
       "configurations": {
         "development": {
           "buildTarget": "backend:build:development"
@@ -20,7 +21,6 @@
         }
       }
     },
-
     "setup": {
       "executor": "nx:run-commands",
       "options": {

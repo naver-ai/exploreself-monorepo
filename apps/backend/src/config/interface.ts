@@ -106,7 +106,7 @@ export interface IUser extends Document {
   value_set: string[];
   background: string;
   thread: IThreadItem[];
-  threadRef: mongoose.Types.ObjectId[];
+  threads: mongoose.Types.ObjectId[];
   // history: IHistoryItem[]
   createdAt: Date;
   updatedAt: Date;

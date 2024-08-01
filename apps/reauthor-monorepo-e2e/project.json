@@ -4,7 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/reauthor-monorepo-e2e/src",
   "tags": [],
-  "implicitDependencies": ["reauthor-monorepo"],
+  "implicitDependencies": ["frontend-web"],
   "// targets": "to see all targets run: nx show project reauthor-monorepo-e2e --web",
   "targets": {}
 }

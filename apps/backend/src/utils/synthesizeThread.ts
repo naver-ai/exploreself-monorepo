@@ -39,9 +39,8 @@ const synthesizePrevThreads = async (uid: mongoose.Types.ObjectId, option='defau
     throw new Error('User not found');
   }
   
-  const threadRefs = user.threadRef;
-  if (threadRefs.length) {
-    const syntheses = await Promise.all(threadRefs.map(async (ref) => {
+  if (user.threads.length) {
+    const syntheses = await Promise.all(user.threads.map(async (ref) => {
       return synthesizeThread(ref.toString(), option);
     }));
     
