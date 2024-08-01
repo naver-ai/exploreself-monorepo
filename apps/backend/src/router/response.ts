@@ -201,7 +201,7 @@ const generateSentences = async (req: RequestWithUser, res) => {
     background: user.background
   }
 
-  const thread = user.threadRef
+  const thread = user.threads
 
   //TODO fix new use schema issue
   const sentences = await generateSentencesFromKeywords(initInfo, thread as any, question, selected_keywords)

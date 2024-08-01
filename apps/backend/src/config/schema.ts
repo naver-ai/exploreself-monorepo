@@ -24,7 +24,7 @@ export interface IThreadORM extends IThreadBase, Document {
 
 export interface IUserORM extends IUserBase, Document {
   _id: mongoose.Types.ObjectId
-  threadRef: Array<mongoose.Types.ObjectId | IThreadORM>
+  threads: Array<mongoose.Types.ObjectId | IThreadORM>
 }
 
 export const AIGuideSchema = new Schema({
@@ -77,7 +77,7 @@ export const UserSchema = new Schema({
     initial_narrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     value_set: {type: [String], required: true, default: []},
     background: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
-    threadRef: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
+    threads: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date}
  });

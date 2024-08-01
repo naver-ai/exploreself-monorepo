@@ -48,5 +48,5 @@ export interface IUserBase {
 
 export interface IUserWithThreadIds extends IUserBase {
   _id: string,
-  threadRef: Array<string>
+  threads: Array<string>
 }

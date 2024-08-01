@@ -18,7 +18,6 @@ export type IExploreState = {
   event_history: IEvent[];
   question_stack: string[];
   pinned_themes: string[];
-  working_thread: IThreadItem;
   isThemeSelectorOpen: boolean;
 } & Omit<
   IUserWithThreadIds,
@@ -33,7 +32,7 @@ const initialState: IExploreState = {
   initial_narrative: undefined,
   value_set: [],
   background: undefined,
-  threadRef: [],
+  threads: [],
   isThemeSelectorOpen: false,
 
   event_history: [], // TODO: experiment with chat-log, or plain text

@@ -18,7 +18,7 @@ const createThreadItem = async (req: RequestWithUser, res) => {
   try {
     const newThread = await newThreadItem.save()
     const threadid = newThread._id
-    await User.findByIdAndUpdate(uid, {$push: {threadRef: threadid}})
+    await User.findByIdAndUpdate(uid, {$push: {threads: threadid}})
     res.json({
       success: true,
       threadid: threadid
@@ -71,10 +71,10 @@ const getOrientingInput = async (req, res) => {
 
 const getThreadList = async (req: RequestWithUser, res) => {
   try {
-    // const user = await User.findById(uid).populate('threadRef').exec();
+    // const user = await User.findById(uid).populate('threads').exec();
     const user = req.user
     return res.json({
-      threadRef: user.threadRef
+      threads: user.threads
     })
   } catch (err) {
     return res.status(500).json({ message: 'Server error fetching thread list:' + err });

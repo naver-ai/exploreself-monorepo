@@ -37,7 +37,7 @@ export const ExplorerPage = () => {
     (state) => state.explore.initial_narrative
   );
   const userName = useSelector((state) => state.explore.name);
-  const threadIds = useSelector((state) => state.explore.threadRef);
+  const threadIds = useSelector((state) => state.explore.threads);
 
   const { ref, inView, entry } = useInView({
     /* Optional options */
@@ -93,10 +93,10 @@ export const ExplorerPage = () => {
                   {initialNarrative}
                 </span>
               </Card>
-              {threadIds.map((threadRef) => (
-                <div key={threadRef} className="py-1">
+              {threadIds.map((threadId) => (
+                <div key={threadId} className="py-1">
                   <ThreadBox
-                    /*TODO theme={workingThread.theme}*/ tid={threadRef}
+                    /*TODO theme={workingThread.theme}*/ tid={threadId}
                   />
                 </div>
               ))}

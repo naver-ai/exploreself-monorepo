@@ -13,8 +13,8 @@ import mongoose from 'mongoose';
 
 const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructions='') => {
 
-  const userData = await User.findById(uid).populate({path: 'threadRef'}) as IUserBase & {threadRef: IThreadORM[]}
-  const themeList = userData.threadRef?.map(iteme => iteme.theme)
+  const userData = await User.findById(uid).populate({path: 'threads'}) as IUserBase & {threads: IThreadORM[]}
+  const themeList = userData.threads?.map(iteme => iteme.theme)
   
   const system_message =  nunjucks.renderString(`
   [Role] You are a therapeutic assistant specializing in generating socratic questions to facilitate self-reflection and personal growth in clients. 

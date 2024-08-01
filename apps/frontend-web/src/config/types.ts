@@ -29,7 +29,7 @@ export interface IUser {
   value_set: string[];
   background: string;
   thread: IThreadItem[];
-  threadRef: string[];
+  threads: string[];
   // history: IHistoryItem[]
   createdAt: Date;
   updatedAt?: Date;

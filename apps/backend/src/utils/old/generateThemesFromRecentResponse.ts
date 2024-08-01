@@ -49,7 +49,7 @@ const generateThemesFromRecentResponse = async (uid: mongoose.Types.ObjectId, ad
 
   const previous_input = await synthesizePrevInput(uid)
   const user = await User.findById(uid)
-  const recent_thread = user.threadRef[user.threadRef.length-1]
+  const recent_thread = user.threads[user.threads.length-1]
   
   const most_recent_session = await synthesizeSession(recent_thread.toString(), uid)
 

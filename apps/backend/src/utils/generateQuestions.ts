@@ -13,7 +13,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
   const userData = await User.findById(uid);
   const threadData = await ThreadItem.findById(tid);
 
-  const threadLength = userData.threadRef.length;
+  const threadLength = userData.threads.length;
 
   const systemTemplate = `
   [Role]

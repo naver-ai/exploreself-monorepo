@@ -13,7 +13,7 @@ const OUTLINE_PANEL_CLASS =
   'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer';
 
 export const OutlinePanel = () => {
-  const threadIds = useSelector((state) => state.explore.threadRef);
+  const threadIds = useSelector((state) => state.explore.threads);
   const token = useSelector((state) => state.auth.token) as string;
 
   const [threadTitleList, setThreadTitleList] = useState<
