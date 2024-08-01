@@ -87,6 +87,7 @@ const getThreadData = async (req: RequestWithUser, res) => {
   try {
     const thread = await ThreadItem.findById(tid)
     if (thread?.questions.length == 0 || !thread.questions) {
+      console.log("generate questions....")
       const questions = await generateQuestions(uid, tid, 3)
       const qaPromises = questions.map(async(question, index) => {
         const newQASet = new QASet({
@@ -99,11 +100,15 @@ const getThreadData = async (req: RequestWithUser, res) => {
       const savedQASets = await Promise.all(qaPromises);
       const qaSetIds = savedQASets.map(qa => qa._id)
 
+      console.log("Generated questions")
+
       const updatedThread = await ThreadItem.findByIdAndUpdate(
         tid, 
         { $push: { questions: { $each: qaSetIds } } },
         { new: true }
       );
+
+      console.log(updatedThread)
 
       return res.json({
         threadData: updatedThread

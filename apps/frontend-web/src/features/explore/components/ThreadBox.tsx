@@ -99,7 +99,6 @@ const SelectedQuestionItem = (props: { qid: string }) => {
 
   const fetchKeywordsHandler = useCallback(async () => {
     const newKeywords = await generateKeywords(token, props.qid, 3);
-    console.log('NEW: ', newKeywords);
     setKeywords((prevKeywords) => [
       ...(prevKeywords || []),
       ...(newKeywords as string[]),
@@ -227,11 +226,11 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
   const fetchQuestionData = useCallback(async () => {
     const qData = await getQuestionData(token, props.qid);
     setQuestion(qData.question.content);
-  }, [props.qid]);
+  }, [token, props.qid]);
 
   useEffect(() => {
-    fetchQuestionData();
-  }, []);
+    fetchQuestionData().then();
+  }, [fetchQuestionData]);
 
   const selectQuestionHandler = useCallback(async () => {
     try {
@@ -273,13 +272,14 @@ const SelectedQuestionList = (props: { tid: string }) => {
   const [questionList, setQuestionList] = useState<string[] | null>([]);
 
   const fetchSelectedQuestionList = useCallback(async () => {
+    console.log("Fetch selected questions")
     const fetchedQuestionList = await getSelectedQuestionList(token, props.tid);
     setQuestionList(fetchedQuestionList);
-  }, []);
+  }, [token, props.tid]);
 
   useEffect(() => {
-    fetchSelectedQuestionList();
-  }, []);
+    fetchSelectedQuestionList().then()
+  }, [fetchSelectedQuestionList]);
 
   return (
     <div>
@@ -299,23 +299,17 @@ const UnselectedQuestionList = (props: { tid: string }) => {
       props.tid
     );
     setQuestionList(fetchedQuestionList);
-  }, []);
+  }, [token, props.tid]);
 
   const fetchMoreQuestionHandler = useCallback(async () => {
     const fetchedQuestions = await generateQuestions(token, props.tid, 1);
     await fetchUnselectedQuestionList();
-  }, []);
+  }, [fetchUnselectedQuestionList]);
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      const fetchedQuestionList = await getUnselectedQuestionList(
-        token,
-        props.tid
-      );
-      setQuestionList(fetchedQuestionList);
-    }
-    fetchQuestions();
-  }, []);
+    fetchUnselectedQuestionList().then()
+  }, [fetchUnselectedQuestionList]);
+
   return (
     <div>
       <Collapse

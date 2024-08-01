@@ -2,16 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { OutlinePanel, PinnedThemesPanel } from '../components/sidebar-views';
 import ThemeBox from '../components/ThemeBox';
 import { ThreadBox } from '../components/ThreadBox';
-import { Card, FloatButton, Drawer, Button } from 'antd';
-import { BulbOutlined } from '@ant-design/icons';
+import { Card,  Button } from 'antd';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
 import { setThemeSelectorOpen } from '../reducer';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
-import { PartialDarkThemeProvider } from '../../../styles';
-import tailwindColors from 'tailwindcss/colors';
 import { ShortcutManager } from '../../../services/shortcut';
 
 const SidePanel = () => {
@@ -93,13 +90,15 @@ export const ExplorerPage = () => {
                   {initialNarrative}
                 </span>
               </Card>
-              {threadIds.map((threadId) => (
-                <div key={threadId} className="py-1">
-                  <ThreadBox
-                    /*TODO theme={workingThread.theme}*/ tid={threadId}
-                  />
-                </div>
-              ))}
+              {
+                threadIds.map((threadId) => (
+                  <div key={threadId} className="py-1">
+                    <ThreadBox
+                      /*TODO theme={workingThread.theme}*/ tid={threadId}
+                    />
+                  </div>
+                ))
+              }
               <Button
                 key={'new-theme-btn-bottom'}
                 ref={ref}
