@@ -1,6 +1,6 @@
 import { Http } from "../net/http";
 
-const getThreadData = async (token: string, tid: string) => {
+export const getThreadData = async (token: string, tid: string) => {
   try {
     const response = await Http.axios.get(`/thread/${tid}`, {
       headers: Http.makeSignedInHeader(token)
@@ -13,4 +13,15 @@ const getThreadData = async (token: string, tid: string) => {
 
 }
 
-export default getThreadData;
+export const getThreadIdList = async (token: string) => {
+  try {
+    const response = await Http.axios.get(`/user/thread_ids`,{
+      headers: Http.makeSignedInHeader(token)
+    })
+    return response.data.threadRef
+  } catch (err) {
+    console.log("Err in fetching thread id list: ", err);
+    return null;
+  }
+}
+

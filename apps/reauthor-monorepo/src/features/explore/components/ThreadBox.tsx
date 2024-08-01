@@ -1,9 +1,9 @@
 import { useCallback, useEffect, ChangeEvent, useState, useRef } from "react"
 import { Space, Button, Input, Card, Flex, Divider, Row, Col, Collapse } from "antd"
 import { PlusOutlined, DeleteOutlined, ReloadOutlined} from '@ant-design/icons';
-import getThreadData from "../../../api_call/getThreadData"
+import {getThreadData} from "../../../api_call/getThreadData"
 const {TextArea} = Input;
-import { useSelector } from "../../../redux/hooks"
+import { useSelector, useDispatch } from "../../../redux/hooks"
 import { IThreadWithQuestionIds, IQASetWithIds, IQASetBase } from "@core";
 import {updateResponse, saveQASetArray, selectQuestion, saveComment, unSelectQuestion} from "../../../api_call/saveQASet";
 import generateQuestions from "../../../api_call/generateQuestions";
@@ -14,6 +14,7 @@ import { getSelectedQuestionList, getUnselectedQuestionList } from "../../../api
 import getCommentList from "../../../api_call/getCommentList";
 import { current } from "@reduxjs/toolkit";
 import { ShortcutManager } from "../../../services/shortcut";
+import { fetchUserInfo } from "../reducer";
 
 const SelectedQuestionItem = (props:{
   qid: string
@@ -72,7 +73,6 @@ const SelectedQuestionItem = (props:{
 
   const fetchKeywordsHandler = useCallback(async () => {
     const newKeywords = await generateKeywords(token, props.qid, 3)
-    console.log("NEW: ", newKeywords)
     setKeywords((prevKeywords) => [...(prevKeywords || []), ...newKeywords as string[]]);
   },[token, props.qid])
 
@@ -160,6 +160,7 @@ const UnselectedQuestionItem = (props:{
 }) => {
   const token = useSelector((state) => state.auth.token) as string
   const [question, setQuestion] = useState<string>()
+  const dispatch = useDispatch();
 
   const fetchQuestionData = useCallback(async () => {
     const qData = await getQuestionData(token, props.qid)
@@ -167,15 +168,17 @@ const UnselectedQuestionItem = (props:{
   },[props.qid])
 
   useEffect(() => {
+    console.log("EEE", props.qid)
     fetchQuestionData();
   },[])
 
   const selectQuestionHandler = useCallback(async () => {
     try {
       const selectedQA = await selectQuestion(token, props.qid)
+      dispatch(fetchUserInfo())
     } catch (err) {
       console.log("Err in selecting question")
-    }
+    } 
   },[])
 
   const deleteQuestionHandler = useCallback(() => {
@@ -203,6 +206,7 @@ const SelectedQuestionList = (props: {
 }) => {
   const token = useSelector((state) => state.auth.token) as string
   const [questionList, setQuestionList] = useState<string[] | null>([])
+  const dispatch = useDispatch();
 
   const fetchSelectedQuestionList = useCallback(async () => {
     const fetchedQuestionList = await getSelectedQuestionList(token, props.tid)
@@ -225,6 +229,7 @@ const UnselectedQuestionList = (props: {
 }) => {
   const token = useSelector((state) => state.auth.token) as string
   const [questionList, setQuestionList] = useState<string[] | null>([])
+  const dispatch = useDispatch();
   const fetchUnselectedQuestionList = useCallback(async () => {
     const fetchedQuestionList = await getUnselectedQuestionList(token, props.tid)
     setQuestionList(fetchedQuestionList)
@@ -267,6 +272,7 @@ export const ThreadBox = (props: {
     try {
       const data: IThreadWithQuestionIds = await getThreadData(token, props.tid);
       setThreadData(data);
+      console.log("DATA: ", data)
     } catch (error) {
       console.error('Failed to fetch thread data:', error);
     }

@@ -55,12 +55,14 @@ export const PinnedThemesPanel = () => {
   const pinnedThemes = useSelector((state) => state.explore.pinned_themes)
   
   const addToThread = useCallback(async (selected: string) => {
-    if(uid != null){
-      const tid = await createThreadItem(token, selected)
-      dispatch(removePinnedTheme(selected))
-      dispatch(fetchUserInfo())
-    }
-  }, [uid])
+    const tid = await createThreadItem(token, selected)
+    dispatch(removePinnedTheme(selected))
+    dispatch(fetchUserInfo())
+  }, [])
+
+  const removeTheme = (themeToRemove: string) => {
+    dispatch(removePinnedTheme(themeToRemove))
+  };
   
   return (<PanelGroup iconComponent={ArchiveBoxIcon} title={"주제 바구니"} titleContainerClassName='!mb-3'>
       {

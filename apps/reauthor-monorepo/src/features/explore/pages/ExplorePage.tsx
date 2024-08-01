@@ -13,6 +13,7 @@ import { useInView } from "react-intersection-observer";
 import { PartialDarkThemeProvider } from "../../../styles";
 import tailwindColors from 'tailwindcss/colors'
 import { ShortcutManager } from "../../../services/shortcut";
+import {getThreadIdList} from "../../../api_call/getThreadData"
 
 const SidePanel = () => {
 
@@ -32,7 +33,17 @@ export const ExplorerPage = () => {
 
   const initialNarrative = useSelector(state => state.explore.initial_narrative)
   const userName = useSelector(state => state.explore.name)
-  const threadIds = useSelector(state => state.explore.threadRef)
+  // const threadIds = useSelector(state => state.explore.threadRef)
+  const token = useSelector((state) => state.auth.token) as string
+
+  const [threadIds, setThreadIds] = useState<Array<string> | null>()
+
+  const fetchThreadList = useCallback(async() => {
+    const threadList = await getThreadIdList(token)
+    setThreadIds(threadList)
+    return threadList
+  },[token])
+  
 
   const { ref, inView, entry } = useInView({
     /* Optional options */
@@ -51,6 +62,7 @@ export const ExplorerPage = () => {
 
 
   useEffect(()=>{
+    fetchThreadList();
     const focusRequestSubscription = ShortcutManager.instance.onFocusRequestedEvent.subscribe(event => {
       switch(event.type){
         case "narrative":
@@ -83,7 +95,7 @@ export const ExplorerPage = () => {
             </span>
           </Card>
           {
-            threadIds.map(threadRef => <div key={threadRef} className="py-1"><ThreadBox /*TODO theme={workingThread.theme}*/ tid={threadRef} /></div>)
+            threadIds?.map(threadRef => <div key={threadRef} className="py-1"><ThreadBox /*TODO theme={workingThread.theme}*/ tid={threadRef} /></div>)
           }
           <Button key={"new-theme-btn-bottom"} ref={ref} type="primary"
             className="w-full border-none shadow-lg h-12 mt-4"

@@ -103,7 +103,7 @@ const getThreadData = async (req: RequestWithUser, res) => {
         tid, 
         { $push: { questions: { $each: qaSetIds } } },
         { new: true }
-      ).populate('questions') as IThreadORM & {questions: Array<IQASetORM>};
+      );
 
       return res.json({
         threadData: updatedThread
@@ -174,6 +174,7 @@ router.post('/synthesizeThread', signedInUserMiddleware, synthesizeThread)
 router.post('/saveSynthesized', signedInUserMiddleware, saveSynthesized)
 router.post('/getOrientingInput', signedInUserMiddleware, getOrientingInput)
 router.get ('/:tid', signedInUserMiddleware, getThreadData);
+
 
 
 
