@@ -61,7 +61,7 @@ router.get('/thread_ids', signedInUserMiddleware, body("threadRef").exists().tri
   const uid = req.user._id
   const user = await User.findById(uid)
   res.json({
-    threadRef: user.threadRef
+    threadRef: user.threads
   })
 })
 
