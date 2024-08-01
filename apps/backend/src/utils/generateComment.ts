@@ -65,15 +65,15 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
 
   const commentSchema = z.object({
     candidates: z.array(z.object({
-      category: z.string().describe('Category of the comment'),
-      comment: z.string().describe('comment'),
-      rationale: z.string().describe('rationale of why this comment would be appropriate and helpful for the client, considering the overall background and the response status')
+      category: z.string().describe('Category of the comment (in Korean)'),
+      comment: z.string().describe('comment (in Korean)'),
+      rationale: z.string().describe('rationale of why this comment would be appropriate and helpful for the client, considering the overall background and the response status (in Korean)')
     })),
     selected: z.object({
-      category: z.string().describe('category of the selected comment'),
-      comment: z.string().describe('selected comment'),
-      rationale: z.string().describe('rationale of the selected comment')
-    }).describe('each category, comment, rationale of the selected comment')
+      category: z.string().describe('category of the selected comment (in Korean)'),
+      comment: z.string().describe('selected commenin Koreant'),
+      rationale: z.string().describe('rationale of the selected comment (in Korean)')
+    }).describe('each category, comment, rationale of the selected comment (in Korean)')
   }) 
 
   const structuredLlm = chatModel.withStructuredOutput(commentSchema)

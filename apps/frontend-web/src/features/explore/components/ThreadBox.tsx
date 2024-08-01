@@ -17,7 +17,7 @@ import {
 } from '@ant-design/icons';
 import getThreadData from '../../../api_call/getThreadData';
 const { TextArea } = Input;
-import { useSelector } from '../../../redux/hooks';
+import { useDispatch, useSelector } from '../../../redux/hooks';
 import { IThreadWithQuestionIds, IQASetWithIds, IQASetBase } from '@core';
 import {
   updateResponse,
@@ -37,6 +37,9 @@ import {
 import getCommentList from '../../../api_call/getCommentList';
 import { current } from '@reduxjs/toolkit';
 import { ShortcutManager } from '../../../services/shortcut';
+import { fetchUserInfo } from '../reducer';
+import { useInView } from 'react-intersection-observer';
+
 
 const SelectedQuestionItem = (props: { qid: string }) => {
   const token = useSelector((state) => state.auth.token) as string;
@@ -219,6 +222,7 @@ const SelectedQuestionItem = (props: { qid: string }) => {
 const UnselectedQuestionItem = (props: { qid: string }) => {
   const token = useSelector((state) => state.auth.token) as string;
   const [question, setQuestion] = useState<string>();
+  const dispatch = useDispatch();
 
   const fetchQuestionData = useCallback(async () => {
     const qData = await getQuestionData(token, props.qid);
@@ -232,6 +236,7 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
   const selectQuestionHandler = useCallback(async () => {
     try {
       const selectedQA = await selectQuestion(token, props.qid);
+      dispatch(fetchUserInfo())
     } catch (err) {
       console.log('Err in selecting question');
     }
@@ -302,7 +307,14 @@ const UnselectedQuestionList = (props: { tid: string }) => {
   }, []);
 
   useEffect(() => {
-    fetchUnselectedQuestionList();
+    const fetchQuestions = async () => {
+      const fetchedQuestionList = await getUnselectedQuestionList(
+        token,
+        props.tid
+      );
+      setQuestionList(fetchedQuestionList);
+    }
+    fetchQuestions();
   }, []);
   return (
     <div>
@@ -337,6 +349,10 @@ const UnselectedQuestionList = (props: { tid: string }) => {
 export const ThreadBox = (props: { tid: string }) => {
   const token = useSelector((state) => state.auth.token) as string;
   const [threadData, setThreadData] = useState<IThreadWithQuestionIds>();
+  const [ref, inView, entry] = useInView({
+    threshold: [0,1],
+    rootMargin: '0px 0px -100% 0px',
+  })
   const fetchThreadData = useCallback(async () => {
     try {
       const data: IThreadWithQuestionIds = await getThreadData(
@@ -366,17 +382,27 @@ export const ThreadBox = (props: { tid: string }) => {
     };
   }, [props.tid]);
 
+  const isIntersectingTop = entry?.isIntersecting && entry.boundingClientRect && entry.boundingClientRect.top <= 0;
+
   return (
-    <Card
-      title={threadData ? threadData.theme : 'Theme Loading'}
-      className="mt-4 relative"
-    >
-      <div
-        ref={scrollAnchorRef}
-        className="scroll-anchor absolute -top-6 w-10 h-10"
-      />
-      <SelectedQuestionList tid={props.tid} />
-      <UnselectedQuestionList tid={props.tid} />
-    </Card>
+    <div ref={ref} className='relative'>
+      {isIntersectingTop && (
+        <div className="fixed top-0 w-full bg-white z-50 border-b border-gray-200 text-black py-3 pl-3 ">
+          <div className="text-lg font-medium pl-3">{threadData ? threadData.theme : 'Theme Loading'}</div>
+        </div>
+      )}
+      <Card
+        title={threadData ? threadData.theme : 'Theme Loading'}
+        className="mt-4 relative"
+      >
+        <div
+          ref={scrollAnchorRef}
+          className="scroll-anchor absolute -top-6 w-10 h-10"
+        />
+        <SelectedQuestionList tid={props.tid} />
+        <UnselectedQuestionList tid={props.tid} />
+      </Card>
+    </div>
+    
   );
 };

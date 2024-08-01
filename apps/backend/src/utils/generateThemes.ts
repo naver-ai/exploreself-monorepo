@@ -48,7 +48,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
 
   const edgeSchema = z.object({
     themes: z.array(z.object({
-      theme: z.string().describe("Each theme from the user's initial narrative and previous log."),
+      theme: z.string().describe("Each theme from the user's initial narrative and previous log. (in Korean)"),
       quote: z.string().describe("Most relevant part of the user's narrative to the theme")
     }))
   })
@@ -66,7 +66,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
 
   const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log});
 
-  return result.themes;
+  return (result as any).themes;
 } 
 
 export default generateThemes;

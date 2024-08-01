@@ -57,6 +57,15 @@ router.post('/profile', signedInUserMiddleware, body("name").exists().trim(), as
   })
 })
 
+router.get('/thread_ids', signedInUserMiddleware, body("threadRef").exists().trim(), async (req: RequestWithUser, res) => {
+  const uid = req.user._id
+  const user = await User.findById(uid)
+  res.json({
+    threadRef: user.threads
+  })
+})
+
+
 
 router.post('/setValueSet', signedInUserMiddleware, setValueSet)
 router.post('/setBackground', signedInUserMiddleware, setBackground)
