@@ -6,7 +6,7 @@ import generateQuestions from '../utils/generateQuestions';
 import { body } from 'express-validator';
 import { synthesizeThread } from '../utils/synthesizeThread';
 
-var router = express.Router();
+const router = express.Router();
 
 
 const getThreadData = async (req: RequestWithUser, res) => {

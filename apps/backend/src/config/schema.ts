@@ -1,6 +1,7 @@
 import { IThreadBase, IUserBase, IQASetBase } from "@core";
 import mongoose, {Schema, Document, mongo} from "mongoose";
 import { InteractionType, InteractionBase } from "@core";
+import * as nanoid from 'nanoid'
 
 export function emptyStringToUndefinedConverter(value: string | undefined){
   return value === '' ? undefined : value;
@@ -69,7 +70,7 @@ export const ThreadItemSchema = new Schema({
    uid: {type: Schema.Types.ObjectId, ref: 'User', required: true},
    theme: {type: String, required: true},
    questions: {type: [Schema.Types.ObjectId], ref: 'QASet', required: true, default: []},
-   synthesized: {type: String},
+   synthesized: {type: String, required: false, default: undefined},
    createdAt: {type: Date, default: Date.now},
    updatedAt: {type: Date}
  });
@@ -79,10 +80,11 @@ ThreadItemSchema.set('timestamps', true)
 export const UserSchema = new Schema({
     alias: {type: String, required: true, unique: true},
     name: {type: String, required: false},
-    passcode: {type: String, required: true},
+    passcode: {type: String, required: true, unique: true, default: () => nanoid.customAlphabet('1234567890', 6) },
     isKorean: {type: Boolean, required: true, default: true},
     initialNarrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     threads: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
+    pinnedThemes: {type: [String], required: true, default: []},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date}
  });

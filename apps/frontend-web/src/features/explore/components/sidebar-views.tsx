@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Timeline } from 'antd';
-import { populateNewThread, removePinnedTheme, threadSelectors } from '../reducer';
+import { populateNewThread, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { IThreadWithQuestionIds } from '@core';
 import { ListBulletIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid';
@@ -68,13 +68,14 @@ export const PinnedThemesPanel = () => {
   const dispatch = useDispatch();
 
   const uid = useSelector((state) => state.explore.userId);
-  const pinnedThemes = useSelector((state) => state.explore.pinned_themes);
+  const pinnedThemes = useSelector((state) => state.explore.pinnedThemes);
 
   const addToThread = useCallback(
     async (selected: string) => {
       if (uid != null) {
-        dispatch(removePinnedTheme(selected))
+        dispatch(unpinTheme(selected, false))
         dispatch(populateNewThread(selected))
+        dispatch(setThemeSelectorOpen(false))
         await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: selected}, {})
       }
     },
@@ -93,7 +94,7 @@ export const PinnedThemesPanel = () => {
         </div>
       ) : (
         <div>
-          {pinnedThemes?.map((theme, i) => (
+          {pinnedThemes.map((theme, i) => (
             <div key={i} onClick={() => addToThread(theme)}>
               {theme}
             </div>

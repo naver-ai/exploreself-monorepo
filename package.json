@@ -45,7 +45,7 @@
     "langchain": "^0.2.5",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.3",
-    "nanoid": "^5.0.7",
+    "nanoid": "~3.3.4",
     "nunjucks": "^3.2.4",
     "openai": "^4.52.0",
     "react": "18.3.1",

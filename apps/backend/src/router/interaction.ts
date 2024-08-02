@@ -4,7 +4,7 @@ import type {RequestWithUser} from './middlewares'
 import { signedInUserMiddleware } from './middlewares';
 import { InteractionBase, InteractionType } from '@core';
 
-var router = express.Router()
+const router = express.Router()
 
 const logInteractionData = async(req: RequestWithUser, res) => {
   const uid = req.user._id.toString();

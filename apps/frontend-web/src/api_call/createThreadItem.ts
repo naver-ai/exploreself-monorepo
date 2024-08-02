@@ -7,7 +7,7 @@ const createThreadItem = async (
 ): Promise<IThreadWithQuestionIds | null> => {
   try {
     const response = await Http.axios.post(
-      `/thread/new`,
+      `/threads/new`,
       {
         theme: theme,
       },

@@ -4,33 +4,8 @@ import { signedInUserMiddleware } from './middlewares';
 import type {RequestWithUser} from './middlewares'
 import { body } from 'express-validator';
 
-var router = express.Router()
+const router = express.Router()
 
-const setValueSet = async (req: RequestWithUser, res) => {
-  const value_set = req.body.value_set;
-  const uid = req.user._id
-  User.findByIdAndUpdate(uid, {$set: {value_set: value_set}}, (err, data) => {
-    if (err) throw err;
-    else {
-      res.json({
-        success: true
-      })
-    }
-  })
-}
-
-const setBackground = async (req: RequestWithUser, res) => {
-  const background = req.body.background;
-  const uid = req.user._id
-  User.findByIdAndUpdate(uid, {$set: {background: background}}, (err, data) => {
-    if (err) throw err;
-    else {
-      res.json({
-        success: true
-      })
-    }
-  })
-}
 router.get('/', signedInUserMiddleware, async (req: RequestWithUser, res) => {
   res.json({
     user: (await req.user.populate({
@@ -61,20 +36,6 @@ router.post('/profile', signedInUserMiddleware, body("name").exists().trim(), as
     name: updatedUser.name
   })
 })
-
-router.get('/thread_ids', signedInUserMiddleware, body("threadRef").exists().trim(), async (req: RequestWithUser, res) => {
-  const uid = req.user._id
-  const user = await User.findById(uid)
-  res.json({
-    threads: user.threads
-  })
-})
-
-
-
-router.post('/setValueSet', signedInUserMiddleware, setValueSet)
-router.post('/setBackground', signedInUserMiddleware, setBackground)
-
 
 export default router;
 
