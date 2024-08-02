@@ -4,7 +4,7 @@ import type {RequestWithUser} from './middlewares'
 import { signedInUserMiddleware } from './middlewares';
 
 
-var router = express.Router()
+const router = express.Router()
 
 const getQuestionData = async(req: RequestWithUser, res) => {
   const qid = req.params.qid

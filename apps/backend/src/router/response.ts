@@ -5,7 +5,7 @@ import { signedInUserMiddleware } from './middlewares';
 import { synthesizeThread } from '../utils/synthesizeThread';
 import { IAIGuide, InteractionType } from '@core';
 
-var router = express.Router()
+const router = express.Router()
 
 
 const saveComment = async(req: RequestWithUser, res) => {

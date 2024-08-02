@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import {
   Button,
   Input,
@@ -6,6 +6,7 @@ import {
   Flex,
   Collapse,
   Spin,
+  Divider,
 } from 'antd';
 import {
   PlusOutlined,
@@ -18,6 +19,10 @@ import { getMoreQuestion, questionSelectors, selectedQuestionIdsSelector, select
 import { useInView } from 'react-intersection-observer';
 import { QuestionBox } from './QuestionBox';
 import { usePrevious } from "@uidotdev/usehooks";
+import { LoadingIndicator } from '../../../components/LoadingIndicator';
+import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
+import { PencilIcon } from '@heroicons/react/20/solid';
 
 
 const UnselectedQuestionItem = (props: { qid: string }) => {
@@ -32,22 +37,25 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
     } catch (err) {}
   }, []);
 
+  const onSelect = useCallback(() => dispatch(selectQuestion(props.qid)), [props.qid])
+
   return (
     <Flex
       vertical={false}
       align="center"
       justify="space-between"
-      className="border-[1px] shadow border-[#B9DBDC]-600 rounded-lg px-5 py-2 my-2"
+      className="group border-b-[1px] pl-5 py-2 hover:bg-slate-200/50 cursor-pointer"
+      onClick={onSelect}
     >
-      {question?.question?.content}
-      <Flex>
-        <Button
-          onClick={() => dispatch(selectQuestion(props.qid))}
-          icon={<PlusOutlined />}
-          shape="circle"
-        />
-        <Button icon={<DeleteOutlined />} shape="circle" className="ml-3" />
-      </Flex>
+      <span className='my-2'>{question?.question?.content}</span>
+      {<Flex>
+        <Button className='pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity'
+          onClick={onSelect}
+          icon={<PencilIcon className='w-4 h-4'/>}
+          type="primary"
+        >답변 쓰기</Button>
+        {false && <Button type="text" icon={<DeleteOutlined />} shape="circle" className="ml-3" />}
+      </Flex>}
     </Flex>
   );
 };
@@ -68,36 +76,42 @@ const UnselectedQuestionList = (props: { tid: string }) => {
 
   const dispatch = useDispatch();
   const questionIds = useSelector(state => unSelectedQuestionIdsSelector(state, props.tid))
+  const isCreatingQuestions = useSelector(state => state.explore.threadQuestionCreationLoadingFlags[props.tid] || false)
 
+  const onMoreQuestionsClick = useCallback(() => {
+    dispatch(getMoreQuestion(props.tid))
+  }, [props.tid])
 
-  return (
-    <div>
-      <Collapse
+  const items = useMemo(()=>{
+    return [
+      {
+        key: '1',
+        label: <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}개)</span>,
+        children: (
+          <p>
+            {
+              questionIds.map((qid) => (
+                <UnselectedQuestionItem key={qid} qid={qid} />
+              ))
+            }
+            {
+              !isCreatingQuestions ? <div className='text-right pt-3'>
+                  <Button className='' disabled={isCreatingQuestions} onClick={onMoreQuestionsClick}>{t("Thread.Questions.More")}</Button>
+                </div> : null
+            }
+            
+          </p>
+        ),
+      },
+    ]
+  }, [questionIds, onMoreQuestionsClick, isCreatingQuestions, t])
+
+  return questionIds.length > 0 || isCreatingQuestions == false ? <Collapse
+        className='bg-slate-100'
         defaultActiveKey={['1']}
         ghost
-        items={[
-          {
-            key: '1',
-            label: '질문들',
-            children: (
-              <p>
-                {questionIds.map((qid) => (
-                  <UnselectedQuestionItem qid={qid} />
-                ))}
-                <Button
-                  onClick={() => {
-                    dispatch(getMoreQuestion(props.tid))
-                  }}
-                >
-                  생각거리 더보기
-                </Button>
-              </p>
-            ),
-          },
-        ]}
-      />
-    </div>
-  );
+        items={items}
+      /> : null
 };
 
 export const ThreadBox = (props: { tid: string }) => {
@@ -107,6 +121,8 @@ export const ThreadBox = (props: { tid: string }) => {
   const thread = useSelector(state => threadSelectors.selectById(state, props.tid))
 
   const isCreatingQuestions = useSelector(state => state.explore.threadQuestionCreationLoadingFlags[props.tid] || false)
+
+  const [t] = useTranslation()
 
   const [ref, inView, entry] = useInView({
     threshold: [0,1],
@@ -138,19 +154,18 @@ export const ThreadBox = (props: { tid: string }) => {
 
   return (<Card
         ref={ref}
-        title={thread.theme}
-        className="mt-4 relative"
+        title={<span className='font-bold'>{thread.theme}</span>}
+        className="mt-4 relative rounded-xl"
       >
         <div
           ref={scrollAnchorRef}
           className="scroll-anchor absolute -top-6 w-10 h-10"
         />
-
-        {
-          isCreatingQuestions === true ? <Spin>Generating questions...</Spin> : <>
             <SelectedQuestionList tid={props.tid} />
             <UnselectedQuestionList tid={props.tid} />
-          </>
+
+        {
+          isCreatingQuestions === true ? <LoadingIndicator title={t("Thread.Questions.Generating")} className='mt-4'/> : null
         }
       </Card>)
 };

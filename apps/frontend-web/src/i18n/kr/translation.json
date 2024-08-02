@@ -20,6 +20,15 @@
     "Placeholder": "당신의 고민 이야기를 적어주세요.",
     "Complete": "고민 탐색 시작하기"
   },
+
+  "Thread": {
+    "Questions": {
+      "Title": "생각해볼 질문들",
+      "Generating": "질문거리 생성중...",
+      "More": "질문 더 추천받기"
+    }
+  },
+
   "Labels": {
     "Apply": "적용",
     "Submit": "제출"

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Row, Space, Col, Drawer } from 'antd';
 import {
-  addPinnedTheme,
+  pinTheme,
   setThemeSelectorOpen,
 } from '../reducer';
 import { MdBookmarkBorder } from 'react-icons/md';
@@ -27,7 +27,7 @@ const ThemeBox = () => {
   }, [token]);
 
   const handleAddPinnedTheme = async (theme: string) => {
-    dispatch(addPinnedTheme(theme));
+    dispatch(pinTheme(theme));
     await postInteractionData(token, InteractionType.UserPinsTheme, {theme: theme}, {})
   };
 

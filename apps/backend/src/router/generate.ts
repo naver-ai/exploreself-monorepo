@@ -10,7 +10,7 @@ import { InteractionType } from '@core';
 import generateSynthesis from '../utils/generateSynthesis';
 import generatePrompt from '../utils/generatePrompt';
 
-var router = express.Router()
+const router = express.Router()
 
 const generateQuestionsHandler = async (req: RequestWithUser, res) => {
   const uid = req.user._id;
