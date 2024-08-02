@@ -6,7 +6,7 @@ import {
   Row,
   Col,
   Skeleton,
-  Switch
+  Switch,
 } from 'antd';
 import {
   ReloadOutlined,
@@ -16,19 +16,21 @@ import { useDispatch, useSelector } from '../../../redux/hooks';
 import {
   updateResponse,
 } from '../../../api_call/saveQASet';
-import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, updateQuestion } from '../reducer';
+import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, updateQuestion, updateQuestionResponse } from '../reducer';
 import { diffChars, Change } from 'diff';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionBase, InteractionType } from '@core';
-
+import generatePrompt from '../../../api_call/generatePrompt';
 
 export const QuestionBox = (props: { qid: string }) => {
   const token = useSelector((state) => state.auth.token) as string;
   const dispatch = useDispatch()
 
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
+  const keywords = question.keywords
+  const response = question.response
+  const [seletedKeyword, setSelectedKeyword] = useState<string | null>()
   const comment = question.aiGuides ? question.aiGuides[question.aiGuides.length -1]?.content: "Loading"
-  const [response, setResponse] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedResponse, setLastSavedResponse] = useState('');
   const [isActive, setIsActive] = useState(false);
@@ -74,8 +76,7 @@ export const QuestionBox = (props: { qid: string }) => {
       setIsSaving(true);
       try {
         const interaction: InteractionBase = determineChangeType(lastSavedResponse, response) as InteractionBase
-        const savedQA = await updateResponse(token, props.qid, response, interaction);
-        dispatch(updateQuestion({_id: props.qid, response: response}))
+        dispatch(updateQuestionResponse(props.qid, response, interaction))
         setLastSavedResponse(response);
       } catch (error) {
         console.error('Failed to save content:', error);
@@ -86,7 +87,7 @@ export const QuestionBox = (props: { qid: string }) => {
   }, [response, props.qid, lastSavedResponse]);
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setResponse(event.target.value);
+    dispatch(updateQuestion({_id: props.qid, response: event.target.value}))
     setIsActive(true);
   };
 
@@ -102,6 +103,14 @@ export const QuestionBox = (props: { qid: string }) => {
   const handleToggleChange = useCallback((checked: boolean) => {
     dispatch(setQuestionShowKeywordsFlag({ qid: props.qid, flag: !checked }));
   }, [dispatch, props.qid]);
+
+  const handleKeywordSelect = useCallback(async () => {
+    if(seletedKeyword) {
+      const prompts = await generatePrompt(token, props.qid, seletedKeyword, response)
+      return prompts
+    }
+    return null
+  },[token, props.qid, seletedKeyword, response])
 
   useEffect(() => {
     if (isActive) {
@@ -122,23 +131,17 @@ export const QuestionBox = (props: { qid: string }) => {
       <Row>
         <div className={'border-dashed border-2 rounded-lg p-2 w-full mb-2'}>
           <div className="text-xs pb-2">생각을 돕는 단어들</div>
-          {!question.keywords || question.keywords?.length == 0 ? (
-            <Button
-              type="text"
-              size="small"
-              onClick={() => {
-                getNewKeywordsHandler(3);
-              }}
-            >
-              생각 도우미 단어들 보기
-            </Button>
-          ) : (
-            <Flex wrap gap="small" className="flex justify-center">
-              {question.keywords &&
-                (question.keywords as string[]).map((keyword, i) => (
+          <Flex vertical={false}>
+            <Flex wrap gap="small" className="flex justify-center" vertical={true}>
+              {keywords &&
+                (keywords as string[]).map((keyword, i) => (
                   <div
                     key={i}
                     className="border border-[#B9DBDC]-600 px-2 py-1 rounded-lg"
+                    onClick={() => {
+                      setSelectedKeyword(keyword);
+                      handleKeywordSelect();
+                    }}
                   >
                     {keyword}
                   </div>
@@ -153,7 +156,10 @@ export const QuestionBox = (props: { qid: string }) => {
                 단어 더보기
               </Button>
             </Flex>
-          )}
+            <Flex vertical={true}>
+              hello
+            </Flex>
+          </Flex>
         </div>
       </Row>
       }

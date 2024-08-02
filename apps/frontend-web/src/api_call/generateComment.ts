@@ -1,4 +1,3 @@
-import { responsiveArray } from 'antd/es/_util/responsiveObserver';
 import { Http } from '../net/http';
 
 const generateComment = async (

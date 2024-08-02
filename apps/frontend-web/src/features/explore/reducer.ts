@@ -1,9 +1,9 @@
 import { createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { InteractionType, IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds } from '@core';
+import { InteractionBase, InteractionType, IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds } from '@core';
 import { Http } from '../../net/http';
 import { AppState, AppThunk } from '../../redux/store';
 import createThreadItem from '../../api_call/createThreadItem';
-import { selectQuestionById } from '../../api_call/saveQASet';
+import { selectQuestionById, updateResponse } from '../../api_call/saveQASet';
 import generateQuestions from '../../api_call/generateQuestions';
 import generateComment from '../../api_call/generateComment';
 import generateKeywords from '../../api_call/generateKeywords';
@@ -54,7 +54,6 @@ const initialState: IExploreState = {
   isKorean: true,
   initialNarrative: undefined,
   pinned_themes: [],
-  synthesis: [],
 
   threadQuestionCreationLoadingFlags : {},
   questionCommentCreationLoadingFlags: {},
@@ -184,6 +183,15 @@ const exploreSlice = createSlice({
         }
         questionObj.keywords.push(...action.payload.keywords)
       } 
+    },
+    updateQuestionResponse: (state, action: PayloadAction<{qid: string, response: string}>) => {
+      const { qid, response } = action.payload;
+      const questionObj = state.questionEntityState.entities[qid];
+      if (questionObj) {
+        questionEntityAdapter.upsertOne(state.questionEntityState, { ...questionObj, response: response });
+      } else {
+        console.log("Not found");
+      }
     },
     setCreatingQuestionCommentFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
       state.questionCommentCreationLoadingFlags[action.payload.qid] = action.payload.flag;
@@ -418,6 +426,27 @@ export function getNewKeywords(qid: string, opt: number = 1): AppThunk {
     }
   }
 }
+
+export function updateQuestionResponse(qid: string, response: string, interaction_data: InteractionBase): AppThunk {
+  return async(dispatch, getState) => {
+    const state = getState()
+    if(state.auth.token) {
+      try {
+        dispatch(exploreSlice.actions.updateQuestionResponse({qid: qid, response: response}))
+        const updatedQuestion = await updateResponse(state.auth.token, qid, response, interaction_data)
+      } catch (ex) {
+        console.log(ex)
+      } finally {
+        
+      }
+    }
+  }
+}
+
+
+
+
+
 
 export const {
   updateUserInfo,
