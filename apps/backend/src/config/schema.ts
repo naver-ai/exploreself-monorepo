@@ -84,6 +84,7 @@ export const UserSchema = new Schema({
     initial_narrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     value_set: {type: [String], required: true, default: []},
     background: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
+    synthesis: {type: [String], required: true, default: []},
     threads: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date}

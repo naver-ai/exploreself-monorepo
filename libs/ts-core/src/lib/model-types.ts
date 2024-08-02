@@ -72,7 +72,8 @@ export interface IUserBase {
   isKorean: boolean;
   initial_narrative: string | undefined
   value_set: string[];
-  background: string | undefined
+  background: string | undefined;
+  synthesis: string[];
   createdAt: Date;
   updatedAt: Date;
 }

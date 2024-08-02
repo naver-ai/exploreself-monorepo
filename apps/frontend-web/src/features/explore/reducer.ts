@@ -23,6 +23,7 @@ const initialQuestionEneityState = questionEntityAdapter.getInitialState()
 export type IExploreState = {
   isLoadingUserInfo: boolean;
   isCreatingNewThread: boolean;
+  isCreatingSynthesis: boolean;
 
   userId?: string;
   pinned_themes: Array<string>; // This should be part of user orm and retrieved from server.
@@ -45,14 +46,17 @@ export type IExploreState = {
 const initialState: IExploreState = {
   isLoadingUserInfo: false,
   isCreatingNewThread: false,
+  isCreatingSynthesis: false,
 
   userId: undefined,
+
   name: undefined,
   isKorean: true,
   initial_narrative: undefined,
   value_set: [],
   background: undefined,
   pinned_themes: [],
+  synthesis: [],
 
   threadQuestionCreationLoadingFlags : {},
   questionCommentCreationLoadingFlags: {},
@@ -110,7 +114,9 @@ const exploreSlice = createSlice({
     setCreatingNewThreadFlag: (state, action: PayloadAction<boolean>) => {
       state.isCreatingNewThread = action.payload;
     },
-
+    setCreatingSynthesisFlag: (state, action: PayloadAction<boolean>) => {
+      state.isCreatingSynthesis = action.payload
+    },
     setCreatingThreadQuestionsFlag: (state, action: PayloadAction<{tid: string, flag: boolean}>) => {
       state.threadQuestionCreationLoadingFlags[action.payload.tid] = action.payload.flag;
     },
