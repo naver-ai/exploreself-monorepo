@@ -16,7 +16,7 @@ export enum InteractionType {
 }
 
 export interface InteractionBase {
-  type: InteractionType;
+  interaction_type: InteractionType;
   metadata: Record<string, any>;
   interaction_data?: Record<string, any>;
 }
