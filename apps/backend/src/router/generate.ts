@@ -1,5 +1,5 @@
 import express from 'express';
-import { Interaction, QASet, ThreadItem } from '../config/schema';
+import { Interaction, QASet, ThreadItem, User } from '../config/schema';
 import type {RequestWithUser} from './middlewares'
 import { signedInUserMiddleware } from './middlewares';
 import generateComment from '../utils/generateComment';
@@ -95,7 +95,8 @@ const generateSynthesisHandler = async(req: RequestWithUser, res) => {
   const user = req.user;
   try {
     const synthesis = await generateSynthesis(user)
-    // TODO: Add to DB
+    const userUpdated = await User.findByIdAndUpdate(user._id, {$push: {synthesis: synthesis}})
+    // TODO: Add log interaction data
     res.json({synthesis: synthesis})
   } catch (err) {
     res.json({

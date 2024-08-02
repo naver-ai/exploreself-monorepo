@@ -2,17 +2,41 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { OutlinePanel, PinnedThemesPanel } from '../components/sidebar-views';
 import ThemeBox from '../components/ThemeBox';
 import { ThreadBox } from '../components/ThreadBox';
-import { Card,  Button } from 'antd';
+import { Card,  Button, Drawer, Space } from 'antd';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
-import { setThemeSelectorOpen, threadSelectors } from '../reducer';
+import { getNewSynthesis, setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
 import useScrollbarSize from 'react-scrollbar-size';
 
+
 const SidePanel = () => {
+  const [open, setOpen] = useState(false)
+  const synthesisList: string[] = useSelector(state => state.explore.synthesis)
+  const dispatch = useDispatch();
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+
+  const generateSynthesis = useCallback(async () => {
+    dispatch(getNewSynthesis())
+  },[])
+
+  useEffect(() => {
+    if(open) {
+      if(!synthesisList || synthesisList.length == 0) {
+        generateSynthesis()
+      }
+    }
+  },[open])
+
   return (
     <>
       <div
@@ -25,6 +49,21 @@ const SidePanel = () => {
       <div className="flex-1 overflow-y-auto bg-gray-400/2">
         <OutlinePanel />
         <PinnedThemesPanel />
+        <Button onClick={showDrawer}>Open</Button>
+        <Drawer
+          onClose={onClose}
+          open={open}
+          placement="bottom"
+          extra={
+            <Space>
+              <Button onClick={() => generateSynthesis()}>New Synthesis</Button>
+              <Button onClick={onClose}>Cancel</Button>
+              <Button type="primary" onClick={onClose}>OK</Button>
+            </Space>
+          }
+        >
+          {synthesisList && synthesisList.map(item => <div className='border border-gray-500 rounded-lg my-3'>{item}</div>)}
+        </Drawer>
       </div>
     </>
   );

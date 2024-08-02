@@ -8,6 +8,7 @@ import generateQuestions from '../../api_call/generateQuestions';
 import generateComment from '../../api_call/generateComment';
 import generateKeywords from '../../api_call/generateKeywords';
 import { postInteractionData } from '../../api_call/postInteractionData';
+import generateSynthesis from '../../api_call/generateSynthesis';
 
 const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>({
   selectId: (model: IThreadWithQuestionIds) => model._id
@@ -190,14 +191,14 @@ const exploreSlice = createSlice({
     setQuestionShowKeywordsFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
       state.questionShowKeywordsFlags[action.payload.qid] = action.payload.flag
     },
-
+    addNewSynthesis: (state, action: PayloadAction<string>) => {
+      state.synthesis.push(action.payload)
+    },
     appendPinnedTheme: (state, action: PayloadAction<string>) => {
       if(state.pinnedThemes.indexOf(action.payload) == -1){
         state.pinnedThemes.push(action.payload)
       }
     },
-
-
     removePinnedTheme: (state, action: PayloadAction<string>) => {
       const index = state.pinnedThemes.indexOf(action.payload)
       if(index >= 0){
@@ -425,6 +426,22 @@ export function getNewKeywords(qid: string, opt: number = 1): AppThunk {
         console.log(ex)
       } finally {
         dispatch(exploreSlice.actions.setCreatingQuestionKeywordsFlag({qid: qid, flag: false}))
+      }
+    }
+  }
+}
+
+export function getNewSynthesis(): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState()
+    if(state.auth.token){
+      try{ 
+        const synthesis = await generateSynthesis(state.auth.token)
+        dispatch(exploreSlice.actions.addNewSynthesis(synthesis))
+      }catch(ex){
+        console.log(ex)
+      }finally{
+
       }
     }
   }
