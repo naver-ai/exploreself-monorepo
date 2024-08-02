@@ -1,3 +1,26 @@
+export enum InteractionType {
+  LLMElicitedTheme = 'LLMElicitedTheme',
+  UserPinsTheme = 'UserPinsTheme',
+  UserSelectsTheme = 'UserSelectsTheme',
+  UserAddsTheme = 'UserAddsTheme',
+  UserRequestsTheme = 'UserRequestsTheme',
+  UserRequestsQuestion='UserRequestsQuestion',
+  UserSelectsQuestion = 'UserSelectsQuestion',
+  UpdateInResponse = 'UpdateInResponse',
+  LLMGeneratedKeyword = 'LLMGeneratedKeyword',
+  UserRequestsKeyword = 'UserRequestsKeyword',
+  UserSelectsKeyword = 'UserSelectsKeyword',
+  LLMGeneratedKeywordPrompt = 'LLMGeneratedKeywordPrompt',
+  UserSelectsKeywordPrompt = 'UserSelectsKeywordPrompt',
+  UserRequestsSynthesize = 'UserRequestsSynthesize',
+}
+
+export interface InteractionBase {
+  type: InteractionType;
+  metadata: Record<string, any>;
+  interaction_data?: Record<string, any>;
+}
+
 export interface IAIGuide {
   content: string;
   rateGood?: boolean;

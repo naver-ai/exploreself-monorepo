@@ -1,5 +1,6 @@
 import { IThreadBase, IUserBase, IQASetBase } from "@core";
 import mongoose, {Schema, Document, mongo} from "mongoose";
+import { InteractionType, InteractionBase } from "@core";
 
 export function emptyStringToUndefinedConverter(value: string | undefined){
   return value === '' ? undefined : value;
@@ -26,6 +27,11 @@ export interface IUserORM extends IUserBase, Document {
   _id: mongoose.Types.ObjectId
   threads: Array<mongoose.Types.ObjectId | IThreadORM>
 }
+export interface InteractionORM extends InteractionBase, Document {
+  _id: mongoose.Types.ObjectId;
+  createdAt: Date
+}
+
 
 export const AIGuideSchema = new Schema({
   content: {type: String},
@@ -92,7 +98,17 @@ UserSchema.set('toJSON', {
       return ret;
   }
 })
+
+const InteractionSchema = new Schema<InteractionORM>({
+  type: { type: String, enum: Object.values(InteractionType), required: true },
+  metadata: { type: Schema.Types.Mixed, required: true },
+  interaction_data: { type: Schema.Types.Mixed },
+  createdAt: {type: Date, default: Date.now},
+});
+
+InteractionSchema.set('timestamps', true);
  
 export const QASet = mongoose.model<IQASetORM>('QASet', QASetSchema)
 export const ThreadItem = mongoose.model<IThreadORM>('ThreadItem', ThreadItemSchema)
 export const User = mongoose.model<IUserORM>('User', UserSchema)
+export const Interaction = mongoose.model<InteractionORM>('Interaction', InteractionSchema);
