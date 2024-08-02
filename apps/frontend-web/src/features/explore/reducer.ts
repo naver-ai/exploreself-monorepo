@@ -4,6 +4,9 @@ import { Http } from '../../net/http';
 import { AppState, AppThunk } from '../../redux/store';
 import createThreadItem from '../../api_call/createThreadItem';
 import { selectQuestionById } from '../../api_call/saveQASet';
+import generateQuestions from '../../api_call/generateQuestions';
+import generateComment from '../../api_call/generateComment';
+import generateKeywords from '../../api_call/generateKeywords';
 
 const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>({
   selectId: (model: IThreadWithQuestionIds) => model._id
@@ -27,6 +30,8 @@ export type IExploreState = {
   questionEntityState: typeof initialQuestionEneityState,
 
   threadQuestionCreationLoadingFlags: {[key: string] : boolean | undefined}
+  questionCommentCreationLoadingFlags: {[key: string] :  boolean | undefined}
+  questionKeywordCreationLoadingFlags: {[key: string] :  boolean | undefined}
 
   isThemeSelectorOpen: boolean;
   floatingHeader: string | undefined
@@ -48,6 +53,8 @@ const initialState: IExploreState = {
   pinned_themes: [],
 
   threadQuestionCreationLoadingFlags : {},
+  questionCommentCreationLoadingFlags: {},
+  questionKeywordCreationLoadingFlags: {},
 
   threadEntityState: initialThreadEntityState,
   questionEntityState: initialQuestionEneityState,
@@ -75,7 +82,7 @@ const exploreSlice = createSlice({
           threadEntityAdapter.setAll(state.threadEntityState, threadMapped)
           questionEntityAdapter.setAll(state.questionEntityState, questions)
 
-        }else {
+        } else {
           (state as any)[key] = (action.payload as any)[key];
         }
         
@@ -137,10 +144,46 @@ const exploreSlice = createSlice({
       questionEntityAdapter.addOne(state.questionEntityState, action.payload)
     },
 
-    updateQuestion: (state, action: PayloadAction<IQASetWithIds>) => {
-      questionEntityAdapter.upsertOne(state.questionEntityState, action.payload)
+    appendQuestions: (state, action: PayloadAction<IQASetWithIds[]>) => {
+      questionEntityAdapter.addMany(state.questionEntityState, action.payload)
     },
 
+    updateQuestion: (state, action: PayloadAction<Partial<IQASetWithIds> & { _id: string }>) => {
+      const questionObj = state.questionEntityState.entities[action.payload._id];
+      if (questionObj) {
+        questionEntityAdapter.upsertOne(state.questionEntityState, {
+          ...questionObj,
+          ...action.payload,
+        });
+      }
+    },
+    updateQuestionWithNewComment: (state, action: PayloadAction<{qid: string, comment: string}>) => {
+      const { qid, comment } = action.payload;
+      const questionObj = state.questionEntityState.entities[qid];
+
+      if (questionObj) {
+        const updatedAiGuides = [...(questionObj.aiGuides || []), { content: comment }];
+
+        questionEntityAdapter.upsertOne(state.questionEntityState, { ...questionObj, aiGuides: updatedAiGuides });
+      } else {
+        console.log("Not found");
+      }
+    },
+    updateQuestionWithNewKeywords: (state, action: PayloadAction<{qid: string, keywords: Array<string>}>) => {
+      const questionObj = state.questionEntityState.entities[action.payload.qid]
+      if(questionObj) {
+        if(!questionObj.keywords) {
+          questionObj.aiGuides = []
+        }
+        questionObj.keywords.push(...action.payload.keywords)
+      } 
+    },
+    setCreatingQuestionCommentFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
+      state.questionCommentCreationLoadingFlags[action.payload.qid] = action.payload.flag;
+    },
+    setCreatingQuestionKeywordsFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
+      state.questionKeywordCreationLoadingFlags[action.payload.qid] = action.payload.flag;
+    },
     resetState: (state) => initialState,
   },
 });
@@ -266,13 +309,7 @@ export function populateNewThread(theme: string): AppThunk {
           dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: true}))
 
           try {
-            const response = await Http.axios.post(
-              `/thread/${newThread._id}/questions/generate`, null,
-              {
-                headers: Http.makeSignedInHeader(state.auth.token),
-              }
-            );
-            const { questions } = response.data
+            const questions = await generateQuestions(state.auth.token, newThread._id, 3)
             if(questions){
               dispatch(exploreSlice.actions.setQuestions(questions))
             }
@@ -311,6 +348,64 @@ export function selectQuestion(qid: string): AppThunk {
   }
 }
 
+export function getMoreQuestion(tid: string): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState()
+    if (state.auth.token) {
+      try {
+        dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: tid, flag: true}))
+        const fetchedQuestion = await generateQuestions(state.auth.token, tid, 1)
+        if (fetchedQuestion) {
+          dispatch(exploreSlice.actions.appendQuestions(fetchedQuestion))
+        }
+      } catch (ex) {
+        console.log(ex)
+      } finally {
+        dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: tid, flag: false}))
+      }
+    } 
+  }
+}
+
+export function getNewComment(qid: string, userResponse: string): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState()
+    if(state.auth.token) {
+      try {
+        dispatch(exploreSlice.actions.setCreatingQuestionCommentFlag({qid: qid, flag: true}))
+        const newComment = await generateComment(state.auth.token, qid, userResponse)
+        console.log("NEW COM: ", newComment)
+        if (newComment) {
+          dispatch(exploreSlice.actions.updateQuestionWithNewComment({qid: qid, comment: newComment.comment}))
+        }
+      } catch (ex) {
+        console.log(ex)
+      } finally {
+        dispatch(exploreSlice.actions.setCreatingQuestionCommentFlag({qid: qid, flag: false}))
+      }
+    } 
+  }
+}
+
+export function getNewKeywords(qid: string, opt: number = 1): AppThunk {
+  return async(dispatch, getState) => {
+    const state = getState()
+    if(state.auth.token) {
+      try {
+        dispatch(exploreSlice.actions.setCreatingQuestionKeywordsFlag({qid: qid, flag: true}))
+        const newKeywords = await generateKeywords(state.auth.token, qid, opt)
+        if(newKeywords) {
+          dispatch(exploreSlice.actions.updateQuestionWithNewKeywords({qid: qid, keywords: newKeywords}))
+        }
+      } catch (ex) {
+        console.log(ex)
+      } finally {
+        dispatch(exploreSlice.actions.setCreatingQuestionKeywordsFlag({qid: qid, flag: false}))
+      }
+    }
+  }
+}
+
 export const {
   updateUserInfo,
   removePinnedTheme,
@@ -318,6 +413,7 @@ export const {
   resetPinnedThemes,
   resetState,
   setThemeSelectorOpen,
-  setFloatingHeader
+  setFloatingHeader,
+  updateQuestion
 } = exploreSlice.actions;
 export default exploreSlice.reducer;

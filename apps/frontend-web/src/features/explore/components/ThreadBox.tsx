@@ -14,7 +14,7 @@ import {
 const { TextArea } = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ShortcutManager } from '../../../services/shortcut';
-import { questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeader, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
+import { getMoreQuestion, questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeader, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
 import { useInView } from 'react-intersection-observer';
 import { QuestionBox } from './QuestionBox';
 import { usePrevious } from "@uidotdev/usehooks";
@@ -25,15 +25,6 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
 
   const dispatch = useDispatch();
-
-  const selectQuestionHandler = useCallback(async () => { //TODO move this to redux-based
-    try {
-      //const selectedQA = await selectQuestion(token, props.qid);
-      dispatch(selectQuestion(props.qid))
-    } catch (err) {
-      console.log('Err in selecting question');
-    }
-  }, [props.qid]);
 
   const deleteQuestionHandler = useCallback(() => {
     try {
@@ -51,7 +42,7 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
       {question?.question?.content}
       <Flex>
         <Button
-          onClick={() => selectQuestionHandler()}
+          onClick={() => dispatch(selectQuestion(props.qid))}
           icon={<PlusOutlined />}
           shape="circle"
         />
@@ -75,14 +66,9 @@ const SelectedQuestionList = (props: { tid: string }) => {
 
 const UnselectedQuestionList = (props: { tid: string }) => {
 
-
+  const dispatch = useDispatch();
   const questionIds = useSelector(state => unSelectedQuestionIdsSelector(state, props.tid))
-  
 
-  //const fetchMoreQuestionHandler = useCallback(async () => { //TODO move this to redux-based
-    //const fetchedQuestions = await generateQuestions(token, props.tid, 1);
-    //await fetchUnselectedQuestionList();
-  //}, [fetchUnselectedQuestionList]);
 
   return (
     <div>
@@ -100,7 +86,7 @@ const UnselectedQuestionList = (props: { tid: string }) => {
                 ))}
                 <Button
                   onClick={() => {
-                    //fetchMoreQuestionHandler(); //TODO fix this
+                    dispatch(getMoreQuestion(props.tid))
                   }}
                 >
                   생각거리 더보기

@@ -38,12 +38,13 @@ const generateQuestionsHandler = async (req: RequestWithUser, res) => {
   }
 }
 
-const generateGuidelineHandler = async (req: RequestWithUser, res) => {
+const generateCommentHandler = async (req: RequestWithUser, res) => {
   const user = req.user
   const qid = req.params.qid
   const response = req.body.response
   try {
     const comments = await generateComment(user, qid, response)
+    const updatedQuestion = await QASet.findByIdAndUpdate(qid, {$push: {aiGuides: comments}})
     return res.json({
       comments: (comments as any).selected
     })
@@ -87,7 +88,7 @@ const generateThemesHandler = async (req: RequestWithUser, res) => {
   }
 }
 
-router.post('/comment/:qid', signedInUserMiddleware, generateGuidelineHandler)
+router.post('/comment/:qid', signedInUserMiddleware, generateCommentHandler)
 router.get('/question/:tid', signedInUserMiddleware, generateQuestionsHandler)
 router.get('/keywords/:qid', signedInUserMiddleware, generateKeywordsHandler)
 router.get('/themes', signedInUserMiddleware, generateThemesHandler)
