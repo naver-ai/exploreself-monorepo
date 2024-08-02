@@ -27,7 +27,7 @@ export const QuestionBox = (props: { qid: string }) => {
   const dispatch = useDispatch()
 
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
-  const comment = question.aiGuides? question.aiGuides[question.aiGuides.length -1].content: "Loading"
+  const comment = question.aiGuides ? question.aiGuides[question.aiGuides.length -1]?.content: "Loading"
   const [response, setResponse] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedResponse, setLastSavedResponse] = useState('');
