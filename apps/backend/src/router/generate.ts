@@ -7,6 +7,7 @@ import generateKeywords from '../utils/generateKeywords';
 import generateThemes from '../utils/generateThemes';
 import generateQuestions from '../utils/generateQuestions';
 import { InteractionType } from '@core';
+import generateSynthesis from '../utils/generateSynthesis';
 
 var router = express.Router()
 
@@ -89,10 +90,23 @@ const generateThemesHandler = async (req: RequestWithUser, res) => {
   }
 }
 
+const generateSynthesisHandler = async(req: RequestWithUser, res) => {
+  const user = req.user;
+  try {
+    const synthesis = await generateSynthesis(user)
+    res.json({synthesis: synthesis})
+  } catch (err) {
+    res.json({
+      err: err.message
+    })
+  }
+}
+
 router.post('/comment/:qid', signedInUserMiddleware, generateCommentHandler)
 router.get('/question/:tid', signedInUserMiddleware, generateQuestionsHandler)
 router.get('/keywords/:qid', signedInUserMiddleware, generateKeywordsHandler)
 router.get('/themes', signedInUserMiddleware, generateThemesHandler)
+router.put('/synthesis', signedInUserMiddleware, generateSynthesisHandler)
 
 
 export default router;
