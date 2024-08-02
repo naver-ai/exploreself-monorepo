@@ -1,10 +1,10 @@
 import express from 'express';
 import { ThreadItem, User, QASet } from '../config/schema';
-import synthesizeSession from '../utils/old/synthesizeSession';
 import { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
 import generateQuestions from '../utils/generateQuestions';
 import { body } from 'express-validator';
+import { synthesizeThread } from '../utils/synthesizeThread';
 
 var router = express.Router();
 
@@ -91,24 +91,6 @@ const getThreadData = async (req: RequestWithUser, res) => {
   }
 };
 
-const synthesizeThread = async (req: RequestWithUser, res) => {
-  const user = req.user;
-  const uid = user._id;
-  const tid = req.body.tid;
-
-  console.log('THREaddata: ', tid);
-  try {
-    const synthesizedData = await synthesizeSession(tid, uid);
-    res.json({
-      synthesized: synthesizedData,
-    });
-  } catch (err) {
-    res.json({
-      err: err.message,
-    });
-  }
-};
-
 const saveSynthesized = async (req, res) => {
   const synthesized = req.body.synthesized;
   const tid = req.body.tid;
@@ -150,7 +132,24 @@ router.post(
 
 router.post('/saveThreadItem', signedInUserMiddleware, saveThreadItem);
 
-router.post('/synthesizeThread', signedInUserMiddleware, synthesizeThread);
+router.post('/synthesizeThread', signedInUserMiddleware, async (req: RequestWithUser, res) => {
+  const user = req.user;
+  const uid = user._id;
+  const tid = req.body.tid;
+
+  console.log('THREaddata: ', tid);
+  try {
+    const synthesizedData = await synthesizeThread (tid);
+    res.json({
+      synthesized: synthesizedData,
+    });
+  } catch (err) {
+    res.json({
+      err: err.message,
+    });
+  }
+});
+
 router.post('/saveSynthesized', signedInUserMiddleware, saveSynthesized);
 router.post('/getOrientingInput', signedInUserMiddleware, getOrientingInput);
 

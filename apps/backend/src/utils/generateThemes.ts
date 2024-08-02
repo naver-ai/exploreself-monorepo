@@ -6,7 +6,7 @@ import { chatModel } from '../config/config';
 import nunjucks from 'nunjucks'
 import { User, ThreadItem, IThreadORM } from '../config/schema';
 import { IUserBase } from '@core';
-import synthesizeProfilicInfo from './synthesizeProfilicInfo';
+import { synthesizeProfilicInfo } from './synthesizeProfilicInfo';
 import {synthesizePrevThreads} from './synthesizeThread'
 import mongoose from 'mongoose';
 
@@ -70,7 +70,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
   const structuredLlm = chatModel.withStructuredOutput(edgeSchema2);
 
   const chain = finalPromptTemplate.pipe(structuredLlm);
-  const init_info = synthesizeProfilicInfo(userData.initial_narrative, userData.value_set, userData.background)
+  const init_info = synthesizeProfilicInfo(userData.initialNarrative)
   const prev_session_log = await synthesizePrevThreads(uid)
 
   const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log});

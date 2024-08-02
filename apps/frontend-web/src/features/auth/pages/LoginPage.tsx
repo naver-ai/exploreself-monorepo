@@ -7,6 +7,7 @@ import * as yup from 'yup';
 import { useDispatch } from '../../../redux/hooks';
 import { FormItem } from 'react-hook-form-antd';
 import { loginWithPasscode } from '../reducer';
+import { useTranslation } from 'react-i18next';
 
 const schema = yup
   .object({
@@ -33,11 +34,13 @@ export const LoginPage = () => {
     []
   );
 
+  const [t] = useTranslation()
+
   return (
     <div className="container mx-auto justify-center items-center flex h-[100vh] overflow-auto">
       <Card
         rootClassName="justify-center min-w-[30%]"
-        title={<span>Sign In</span>}
+        title={<span>{t("SignIn.Title")}</span>}
         bordered={false}
       >
         <Form onFinish={handleSubmit(signIn)} className="w-full flex gap-2">
@@ -46,10 +49,10 @@ export const LoginPage = () => {
             name="passcode"
             rootClassName="m-0 flex-1"
           >
-            <Input.Password placeholder="Insert passcode" />
+            <Input.Password placeholder={t("SignIn.Passcode.Prompt")} autoFocus/>
           </FormItem>
           <Button rootClassName="self-stretch" htmlType="submit" type="primary">
-            Enter
+            {t("SignIn.Enter")}
           </Button>
         </Form>
       </Card>

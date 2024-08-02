@@ -4,7 +4,7 @@ import { chatModel } from "../config/config";
 import { User, ThreadItem } from "../config/schema";
 import nunjucks from 'nunjucks'
 import {synthesizePrevThreads} from './synthesizeThread'
-import synthesizeProfilicInfo from "./synthesizeProfilicInfo";
+import { synthesizeProfilicInfo } from "./synthesizeProfilicInfo";
 import mongoose from 'mongoose';
 
 
@@ -55,7 +55,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
   const structuredLlm = chatModel.withStructuredOutput(questionSchema)
 
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = synthesizeProfilicInfo(userData.initial_narrative, userData.value_set, userData.background)
+  const init_info = synthesizeProfilicInfo(userData.initialNarrative)
   
   try {
     const prev_session_log = await synthesizePrevThreads(uid, "question")

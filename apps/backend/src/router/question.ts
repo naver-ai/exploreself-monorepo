@@ -1,6 +1,5 @@
 import express from 'express';
 import { IQASetORM, IThreadORM, QASet, ThreadItem, User } from '../config/schema';
-import { generateReflexiveQuestions } from '../utils/old/generateReflexiveQuestions';
 import type {RequestWithUser} from './middlewares'
 import { signedInUserMiddleware } from './middlewares';
 
@@ -21,18 +20,6 @@ const getQuestionData = async(req: RequestWithUser, res) => {
   }
 }
 
-const generateReflexiveQuestionsController = async (req: RequestWithUser, res) => {
-  const user = req.user;
-  const uid = user._id
-
-  const selected_theme = req.body.selected_theme;
-  const orienting_input = req.body.orienting_input;
-
-  const questions = await generateReflexiveQuestions(uid, selected_theme, orienting_input)
-  res.json({
-    questions: questions
-  })
-}
 const selectQuestion = async(req: RequestWithUser, res) => {
   const qid = req.params.qid
   try {
@@ -80,7 +67,6 @@ const getComment = async(req: RequestWithUser, res) => {
   }
 }
 
-router.post('/generateReflexive', signedInUserMiddleware, generateReflexiveQuestionsController);
 router.get('/:qid', signedInUserMiddleware, getQuestionData )
 router.put('/:qid/select', signedInUserMiddleware, selectQuestion)
 router.put('/:qid/unselect', signedInUserMiddleware, unSelectQuestion)

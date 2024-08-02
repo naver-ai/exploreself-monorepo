@@ -49,9 +49,7 @@ const initialState: IExploreState = {
   userId: undefined,
   name: undefined,
   isKorean: true,
-  initial_narrative: undefined,
-  value_set: [],
-  background: undefined,
+  initialNarrative: undefined,
   pinned_themes: [],
 
   threadQuestionCreationLoadingFlags : {},
@@ -260,7 +258,7 @@ export function submitInitialNarrative(
 
         dispatch(
           exploreSlice.actions.updateUserInfo({
-            initial_narrative: response.data.initial_narrative,
+            initialNarrative: response.data.initialNarrative,
           })
         );
 

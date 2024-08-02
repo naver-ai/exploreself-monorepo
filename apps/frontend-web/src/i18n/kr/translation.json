@@ -1,4 +1,11 @@
-{
+{ 
+  "SignIn": {
+    "Title": "MeSense",
+    "Passcode": {
+      "Prompt": "패스코드"
+    },
+    "Enter": "로그인"
+  },
   "Profile": {
     "Title": "사용자 정보 입력하기",
     "Name": {
