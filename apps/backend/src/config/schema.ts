@@ -81,10 +81,7 @@ export const UserSchema = new Schema({
     name: {type: String, required: false},
     passcode: {type: String, required: true},
     isKorean: {type: Boolean, required: true, default: true},
-    initial_narrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
-    value_set: {type: [String], required: true, default: []},
-    background: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
-    synthesis: {type: [String], required: true, default: []},
+    initialNarrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     threads: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date}
@@ -94,8 +91,8 @@ UserSchema.set('timestamps', true);
 UserSchema.set('toJSON', {
   transform: function(doc, ret, options) {
       delete ret.passcode;
-      if(ret.initial_narrative != null && ret.initial_narrative == ''){
-        ret.initial_narrative = undefined
+      if(ret.initialNarrative != null && ret.initialNarrative == ''){
+        ret.initialNarrative = undefined
       }
       return ret;
   }

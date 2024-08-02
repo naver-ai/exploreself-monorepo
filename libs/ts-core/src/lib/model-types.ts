@@ -70,10 +70,7 @@ export interface IUserBase {
   passcode: string;
   name?: string | undefined;
   isKorean: boolean;
-  initial_narrative: string | undefined
-  value_set: string[];
-  background: string | undefined;
-  synthesis: string[];
+  initialNarrative: string | undefined
   createdAt: Date;
   updatedAt: Date;
 }

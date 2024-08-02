@@ -1,11 +1,10 @@
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from '@langchain/core/prompts';
 import z from "zod"
 import { chatModel } from '../config/config';
-import { QASet, ThreadItem } from '../config/schema';
+import { QASet } from '../config/schema';
 import { IUserORM } from '../config/schema';
 import nunjucks from 'nunjucks'
-import { SystemMessage } from '@langchain/core/dist/messages';
-import synthesizeProfilicInfo from './synthesizeProfilicInfo';
+import { synthesizeProfilicInfo } from './synthesizeProfilicInfo';
 import { synthesizePrevThreads } from './synthesizeThread';
 
 
@@ -78,7 +77,7 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
 
   const structuredLlm = chatModel.withStructuredOutput(commentSchema)
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = synthesizeProfilicInfo(user.initial_narrative, user.value_set, user.background)
+  const init_info = synthesizeProfilicInfo(user.initialNarrative)
 
   const prev_log = await synthesizePrevThreads(user._id, "comment")
   

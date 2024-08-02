@@ -17,8 +17,8 @@ const { TextArea } = Input;
 
 export const InitialNarrativePage = () => {
   const userId = useSelector((state) => state.explore.userId);
-  const initial_narrative = useSelector(
-    (state) => state.explore.initial_narrative
+  const initialNarrative = useSelector(
+    (state) => state.explore.initialNarrative
   );
 
   const {
@@ -44,8 +44,8 @@ export const InitialNarrativePage = () => {
   }, []);
 
   return userId != null &&
-    initial_narrative != null &&
-    initial_narrative.length > 0 ? (
+    initialNarrative != null &&
+    initialNarrative.length > 0 ? (
     <Navigate to="/app" />
   ) : (
     <div className="h-full overflow-y-scroll">

@@ -32,7 +32,7 @@ const SidePanel = () => {
 
 export const ExplorerPage = () => {
   const initialNarrative = useSelector(
-    (state) => state.explore.initial_narrative
+    (state) => state.explore.initialNarrative
   );
   const userName = useSelector((state) => state.explore.name);
   const threadIds = useSelector(threadSelectors.selectIds);

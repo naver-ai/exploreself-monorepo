@@ -3,7 +3,7 @@ import z from "zod"
 import { chatModel } from '../config/config';
 import { QASet } from '../config/schema';
 import { IUserORM } from '../config/schema';
-import synthesizeProfilicInfo from './synthesizeProfilicInfo';
+import { synthesizeProfilicInfo } from './synthesizeProfilicInfo';
 import { synthesizePrevThreads } from './synthesizeThread';
 
 
@@ -54,7 +54,7 @@ const generateSynthesis = async (user: IUserORM) => {
 
   const structuredLlm = chatModel.withStructuredOutput(keywordsSchema)
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = synthesizeProfilicInfo(user.initial_narrative, user.value_set, user.background)
+  const init_info = synthesizeProfilicInfo(user.initialNarrative)
 
   const prev_log = await synthesizePrevThreads(user._id)
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, user_name: user_name})

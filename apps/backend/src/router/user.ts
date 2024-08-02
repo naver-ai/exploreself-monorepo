@@ -45,9 +45,9 @@ router.get('/', signedInUserMiddleware, async (req: RequestWithUser, res) => {
 router.post('/narrative', signedInUserMiddleware, body("init_narrative").exists().trim(), async (req: RequestWithUser, res) => {
   const init_narrative = req.body.init_narrative;
   const uid = req.user._id
-  const updatedUser = await User.findByIdAndUpdate(uid, {$set: {initial_narrative: init_narrative}}, {new: true})
+  const updatedUser = await User.findByIdAndUpdate(uid, {$set: {initialNarrative: init_narrative}}, {new: true})
   res.json({
-    initial_narrative: updatedUser.initial_narrative
+    initialNarrative: updatedUser.initialNarrative
   })
 })
 
