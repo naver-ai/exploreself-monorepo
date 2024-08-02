@@ -1,11 +1,12 @@
 import express from 'express';
-import { QASet, ThreadItem } from '../config/schema';
+import { Interaction, QASet, ThreadItem } from '../config/schema';
 import type {RequestWithUser} from './middlewares'
 import { signedInUserMiddleware } from './middlewares';
 import generateComment from '../utils/generateComment';
 import generateKeywords from '../utils/generateKeywords';
 import generateThemes from '../utils/generateThemes';
 import generateQuestions from '../utils/generateQuestions';
+import { InteractionType } from '@core';
 
 var router = express.Router()
 

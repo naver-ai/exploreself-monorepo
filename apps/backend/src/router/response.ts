@@ -1,5 +1,5 @@
 import express from 'express';
-import { IThreadORM, QASet, ThreadItem, User } from "../config/schema";
+import { IThreadORM, Interaction, QASet, ThreadItem, User } from "../config/schema";
 import { IInitInfo } from "../config/interface";
 import generateSentencesFromKeywords from "../utils/old/generateSentencesFromKeywords";
 import generateThemeScaffoldingKeywords from '../utils/old/generateThemeScaffoldingKeywords'
@@ -7,7 +7,7 @@ import {generateScaffoldingQuestions} from '../utils/old/generateScaffoldingQues
 import type { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
 import { synthesizeThread } from '../utils/synthesizeThread';
-import { IAIGuide } from '@core';
+import { IAIGuide, InteractionType } from '@core';
 
 var router = express.Router()
 
@@ -89,8 +89,16 @@ const updateKeywords = async (req, res) => {
 const updateResponse = async (req, res) => {
   const qid = req.params.qid
   const response = req.body.response
+  const interaction = req.body.interaction
   try {
     const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {response: response}})
+    const {interaction_type, interaction_data, metadata} = interaction
+    const newInteraction = new Interaction({
+      interaction_type: interaction_type,
+      interaction_data: interaction_data,
+      metadata: {...metadata, uid: req.user._id}
+    })
+    await newInteraction.save()
     res.json({
       success: true,
       qaSet: updatedQASet._id
@@ -254,7 +262,7 @@ router.post('/createQASet', signedInUserMiddleware, createQASet)
 router.post('/updateQASet', signedInUserMiddleware, updateQASet)
 router.post('/updateKeywords', signedInUserMiddleware, updateKeywords)
 // The upper APIs are currently deprecated, and will delete in order
-router.put('/:qid', signedInUserMiddleware, updateResponse)
+router.post('/:qid', signedInUserMiddleware, updateResponse)
 router.put('/comment/:qid', signedInUserMiddleware, saveComment)
 
 export default router;

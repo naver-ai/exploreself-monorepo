@@ -17,8 +17,8 @@ export enum InteractionType {
 
 export interface InteractionBase {
   interaction_type: InteractionType;
-  metadata: Record<string, any>;
-  interaction_data?: Record<string, any>;
+  metadata: Record<string, any> | {};
+  interaction_data?: Record<string, any> | {};
 }
 
 export interface IAIGuide {

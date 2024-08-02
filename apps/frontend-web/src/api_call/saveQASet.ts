@@ -1,4 +1,4 @@
-import { IQASetBase, IQASetWithIds } from '@core';
+import { IQASetBase, IQASetWithIds, InteractionBase } from '@core';
 import { Http } from '../net/http';
 
 export async function selectQuestionById(token: string, qid: string): Promise<IQASetWithIds | null> {
@@ -60,13 +60,15 @@ export const updateKeywords = async (
 export const updateResponse = async (
   token: string,
   qid: string,
-  response: string
+  response: string,
+  interaction: InteractionBase
 ) => {
   try {
-    const resp = await Http.axios.put(
+    const resp = await Http.axios.post(
       `/response/${qid}`,
       {
         response: response,
+        interaction: interaction
       },
       {
         headers: Http.makeSignedInHeader(token),

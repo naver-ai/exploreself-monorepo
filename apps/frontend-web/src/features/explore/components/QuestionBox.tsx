@@ -5,7 +5,8 @@ import {
   Flex,
   Row,
   Col,
-  Skeleton
+  Skeleton,
+  Switch
 } from 'antd';
 import {
   ReloadOutlined,
@@ -15,7 +16,10 @@ import { useDispatch, useSelector } from '../../../redux/hooks';
 import {
   updateResponse,
 } from '../../../api_call/saveQASet';
-import { getNewComment, getNewKeywords, questionSelectors, updateQuestion } from '../reducer';
+import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, updateQuestion } from '../reducer';
+import { diffChars, Change } from 'diff';
+import { postInteractionData } from '../../../api_call/postInteractionData';
+import { InteractionBase, InteractionType } from '@core';
 
 
 export const QuestionBox = (props: { qid: string }) => {
@@ -39,11 +43,38 @@ export const QuestionBox = (props: { qid: string }) => {
     dispatch(getNewComment(props.qid, response))
   },[props.qid, response])
 
+  const determineChangeType = (prevText: string, newText: string) => {
+    const diffs: Change[] = diffChars(prevText, newText);
+    diffs.forEach( (part) => {
+      if (part.added) {
+        return {
+          interaction_type: InteractionType.UpdateInResponse,
+          interaction_data: {type: 'insert', delta: part.value, prevText: prevText, newText: newText},
+          metadata: {qid: props.qid}
+        }
+      } else if (part.removed) {
+        return {
+          interaction_type: InteractionType.UpdateInResponse,
+          interaction_data: {type: 'delete', delta: part.value, prevText: prevText, newText: newText},
+          metadata: {qid: props.qid}
+        }
+      }
+    });
+    if (prevText !== newText) {
+      return {
+        interaction_type: InteractionType.UpdateInResponse,
+        interaction_data: {type: 'edit', delta: "", prevText: prevText, newText: newText},
+        metadata: {qid: props.qid}
+      }
+    }
+  };
+
   const saveResponse = useCallback(async () => {
     if (response !== lastSavedResponse) {
       setIsSaving(true);
       try {
-        const savedQA = await updateResponse(token, props.qid, response);
+        const interaction: InteractionBase = determineChangeType(lastSavedResponse, response) as InteractionBase
+        const savedQA = await updateResponse(token, props.qid, response, interaction);
         dispatch(updateQuestion({_id: props.qid, response: response}))
         setLastSavedResponse(response);
       } catch (error) {
@@ -66,6 +97,11 @@ export const QuestionBox = (props: { qid: string }) => {
   const handleBlur = () => {
     setIsActive(false);
   };
+  const isQuestionKeywordsShown = useSelector(state => state.explore.questionShowKeywordsFlags[props.qid] || false)
+
+  const handleToggleChange = useCallback((checked: boolean) => {
+    dispatch(setQuestionShowKeywordsFlag({ qid: props.qid, flag: !checked }));
+  }, [dispatch, props.qid]);
 
   useEffect(() => {
     if (isActive) {
@@ -77,41 +113,15 @@ export const QuestionBox = (props: { qid: string }) => {
 
   return (
     <div className="border-2 border-[#B9DBDC]-600 p-3 rounded-lg my-3">
-      <div className="pb-2 pl-1"> {question.question.content} </div>
-      <Row justify="space-between">
-        <Col span={15}>
-          <TextArea
-            value={response}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            onFocus={handleFocus}
-            placeholder="자유롭게 적어보아요"
-          />
-        </Col>
-        <Col span={8} className="">
-          <div className="bg-[#F1F8F8] p-3 rounded-lg text-xs flex flex-col">
-            {
-              isCreatingComment === true ? 
-                <Skeleton active /> : 
-                <>
-                <div className="pb-3">{comment}</div>
-                <Button
-                type="text"
-                icon={<ReloadOutlined />}
-                onClick={() => getNewCommentHandler()}
-                size="small"
-                className="text-xs self-end"
-              >
-                새로운 도움말 보기
-              </Button>
-              </>
-            }
-          </div>
-        </Col>
-      </Row>
-      <Row className="mt-2">
-        <div className={'border-dashed border-2 rounded-lg p-2 w-full'}>
-          <div className="text-xs pb-2">관련있는 단어가 있다면 눌러보아요</div>
+      <Flex vertical={false}>
+        <div className="pb-2 pl-1"> {question.question.content} </div>
+        {/* <Switch className="" checkedChildren="단어 도우미" unCheckedChildren="단어 도우미" defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/> */}
+      </Flex>
+      <Switch className="mb-1" checkedChildren="단어 도우미" unCheckedChildren="단어 도우미" defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/>
+      {isQuestionKeywordsShown && 
+      <Row>
+        <div className={'border-dashed border-2 rounded-lg p-2 w-full mb-2'}>
+          <div className="text-xs pb-2">생각을 돕는 단어들</div>
           {!question.keywords || question.keywords?.length == 0 ? (
             <Button
               type="text"
@@ -145,6 +155,38 @@ export const QuestionBox = (props: { qid: string }) => {
             </Flex>
           )}
         </div>
+      </Row>
+      }
+      <Row justify="space-between">
+        <Col span={15}>
+          <TextArea
+            value={response}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onFocus={handleFocus}
+            placeholder="자유롭게 적어보아요"
+          />
+        </Col>
+        <Col span={8} className="">
+          <div className="bg-[#F1F8F8] p-3 rounded-lg text-xs flex flex-col">
+            {
+              isCreatingComment === true ? 
+                <Skeleton active /> : 
+                <>
+                <div className="pb-3">{comment}</div>
+                <Button
+                type="text"
+                icon={<ReloadOutlined />}
+                onClick={() => getNewCommentHandler()}
+                size="small"
+                className="text-xs self-end"
+              >
+                새로운 도움말 보기
+              </Button>
+              </>
+            }
+          </div>
+        </Col>
       </Row>
     </div>
   );

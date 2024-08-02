@@ -8,6 +8,7 @@ import responseRouter from './router/response'
 import threadRouter from './router/thread'
 import themeRouter from './router/theme'
 import generateRouter from './router/generate'
+import interactionRouter from './router/interaction'
 
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
@@ -54,6 +55,7 @@ apiRouter.use("/response", responseRouter)
 apiRouter.use("/thread", threadRouter)
 apiRouter.use("/theme", themeRouter)
 apiRouter.use("/generate", generateRouter)
+apiRouter.use("/interaction", interactionRouter)
 
 apiRouter.get("/ping", (req, res) => {
   res.send("Server responds.")

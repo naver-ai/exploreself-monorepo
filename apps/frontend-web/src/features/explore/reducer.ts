@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds } from '@core';
+import { InteractionType, IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds } from '@core';
 import { Http } from '../../net/http';
 import { AppState, AppThunk } from '../../redux/store';
 import createThreadItem from '../../api_call/createThreadItem';
@@ -7,6 +7,7 @@ import { selectQuestionById } from '../../api_call/saveQASet';
 import generateQuestions from '../../api_call/generateQuestions';
 import generateComment from '../../api_call/generateComment';
 import generateKeywords from '../../api_call/generateKeywords';
+import { postInteractionData } from '../../api_call/postInteractionData';
 
 const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>({
   selectId: (model: IThreadWithQuestionIds) => model._id
@@ -32,6 +33,7 @@ export type IExploreState = {
   threadQuestionCreationLoadingFlags: {[key: string] : boolean | undefined}
   questionCommentCreationLoadingFlags: {[key: string] :  boolean | undefined}
   questionKeywordCreationLoadingFlags: {[key: string] :  boolean | undefined}
+  questionShowKeywordsFlags: {[key: string] :  boolean | undefined}
 
   isThemeSelectorOpen: boolean;
   floatingHeader: string | undefined
@@ -55,6 +57,7 @@ const initialState: IExploreState = {
   threadQuestionCreationLoadingFlags : {},
   questionCommentCreationLoadingFlags: {},
   questionKeywordCreationLoadingFlags: {},
+  questionShowKeywordsFlags: {},
 
   threadEntityState: initialThreadEntityState,
   questionEntityState: initialQuestionEneityState,
@@ -183,6 +186,9 @@ const exploreSlice = createSlice({
     },
     setCreatingQuestionKeywordsFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
       state.questionKeywordCreationLoadingFlags[action.payload.qid] = action.payload.flag;
+    },
+    setQuestionShowKeywordsFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
+      state.questionShowKeywordsFlags[action.payload.qid] = action.payload.flag
     },
     resetState: (state) => initialState,
   },
@@ -338,6 +344,7 @@ export function selectQuestion(qid: string): AppThunk {
         const updatedQuestion = await selectQuestionById(state.auth.token, qid)
         if(updatedQuestion){
           dispatch(exploreSlice.actions.updateQuestion(updatedQuestion))
+          await postInteractionData(state.auth.token, InteractionType.UserSelectsQuestion, {selected_question: updatedQuestion}, {})
         }
       }catch(ex){
         console.log(ex)
@@ -357,6 +364,7 @@ export function getMoreQuestion(tid: string): AppThunk {
         const fetchedQuestion = await generateQuestions(state.auth.token, tid, 1)
         if (fetchedQuestion) {
           dispatch(exploreSlice.actions.appendQuestions(fetchedQuestion))
+          await postInteractionData(state.auth.token, InteractionType.UserRequestsQuestion, {generated_questions: fetchedQuestion}, {tid: tid})
         }
       } catch (ex) {
         console.log(ex)
@@ -396,6 +404,7 @@ export function getNewKeywords(qid: string, opt: number = 1): AppThunk {
         const newKeywords = await generateKeywords(state.auth.token, qid, opt)
         if(newKeywords) {
           dispatch(exploreSlice.actions.updateQuestionWithNewKeywords({qid: qid, keywords: newKeywords}))
+          await postInteractionData(state.auth.token, InteractionType.LLMGeneratedKeyword, {keywords: newKeywords}, {qid: qid})
         }
       } catch (ex) {
         console.log(ex)
@@ -414,6 +423,7 @@ export const {
   resetState,
   setThemeSelectorOpen,
   setFloatingHeader,
-  updateQuestion
+  updateQuestion,
+  setQuestionShowKeywordsFlag
 } = exploreSlice.actions;
 export default exploreSlice.reducer;

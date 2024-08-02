@@ -29,6 +29,7 @@ export interface IUserORM extends IUserBase, Document {
 }
 export interface InteractionORM extends InteractionBase, Document {
   _id: mongoose.Types.ObjectId;
+  metadata: Record<string, any>;
   createdAt: Date
 }
 
@@ -100,7 +101,7 @@ UserSchema.set('toJSON', {
 })
 
 const InteractionSchema = new Schema<InteractionORM>({
-  type: { type: String, enum: Object.values(InteractionType), required: true },
+  interaction_type: { type: String, enum: Object.values(InteractionType), required: true },
   metadata: { type: Schema.Types.Mixed, required: true },
   interaction_data: { type: Schema.Types.Mixed },
   createdAt: {type: Date, default: Date.now},

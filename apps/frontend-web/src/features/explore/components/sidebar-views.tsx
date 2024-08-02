@@ -6,6 +6,8 @@ import { IThreadWithQuestionIds } from '@core';
 import { ListBulletIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid';
 import { PanelGroup } from '../../../components/PanelGroup';
 import { ShortcutManager } from '../../../services/shortcut';
+import { postInteractionData } from '../../../api_call/postInteractionData';
+import { InteractionType } from '@core';
 
 const OUTLINE_PANEL_CLASS =
   'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer';
@@ -73,6 +75,7 @@ export const PinnedThemesPanel = () => {
       if (uid != null) {
         dispatch(removePinnedTheme(selected))
         dispatch(populateNewThread(selected))
+        await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: selected}, {})
       }
     },
     [uid]

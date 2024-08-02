@@ -8,6 +8,8 @@ import { MdBookmarkBorder } from 'react-icons/md';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import generateThemes from '../../../api_call/generateThemes';
 import { CloseOutlined } from '@ant-design/icons';
+import { postInteractionData } from '../../../api_call/postInteractionData';
+import { InteractionType } from '@core';
 
 const ThemeBox = () => {
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
@@ -24,8 +26,9 @@ const ThemeBox = () => {
     setThemes(data);
   }, [token]);
 
-  const handleAddPinnedTheme = (theme: string) => {
+  const handleAddPinnedTheme = async (theme: string) => {
     dispatch(addPinnedTheme(theme));
+    await postInteractionData(token, InteractionType.UserPinsTheme, {theme: theme}, {})
   };
 
   const onChangeSelect = (theme: string) => {
