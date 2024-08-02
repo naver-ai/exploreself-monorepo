@@ -3,7 +3,6 @@ import {ChatPromptTemplate, HumanMessagePromptTemplate} from "@langchain/core/pr
 import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
 import { chatModel } from '../config/config';
-import { IInitInfo } from '../config/interface';
 import nunjucks from 'nunjucks'
 import { User, ThreadItem, IThreadORM } from '../config/schema';
 import { IUserBase } from '@core';

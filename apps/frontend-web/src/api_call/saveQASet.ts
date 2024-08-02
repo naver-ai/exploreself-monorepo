@@ -33,30 +33,6 @@ export async function unSelectQuestion(token: string, qid: string): Promise<IQAS
   }
 };
 
-export const updateKeywords = async (
-  token: string,
-  qid: string,
-  keywords: Array<string>
-) => {
-  try {
-    const resp = await Http.axios.post(
-      `/response/updateKeywords`,
-      {
-        qid: qid,
-        keywords: keywords,
-        selected: true,
-      },
-      {
-        headers: Http.makeSignedInHeader(token),
-      }
-    );
-    return resp.data.qaSet;
-  } catch (err) {
-    console.log('Err in updateKeywords: ', err);
-    return null;
-  }
-};
-
 export const updateResponse = async (
   token: string,
   qid: string,
@@ -99,29 +75,6 @@ export const saveComment = async (
     return response;
   } catch (err) {
     console.log('Err in saveComment: ', err);
-    return null;
-  }
-};
-
-export const saveQASetArray = async (
-  token: string,
-  tid: string,
-  QAList: Array<IQASetBase>
-) => {
-  try {
-    const response = await Http.axios.post(
-      `/response/saveQASetArray`,
-      {
-        tid: tid,
-        qalist: QAList,
-      },
-      {
-        headers: Http.makeSignedInHeader(token),
-      }
-    );
-    return response.data.success;
-  } catch (err) {
-    console.log('Err in saving QASetArray: ', err);
     return null;
   }
 };
