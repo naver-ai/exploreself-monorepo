@@ -84,6 +84,7 @@ export const UserSchema = new Schema({
     isKorean: {type: Boolean, required: true, default: true},
     initialNarrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     threads: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
+    synthesis: {type: [String], required: true, default: []},
     pinnedThemes: {type: [String], required: true, default: []},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date}

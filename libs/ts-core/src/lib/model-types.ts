@@ -72,6 +72,7 @@ export interface IUserBase {
   isKorean: boolean;
   initialNarrative: string | undefined
   pinnedThemes: Array<string>
+  synthesis: string[];
   createdAt: Date;
   updatedAt: Date;
 }
