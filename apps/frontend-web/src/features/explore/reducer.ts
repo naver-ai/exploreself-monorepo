@@ -192,7 +192,7 @@ const exploreSlice = createSlice({
       state.questionShowKeywordsFlags[action.payload.qid] = action.payload.flag
     },
     addNewSynthesis: (state, action: PayloadAction<string>) => {
-      state.synthesis.push(action.payload)
+      state.synthesis.push(...action.payload)
     },
     appendPinnedTheme: (state, action: PayloadAction<string>) => {
       if(state.pinnedThemes.indexOf(action.payload) == -1){
@@ -435,13 +435,15 @@ export function getNewSynthesis(): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if(state.auth.token){
+      // dispatch(exploreSlice.actions.setCreatingSynthesisFlag(true))
       try{ 
         const synthesis = await generateSynthesis(state.auth.token)
-        dispatch(exploreSlice.actions.addNewSynthesis(synthesis))
+        const comments = synthesis.map((item: any) => item.comment)
+        dispatch(exploreSlice.actions.addNewSynthesis(comments))
       }catch(ex){
         console.log(ex)
       }finally{
-
+        // dispatch(exploreSlice.actions.setCreatingSynthesisFlag(false))
       }
     }
   }

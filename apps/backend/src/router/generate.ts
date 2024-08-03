@@ -94,10 +94,10 @@ const generateThemesHandler = async (req: RequestWithUser, res) => {
 const generateSynthesisHandler = async(req: RequestWithUser, res) => {
   const user = req.user;
   try {
-    const synthesis = await generateSynthesis(user)
-    const userUpdated = await User.findByIdAndUpdate(user._id, {$push: {synthesis: synthesis}})
+    const comments = await generateSynthesis(user)
+    const userUpdated = await User.findByIdAndUpdate(user._id, {$push: {synthesis: {$each: comments.map(comment => comment.comment)}}})
     // TODO: Add log interaction data
-    res.json({synthesis: synthesis})
+    res.json({comments: comments})
   } catch (err) {
     res.json({
       err: err.message

@@ -11,7 +11,7 @@ const generateSynthesis = async (
         headers: Http.makeSignedInHeader(token),
       }
     );
-    return response.data.synthesis;
+    return response.data.comments;
   } catch (err) {
     console.error('Error in getting synthesis: ', err);
     return null;

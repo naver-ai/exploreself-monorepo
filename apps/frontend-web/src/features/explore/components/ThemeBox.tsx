@@ -41,8 +41,10 @@ const ThemeBox = () => {
   }, []);
 
   useEffect(() => {
-    fetchInitThemes();
-  }, [fetchInitThemes]);
+    if(isOpen) {
+      fetchInitThemes();
+    }
+  }, [fetchInitThemes, isOpen]);
 
   return (
     <Drawer

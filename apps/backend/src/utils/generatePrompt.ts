@@ -27,6 +27,14 @@ const generatePrompt = async (user: IUserORM, qid: string, keyword: string, curr
   Along with the prompt, each provide a rationale of why this prompt can be helpful. It could be cognitively helpful in thinking about the question, it could be therapeutically meaningful/helpful, user might want to select that prompt considering the current context, etc ---there could be diverse rationales. 
   The prompt should be provided in a first-person perspective, since it can be imported to the textarea that the user is responding to, in one's own perspective, and it should be written "In Korean". (The rationale can be English)
   
+  [Checkpoints]
+  - User should be attracted to importing the prompt in answering the given question
+  - The prompt must be 'in scope' of the given question), 
+  - Consider the context of the provided current response. "It should be natural to come right next in the current response."
+  - These prompts shouldn't be so cognitively difficult to select. 
+
+
+
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty.
   <previous_session_log>: Logs of sessions before the current session.
@@ -35,7 +43,7 @@ const generatePrompt = async (user: IUserORM, qid: string, keyword: string, curr
   <current_response_status/>: The question's current response status of the user. 
 
   [Output]
-  Provide just ${opt} best each different prompts.
+  Provide "just ${opt}" best each different prompts.
   `
 
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplae)
@@ -65,6 +73,7 @@ const generatePrompt = async (user: IUserORM, qid: string, keyword: string, curr
   const structuredLlm = chatModel.withStructuredOutput(keywordsSchema)
   const chain = finalPromptTemplate.pipe(structuredLlm)
   const init_info = synthesizeProfilicInfo(user.initialNarrative)
+  console.log("CUR: ", curr_response)
 
   const prev_log = await synthesizePrevThreads(user._id)
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question, keyword: keyword, current_response: curr_response})

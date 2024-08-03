@@ -14,6 +14,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
 
   const userData = await User.findById(uid).populate({path: 'threads'}) as IUserBase & {threads: IThreadORM[]}
   const themeList = userData.threads?.map(iteme => iteme.theme)
+  const pinnedThemes = userData.pinnedThemes
   
   const system_message =  nunjucks.renderString(`
   [Role] You are a therapeutic assistant specializing in generating socratic questions to facilitate self-reflection and personal growth in clients. 
@@ -32,8 +33,11 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
   {% if threadLength > 0 %}
     <previous_session_log>: Logs of sessions before the current session. Try not to overlap with the previously selected themes.
   {% endif %}
+  {% if pinnedLength > 0 %}
+    <already_pinned_themes>: The themes that the user has already selected to explore soon. Try not to overlap with the previously selected themes.
+  {% endif %}
 
-  `,{threadLength: themeList.length})
+  `,{threadLength: themeList.length, pinnedLength: pinnedThemes.length})
 
   const systemMessage = new SystemMessage(system_message);
 
@@ -42,19 +46,16 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
   {% if threadLength > 0 %}
     <previous_session_log>: {prev_log}
   {% endif %}
-  `, {threadLength: themeList.length})
+  {% if pinnedLength > 0 %}
+    <already_pinned_themes>: {pinned_themes}
+  {% endif %}
+  `, {threadLength: themeList.length, pinnedLength: pinnedThemes.length})
 
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 
-  const edgeSchema = z.object({
-    themes: z.array(z.object({
-      theme: z.string().describe("Each theme from the user's initial narrative and previous log. (in Korean)"),
-      quote: z.string().describe("Most relevant part of the user's narrative to the theme")
-    }))
-  })
 
-  const edgeSchema2 = z.object({
+  const edgeSchema = z.object({
     themes: z.array(z.object({
       main_theme: z.string().describe("Each theme from the user's initial narrative and previous log. (in Korean). This main theme should directly borrow expression/language of the user."),
       expressions: z.array(z.string()).describe("An array of diverse different expressions of the main_theme (in Korean)."),
@@ -67,13 +68,13 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
     humanMessage
   ])
 
-  const structuredLlm = chatModel.withStructuredOutput(edgeSchema2);
+  const structuredLlm = chatModel.withStructuredOutput(edgeSchema);
 
   const chain = finalPromptTemplate.pipe(structuredLlm);
   const init_info = synthesizeProfilicInfo(userData.initialNarrative)
   const prev_session_log = await synthesizePrevThreads(uid)
 
-  const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log});
+  const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log, pinned_themes: pinnedThemes.join(', ')});
 
   return (result as any).themes;
 } 

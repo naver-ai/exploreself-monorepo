@@ -5,13 +5,15 @@ import { QASet } from '../config/schema';
 import { IUserORM } from '../config/schema';
 import { synthesizeProfilicInfo } from './synthesizeProfilicInfo';
 import { synthesizePrevThreads } from './synthesizeThread';
+import nunjucks from 'nunjucks'
 
 
 const generateKeywords = async (user: IUserORM, qid: string, opt:number=1) => {
   const qData = await QASet.findById(qid)
   const question = qData.question.content
+  const keywords = qData.keywords
 
-  const systemTemplae = `
+  const systemTemplae = nunjucks.renderString(`
   [Role]
   You are a therapeutic assistant specializing in supporting users to response to socratic questions, facilitating self-reflection and personal growth. 
 
@@ -25,15 +27,21 @@ const generateKeywords = async (user: IUserORM, qid: string, opt:number=1) => {
   <initial_information/>: Client's initial brief introductory of difficulty, and the client's background.
   <previous_session_log>: Logs of sessions before the current session.
   <question/>: Question that the user is trying to think about now. 
-  `
+  {% if keywords > 0 %}
+    <existing_keywords/>: The keywords that are already provided to the users. Do not overlap with these existing keywords. 
+  {% endif %}
+  `,{keywords: keywords.length})
 
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplae)
 
-  const humanTemplate = `
+  const humanTemplate = nunjucks.renderString(`
   <initial_information/>: {init_info}
   <previous_session_log>: {prev_log}
   <question/>: {question}
-  `
+  {% if keywords > 0 %}
+    <existing_keywords/>: {keywords}
+  {% endif %}
+  `,{keywords: keywords.length})
 
   const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
 
@@ -54,7 +62,7 @@ const generateKeywords = async (user: IUserORM, qid: string, opt:number=1) => {
   const init_info = synthesizeProfilicInfo(user.initialNarrative)
 
   const prev_log = await synthesizePrevThreads(user._id, "keyword")
-  const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question})
+  const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question, keywords: keywords.join(', ')})
 
   return (result as any).keywords
 
