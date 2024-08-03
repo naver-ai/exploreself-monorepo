@@ -42,3 +42,22 @@ label.ant-form-item-required {
   @apply leading-7;
   height: initial !important;
 }
+
+.custom-carousel .slick-prev,
+.custom-carousel .slick-next {
+  @apply text-green-500; 
+}
+
+.custom-carousel .slick-prev:hover,
+.custom-carousel .slick-next:hover {
+  @apply text-green-800; /* should change color */
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+  background-color: #ffffff; /* Customize the active dot color */
+}
+
+.ant-carousel .slick-dots li button {
+  background-color: #888888; /* Customize the dot color */
+}
+

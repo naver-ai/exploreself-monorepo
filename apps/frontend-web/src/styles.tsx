@@ -16,6 +16,10 @@ export const theme: ThemeConfig = {
       orientationMargin: 0,
       textPaddingInline: 0,
     },
+    Carousel: {
+      // arrowOffset: 8
+      arrowSize: 25
+    }
   },
 };
 

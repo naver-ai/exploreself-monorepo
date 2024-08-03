@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { OutlinePanel, PinnedThemesPanel } from '../components/sidebar-views';
 import ThemeBox from '../components/ThemeBox';
 import { ThreadBox } from '../components/ThreadBox';
-import { Card,  Button, Drawer, Space } from 'antd';
+import { Card,  Button, Drawer, Space, Carousel, Input } from 'antd';
+const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
@@ -11,11 +12,13 @@ import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
 import useScrollbarSize from 'react-scrollbar-size';
-
+import {AlignLeftOutlined} from '@ant-design/icons'
 
 const SidePanel = () => {
   const [open, setOpen] = useState(false)
   const synthesisList: string[] = useSelector(state => state.explore.synthesis)
+  const isCreatingSynthesis = useSelector(state => state.explore.isCreatingSynthesis)
+
   const dispatch = useDispatch();
 
   const showDrawer = () => {
@@ -37,6 +40,7 @@ const SidePanel = () => {
     }
   },[open])
 
+
   return (
     <>
       <div
@@ -49,20 +53,36 @@ const SidePanel = () => {
       <div className="flex-1 overflow-y-auto bg-gray-400/2">
         <OutlinePanel />
         <PinnedThemesPanel />
-        <Button onClick={showDrawer}>Open</Button>
+        <div className='w-full flex justify-end '>
+          <Button onClick={showDrawer} icon={<AlignLeftOutlined/>}>AI 요약 보기</Button>
+        </div>
+        
         <Drawer
           onClose={onClose}
           open={open}
           placement="bottom"
+          title="AI 요약"
+          // closeIcon={false}
           extra={
             <Space>
-              <Button onClick={() => generateSynthesis()}>New Synthesis</Button>
-              <Button onClick={onClose}>Cancel</Button>
-              <Button type="primary" onClick={onClose}>OK</Button>
+              <Button onClick={() => generateSynthesis()}>{isCreatingSynthesis? "요약중입니다": "새로운 요약 보기"}</Button>
+
             </Space>
           }
         >
-          {synthesisList && synthesisList.map(item => <div className='border border-gray-500 rounded-lg my-3'>{item}</div>)}
+          <Carousel 
+            arrows
+            className='custom-carousel h-full'
+            initialSlide={synthesisList?.length-1}>
+            {synthesisList.map((item, i) => 
+            <div className='rounded-lg' key={i}>
+              <div className='px-20 pb-10 leading-loose'>
+                <TextArea className='flex justify-end pb-3' value={item} rows={10}/>
+              </div>
+            </div>)}
+            {isCreatingSynthesis && "Is creating synthesis"}
+          </Carousel>
+          
         </Drawer>
       </div>
     </>
