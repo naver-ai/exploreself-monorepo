@@ -1,4 +1,3 @@
-import { ChatOpenAI } from '@langchain/openai';
 import {ChatPromptTemplate, HumanMessagePromptTemplate} from "@langchain/core/prompts"
 import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
@@ -34,7 +33,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
     <previous_session_log>: Logs of sessions before the current session. Try not to overlap with the previously selected themes.
   {% endif %}
   {% if pinnedLength > 0 %}
-    <already_pinned_themes>: The themes that the user has already selected to explore soon. Try not to overlap with the previously selected themes.
+    <already_pinned_themes>: The themes that the user has already selected. Try not to overlap with the previously selected themes.
   {% endif %}
 
   `,{threadLength: themeList.length, pinnedLength: pinnedThemes.length})
@@ -74,7 +73,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
   const init_info = synthesizeProfilicInfo(userData.initialNarrative)
   const prev_session_log = await synthesizePrevThreads(uid)
 
-  const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log, pinned_themes: pinnedThemes.join(', ')});
+  const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log, pinned_themes: themeList.concat(pinnedThemes).join(', ')});
 
   return (result as any).themes;
 } 

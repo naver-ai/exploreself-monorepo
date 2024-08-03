@@ -9,6 +9,7 @@ import generateComment from '../../api_call/generateComment';
 import generateKeywords from '../../api_call/generateKeywords';
 import { postInteractionData } from '../../api_call/postInteractionData';
 import generateSynthesis from '../../api_call/generateSynthesis';
+import generateThemes from '../../api_call/generateThemes';
 
 const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>({
   selectId: (model: IThreadWithQuestionIds) => model._id
@@ -25,6 +26,7 @@ export type IExploreState = {
   isLoadingUserInfo: boolean;
   isCreatingNewThread: boolean;
   isCreatingSynthesis: boolean;
+  isLoadingThemes:  boolean;
 
   userId?: string;
 
@@ -47,6 +49,7 @@ const initialState: IExploreState = {
   isLoadingUserInfo: false,
   isCreatingNewThread: false,
   isCreatingSynthesis: false,
+  isLoadingThemes: false,
 
   userId: undefined,
 
@@ -114,6 +117,9 @@ const exploreSlice = createSlice({
     },
     setCreatingSynthesisFlag: (state, action: PayloadAction<boolean>) => {
       state.isCreatingSynthesis = action.payload
+    },
+    setLoadingThemesFlag: (state, action: PayloadAction<boolean>) => {
+      state.isLoadingThemes = action.payload
     },
     setCreatingThreadQuestionsFlag: (state, action: PayloadAction<{tid: string, flag: boolean}>) => {
       state.threadQuestionCreationLoadingFlags[action.payload.tid] = action.payload.flag;
@@ -489,7 +495,7 @@ export function pinTheme(theme: string): AppThunk {
   }
 }
 
-export function unpinTheme(theme: string, intentional: boolean): AppThunk {
+export function unpinTheme(theme: string, intentional: boolean=true): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if(state.auth.token){
@@ -514,12 +520,29 @@ export function unpinTheme(theme: string, intentional: boolean): AppThunk {
   }
 }
 
+export function getNewThemes (): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState()
+    if (state.auth.token) {
+      try {
+        dispatch(exploreSlice.actions.setLoadingThemesFlag(true))
+        await generateThemes(state.auth.token)
+      } catch (ex) {
+        console.log(ex)
+      } finally {
+        dispatch(exploreSlice.actions.setLoadingThemesFlag(false))
+      }
+    }
+  }
+}
+
 export const {
   updateUserInfo,
   resetState,
   setThemeSelectorOpen,
   setFloatingHeader,
   updateQuestion,
-  setQuestionShowKeywordsFlag
+  setQuestionShowKeywordsFlag,
+  setLoadingThemesFlag
 } = exploreSlice.actions;
 export default exploreSlice.reducer;

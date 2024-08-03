@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Button, Row, Space, Col, Drawer } from 'antd';
+import { Button, Row, Space, Col, Drawer, Spin } from 'antd';
 import {
   pinTheme,
+  setLoadingThemesFlag,
   setThemeSelectorOpen,
 } from '../reducer';
 import { MdBookmarkBorder } from 'react-icons/md';
@@ -20,10 +21,13 @@ const ThemeBox = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
+  const isLoadingThemes = useSelector(state => state.explore.isLoadingThemes)
 
   const fetchInitThemes = useCallback(async () => {
+    dispatch(setLoadingThemesFlag(true))
     const data = await generateThemes(token);
     setThemes(data);
+    dispatch(setLoadingThemesFlag(false))
   }, [token]);
 
   const handleAddPinnedTheme = async (theme: string) => {
@@ -41,8 +45,10 @@ const ThemeBox = () => {
   }, []);
 
   useEffect(() => {
+    console.log("NEW")
     if(isOpen) {
       fetchInitThemes();
+      console.log("FETCHED")
     }
   }, [fetchInitThemes, isOpen]);
 
@@ -56,7 +62,7 @@ const ThemeBox = () => {
       rootStyle={{ position: 'absolute', height: '100vh' }}
     >
       <div>
-        {themes?.length ? (
+        {!isLoadingThemes ? (
           <div>
             <div className="w-full flex justify-end">
               <Button
@@ -129,7 +135,7 @@ const ThemeBox = () => {
             </Space>
           </div>
         ) : (
-          'Loading themes'
+          <Spin/>
         )}
       </div>
     </Drawer>
