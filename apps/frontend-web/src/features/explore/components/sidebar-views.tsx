@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Timeline } from 'antd';
+import { Timeline, Button, Flex } from 'antd';
 import { populateNewThread, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { IThreadWithQuestionIds } from '@core';
@@ -8,6 +8,7 @@ import { PanelGroup } from '../../../components/PanelGroup';
 import { ShortcutManager } from '../../../services/shortcut';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
+import {CloseOutlined} from '@ant-design/icons'
 
 const OUTLINE_PANEL_CLASS =
   'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer';
@@ -70,6 +71,11 @@ export const PinnedThemesPanel = () => {
   const uid = useSelector((state) => state.explore.userId);
   const pinnedThemes = useSelector((state) => state.explore.pinnedThemes);
 
+  const handleRemovePinnedTheme = async (theme: string) => {
+    dispatch(unpinTheme(theme));
+    await postInteractionData(token, InteractionType.UserUnpinsTheme, {theme: theme}, {})
+  };
+
   const addToThread = useCallback(
     async (selected: string) => {
       if (uid != null) {
@@ -95,9 +101,15 @@ export const PinnedThemesPanel = () => {
       ) : (
         <div>
           {pinnedThemes.map((theme, i) => (
-            <div key={i} onClick={() => addToThread(theme)}>
+            <div className='flex items-center border rounded-lg p-2'>
+              <div key={i} onClick={() => addToThread(theme)}>
               {theme}
+              
+              {/* TODO: 삭제 시 취소 확인 modal*/}
             </div>
+            <Button type="text" shape="circle" size="small" className="justift"icon={<CloseOutlined/>} onClick={() => handleRemovePinnedTheme(theme)}/>
+            </div>
+            
           ))}
         </div>
       )}

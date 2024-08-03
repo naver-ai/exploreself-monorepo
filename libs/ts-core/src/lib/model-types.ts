@@ -1,6 +1,7 @@
 export enum InteractionType {
   LLMElicitedTheme = 'LLMElicitedTheme',
   UserPinsTheme = 'UserPinsTheme',
+  UserUnpinsTheme = 'UserUnpinsTheme',
   UserSelectsTheme = 'UserSelectsTheme',
   UserAddsTheme = 'UserAddsTheme',
   UserRequestsTheme = 'UserRequestsTheme',
