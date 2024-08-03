@@ -73,11 +73,14 @@ const SidePanel = () => {
           <Carousel 
             arrows
             className='custom-carousel h-full'
-            initialSlide={synthesisList?.length-1}>
+            initialSlide={synthesisList?.length-1}
+          >
             {synthesisList.map((item, i) => 
             <div className='rounded-lg' key={i}>
               <div className='px-20 pb-10 leading-loose'>
-                <TextArea className='flex justify-end pb-3' value={item} rows={10}/>
+                <div className='flex justify-end pb-3'>
+                  {item}
+                </div>
               </div>
             </div>)}
             {isCreatingSynthesis && "Is creating synthesis"}

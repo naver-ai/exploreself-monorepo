@@ -6,9 +6,7 @@ import {
   Row,
   Col,
   Skeleton,
-  Switch,
-  Divider,
-  Spin
+  Switch
 } from 'antd';
 import {
   ReloadOutlined,
@@ -22,7 +20,7 @@ import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywor
 import { diffChars, Change } from 'diff';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionBase, InteractionType } from '@core';
-import generatePrompt from '../../../api_call/generatePrompt';
+
 
 export const QuestionBox = (props: { qid: string }) => {
   const token = useSelector((state) => state.auth.token) as string;
@@ -31,13 +29,11 @@ export const QuestionBox = (props: { qid: string }) => {
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
   const keywords = question.keywords
   const response = question.response
-  const [selectedKeyword, setSelectedKeyword] = useState<string | null>()
-  const comment = question.aiGuides ? question.aiGuides[question.aiGuides.length -1]?.content: "Loading"
+  // const comment = question.aiGuides.length > 0 ? question.aiGuides[question.aiGuides.length-1] : null;
+  const comment = question.aiGuides ? question.aiGuides[question.aiGuides.length -1]?.content: null
   const [isSaving, setIsSaving] = useState(false);
-  const [isLoadingPrompt, setIsLoadingPrompt] = useState(false)
   const [lastSavedResponse, setLastSavedResponse] = useState('');
   const [isActive, setIsActive] = useState(false);
-  const [prompts, setPrompts] = useState<{[keyword: string]: string[]}>({})
   const isCreatingComment = useSelector(state => state.explore.questionCommentCreationLoadingFlags[props.qid] || false)
 
 
@@ -75,20 +71,6 @@ export const QuestionBox = (props: { qid: string }) => {
     }
   };
 
-  const importPrompt = useCallback(async (prompt: string) => {
-    try {
-      const interaction: InteractionBase = {
-        interaction_type: InteractionType.UpdateInResponse,
-        interaction_data: {type: 'llm', delta: "prompt", prevText: response},
-        metadata: {qid: props.qid}
-      }
-      await dispatch(updateQuestionResponse(props.qid, response.concat(prompt), interaction))
-    } catch (error) {
-      console.error('Failed to import Prompt')
-    }
-  },[props.qid, response])
-
-
   const saveResponse = useCallback(async () => {
     if (response !== lastSavedResponse) {
       setIsSaving(true);
@@ -122,28 +104,20 @@ export const QuestionBox = (props: { qid: string }) => {
     dispatch(setQuestionShowKeywordsFlag({ qid: props.qid, flag: !checked }));
   }, [dispatch, props.qid]);
 
-  const handleKeywordSelect = useCallback(async (keyword: string) => {
-    // TODO: interaction log for selecting keyword  
-    if(!prompts[keyword]) {
-      setIsLoadingPrompt(true)
-      const newPrompts = await generatePrompt(token, props.qid, keyword as string, response)
-      setPrompts((prevPrompts) => ({
-        ...prevPrompts,
-        [keyword]: newPrompts
-      }))
-      setIsLoadingPrompt(false)
-    } 
-    setSelectedKeyword(keyword)
-    setIsLoadingPrompt(false)
-  },[token, props.qid, selectedKeyword, response, setPrompts, setSelectedKeyword])
-
-
   useEffect(() => {
     if (isActive) {
       const handle = setTimeout(saveResponse, 1000);
       return () => clearTimeout(handle);
     }
   }, [response, isActive, saveResponse]);
+
+  useEffect(() => {
+    console.log("AI: ", question.aiGuides)
+    if(!comment) {
+      console.log("Generating comment")
+      getNewCommentHandler()
+    }
+  },[])
 
 
   return (
@@ -154,51 +128,43 @@ export const QuestionBox = (props: { qid: string }) => {
       </Flex>
       <Switch className="mb-1" checkedChildren="단어 도우미" unCheckedChildren="단어 도우미" defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/>
       {isQuestionKeywordsShown && 
-        <div className={'p-2 w-full mb-2'}>
-          {/* <div className="text-xs pb-2">생각을 돕는 단어들</div> */}
-          <Row>
-            <Col className="flex justify-center" span={6}>
-              <Flex wrap gap="small" className="flex justify-center" vertical={true}>
-                {keywords &&
-                  (keywords as string[]).map((keyword, i) => (
-                    <div
-                      key={i}
-                      className="border border-[#B9DBDC]-600 px-2 py-1 rounded-lg"
-                      onClick={() => {handleKeywordSelect(keyword);}}
-                    >
-                      {keyword}
-                    </div>
-                  ))}
-                <Button
-                  type="text"
-                  className="px-2 py-1 text-black text-opacity-50"
-                  onClick={() => {
-                    getNewKeywordsHandler(1);
-                  }}
-                >
-                  단어 더보기
-                </Button>
-              </Flex>
-              
-            </Col>
-            <Col className='border-dashed border-2 rounded-lg' span={18}>
-              {selectedKeyword? (isLoadingPrompt? 
-                <Spin/>: 
-                <>
-                {prompts[selectedKeyword].map(prompt => 
-                  <div className='p-2'>
-                    {prompt}
-                    <Button onClick={() => importPrompt(prompt)}>가져오기</Button>
+      <Row>
+        <div className={'border-dashed border-2 rounded-lg p-2 w-full mb-2'}>
+          <div className="text-xs pb-2">생각을 돕는 단어들</div>
+          {!question.keywords || question.keywords?.length == 0 ? (
+            <Button
+              type="text"
+              size="small"
+              onClick={() => {
+                getNewKeywordsHandler(3);
+              }}
+            >
+              생각 도우미 단어들 보기
+            </Button>
+          ) : (
+            <Flex wrap gap="small" className="flex justify-center">
+              {question.keywords &&
+                (question.keywords as string[]).map((keyword, i) => (
+                  <div
+                    key={i}
+                    className="border border-[#B9DBDC]-600 px-2 py-1 rounded-lg"
+                  >
+                    {keyword}
                   </div>
-                )}
-                </>
-                ):
-                <div>
-                  "단어를 눌러보세요"
-                </div>}
-            </Col>
-          </Row>
+                ))}
+              <Button
+                type="text"
+                className="px-2 py-1 text-black text-opacity-50"
+                onClick={() => {
+                  getNewKeywordsHandler(1);
+                }}
+              >
+                단어 더보기
+              </Button>
+            </Flex>
+          )}
         </div>
+      </Row>
       }
       <Row justify="space-between">
         <Col span={15}>
