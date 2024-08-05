@@ -16,7 +16,6 @@ import { useInView } from 'react-intersection-observer';
 import { QuestionBox } from './QuestionBox';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { useTranslation } from 'react-i18next';
-import { t } from 'i18next';
 import { PencilIcon } from '@heroicons/react/20/solid';
 import { usePrevious } from "@uidotdev/usehooks";
 
@@ -68,6 +67,8 @@ const SelectedQuestionList = (props: { tid: string }) => {
 };
 
 const UnselectedQuestionList = (props: { tid: string }) => {
+
+  const [t] = useTranslation()
 
   const dispatch = useDispatch();
   const questionIds = useSelector(state => unSelectedQuestionIdsSelector(state, props.tid))
@@ -137,8 +138,6 @@ export const ThreadBox = (props: { tid: string }) => {
   const dispatch = useDispatch()
 
   const thread = useSelector(state => threadSelectors.selectById(state, props.tid))
-
-  const [t] = useTranslation()
 
   const [ref, inView, entry] = useInView({
     threshold: THRESHOLDS,
