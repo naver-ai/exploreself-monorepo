@@ -16,7 +16,7 @@ import { useInView } from 'react-intersection-observer';
 import { QuestionBox } from './QuestionBox';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { useTranslation } from 'react-i18next';
-import { PencilIcon } from '@heroicons/react/20/solid';
+import { ArrowDownIcon, PencilIcon } from '@heroicons/react/20/solid';
 import { usePrevious } from "@uidotdev/usehooks";
 
 const UnselectedQuestionItem = (props: { qid: string }) => {
@@ -55,15 +55,19 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
 };
 
 const SelectedQuestionList = (props: { tid: string }) => {
+
+  const [t] = useTranslation()
+
   const questionIds = useSelector(state => selectedQuestionIdsSelector(state, props.tid))
   
-  return (
-    <div>
+  return questionIds.length > 0 ? <div>
       {questionIds.map((qid) => (
         <QuestionBox key={qid} qid={qid} />
       ))}
+    </div> : <div className='pb-6 pt-0 px-2 flex items-center font-base text-blue-500'>
+      <ArrowDownIcon className='w-6 h-6 mr-2 animate-bounce'/>
+      <span>{t("Thread.Questions.NoQuestionPlaceholder")}</span>
     </div>
-  );
 };
 
 const UnselectedQuestionList = (props: { tid: string }) => {

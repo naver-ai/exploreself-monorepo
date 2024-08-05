@@ -14,6 +14,7 @@ import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { PlusIcon } from '@heroicons/react/20/solid';
+import { ShortcutManager } from '../../../services/shortcut';
 import { useTranslation } from 'react-i18next';
 import { POPULATE_NEW_THREAD_OPTS } from './common';
 
