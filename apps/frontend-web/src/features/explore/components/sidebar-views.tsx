@@ -122,12 +122,10 @@ export const PinnedThemesPanel = () => {
 
   const [userTheme, setUserTheme] = useState<string>('')
 
-  const handleAddTheme = useCallback(() => {
-    async () => {
-      dispatch(pinTheme(userTheme))
-      setUserTheme('')
-      await postInteractionData(token, InteractionType.UserAddsTheme, {theme: userTheme}, {})
-    }
+  const handleAddTheme = useCallback(async() => {
+    dispatch(pinTheme(userTheme))
+    await postInteractionData(token, InteractionType.UserAddsTheme, {theme: userTheme}, {})
+    setUserTheme('')
   },[userTheme, token, setUserTheme])
 
   return (
