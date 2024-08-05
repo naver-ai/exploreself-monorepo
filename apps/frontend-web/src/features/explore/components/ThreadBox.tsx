@@ -98,14 +98,16 @@ const UnselectedQuestionList = (props: { tid: string }) => {
         label: <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}개)</span>,
         children: (
           <div>
-            <div>{
-              questionIds.map((qid) => (
-                <UnselectedQuestionItem key={qid} qid={qid} />
-              ))
-            }</div>
+            <div>
             {
             !isCreatingQuestions ? moreButton : <LoadingIndicator className='!justify-end' title={t("Thread.Questions.Generating")}/>
             }
+            {
+              [...questionIds].reverse().map((qid) => (
+                <UnselectedQuestionItem key={qid} qid={qid} />
+              ))
+            }</div>
+            
           </div>
         ),
       },
