@@ -63,7 +63,12 @@
     },
     "UndoDelete": "주제 삭제 취소"
   },
-
+  "Synthesis": {
+    "Title": "AI 요약",
+    "Open": "AI 요약 보기",
+    "Generating": "새로운 요약 생성 중",
+    "More": "새로운 요약 보기"
+  },
   "Labels": {
     "Apply": "적용",
     "Submit": "제출"

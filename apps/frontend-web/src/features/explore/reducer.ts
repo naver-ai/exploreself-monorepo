@@ -500,15 +500,15 @@ export function getNewSynthesis(): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if(state.auth.token){
-      // dispatch(exploreSlice.actions.setCreatingSynthesisFlag(true))
       try{ 
+        dispatch(exploreSlice.actions.setCreatingSynthesisFlag(true))
         const synthesis = await generateSynthesis(state.auth.token)
         const comments = synthesis.map((item: any) => item.comment)
         dispatch(exploreSlice.actions.addNewSynthesis(comments))
       }catch(ex){
         console.log(ex)
       }finally{
-        // dispatch(exploreSlice.actions.setCreatingSynthesisFlag(false))
+        dispatch(exploreSlice.actions.setCreatingSynthesisFlag(false))
       }
     }
   }

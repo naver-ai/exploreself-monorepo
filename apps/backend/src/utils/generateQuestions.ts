@@ -22,6 +22,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
   
   [Task]
   Given a client's personal narrative and context, your task is to generate list of "just ${opt}" socratic questions and intention of the question in KOREAN. 
+  Try at most to follow up with the user's previous response (if there is any). 
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty, and the client's background.

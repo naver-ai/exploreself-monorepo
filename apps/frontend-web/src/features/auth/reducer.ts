@@ -34,7 +34,6 @@ const authSlice = createSlice({
 
       state.userId = action.payload.userId;
       state.authorizationError = undefined;
-      console.log('UID SET!: ', state.userId);
     },
 
     setAuthorizingFlag: (state, action: PayloadAction<boolean>) => {

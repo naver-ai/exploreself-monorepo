@@ -14,8 +14,6 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
   const userData = await User.findById(uid).populate({path: 'threads'}) as IUserBase & {threads: IThreadORM[]}
   const themeList = userData.threads?.map(iteme => iteme.theme)
   const pinnedThemes = userData.pinnedThemes
-  console.log("PREV: ", prev_themes)
-  console.log("OPT: ", opt)
   
   const system_message =  nunjucks.renderString(`
   [Role] You are a therapeutic assistant specializing in generating socratic questions to facilitate self-reflection and personal growth in clients. 
@@ -23,23 +21,26 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
   In each session, the user comes up with a resonse to a set of questions relevant to the theme.  
 
   [Task] 
-  Your specific task is to identify new themes that the client can navigate on. 
+  Your specific task is to identify new themes that the client can navigate on. You can think of it as a list of topic of the follow-up question of the user's previous responses.
   For each main_theme, also provide the referred part/quote of user input of the previous session "in Korean". 
   Try not do 'inference' in generating cards, and go ahead by assuming, but stick to the user's expression. Being synced with user's language/expression is important. 
+  Avoid interpretation and stick to the language and expressions that the user used in their log for eliciting the main_theme.  
+  If therapeutically important asepcts(e.g., emotion, new character, etc), do include them in the theme.
   For each elicited main_theme (sticking to user's expression), come up with diverse different expressions of the main_theme. It could be altered in diverse ways expression-wise.  
-  (Only if there is a good metaphoric expression, or in a therapeutically meaningful way), you can also feel free to fetch some metaphoric expressions, too
+  If there is a good metaphoric expression, or in a therapeutically meaningful way, feel free to fetch some metaphoric expressions, too.
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty narrative, and the client's background.
   {% if threadLength > 0 %}
-    <previous_session_log>: Logs of sessions before the current session. DO NOT overlap with the previously selected themes.
+    <previous_session_log>: Logs of sessions before the current session. "DO NOT" overlap with the previously selected themes.
   {% endif %}
   {% if pinnedLength > 0 %}
-    <already_pinned_themes>: The themes that the user has already selected. DO NOT overlap with the previously selected themes.
+    <already_pinned_themes>: The themes that the user has already selected. "DO NOT" overlap with the previously selected themes.
   {% endif %}
 
   [Output]
   Generate a themes list of just ${opt}. However, if there is no additional theme to elicit from the input provided, or do not create, and provide an empty themes array of length 0.
+  Again, DO NOT overlap with previously selected themes.
 
   `,{threadLength: themeList.length, pinnedLength: pinnedThemes.length})
 

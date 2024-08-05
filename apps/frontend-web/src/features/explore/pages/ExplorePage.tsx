@@ -8,12 +8,14 @@ import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
 import { getNewSynthesis, selectFloatingHeader, setThemeSelectorOpen, threadSelectors } from '../reducer';
-import { LightBulbIcon } from '@heroicons/react/24/solid';
+import { LightBulbIcon, BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/24/solid';
+import {BookmarkIcon as OutlineBookmarkIcon} from '@heroicons/react/24/outline'
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
 import useScrollbarSize from 'react-scrollbar-size';
 import {AlignLeftOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
+import { LoadingIndicator } from '../../../components/LoadingIndicator';
 
 const SidePanel = () => {
 
@@ -42,6 +44,7 @@ const SidePanel = () => {
     }
   },[isSynthViewOpen])
 
+  const [t] = useTranslation()
 
   return (
     <>
@@ -60,30 +63,23 @@ const SidePanel = () => {
           onClose={onClose}
           open={isSynthViewOpen}
           placement="bottom"
-          title="AI 요약"
+          title={t("Synthesis.Title")}
           // closeIcon={false}
           extra={
             <Space>
-              <Button onClick={() => generateSynthesis()}>{isCreatingSynthesis? "요약중입니다": "새로운 요약 보기"}</Button>
+              <Button onClick={isCreatingSynthesis? undefined: (() => generateSynthesis())}>{t("Synthesis.More")}</Button>
             </Space>
           }
         >
-          <Carousel 
-            arrows
-            className='custom-carousel h-full'
-            initialSlide={synthesisList?.length-1}
-          >
-            {synthesisList.map((item, i) => 
-            <div className='rounded-lg' key={i}>
-              <div className='px-20 pb-10 leading-loose'>
-                <div className='flex justify-end pb-3'>
-                  {item}
-                </div>
-              </div>
-            </div>)}
-            {isCreatingSynthesis && "Is creating synthesis"}
-          </Carousel>
-          
+          {isCreatingSynthesis? <LoadingIndicator title={t("Synthesis.Generating")}/>: null}
+          {[...synthesisList].reverse().map((item, i) => {
+          return (
+            <div className='flex flex-row border justify-between mx-10 px-10 py-7 my-5 rounded-lg shadow-md'>
+              {item}
+              {/* <OutlineBookmarkIcon className="w-8 h-8"/> */}
+            </div>
+          )
+        })}          
         </Drawer>
       </div>
       <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
