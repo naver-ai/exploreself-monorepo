@@ -17,6 +17,7 @@ import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType, ThemeWithExpressions } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { t } from 'i18next';
+import { ShortcutManager } from '../../../services/shortcut';
 
 const ThemeBox = () => {
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
@@ -26,6 +27,8 @@ const ThemeBox = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
   const isLoadingThemes = useSelector(state => state.explore.isLoadingThemes)
+  const isCreatingNewThread = useSelector(state => state.explore.isCreatingNewThread)
+
   const [currentExpressionIndex, setCurrentExpressionIndex] = useState<number[]>([]);
 
   const handleShowNextExpression = (index: number) => {
@@ -50,12 +53,17 @@ const ThemeBox = () => {
 
   const addToThread = useCallback(
     async (selected: string) => {
-      dispatch(populateNewThread(selected))
+      const tid = await dispatch(populateNewThread(selected))
       dispatch(setThemeSelectorOpen(false))
+      if(tid) {
+        ShortcutManager.instance.requestFocus({
+          id: tid as string,
+          type: 'thread',
+        })
+      }
       await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: selected}, {})
     },
     []);
-
 
   const fetchThemes = useCallback(async (opt: number) => {
     dispatch(getNewThemes(opt))
@@ -116,7 +124,7 @@ const ThemeBox = () => {
                     >
                       <Col 
                       className="flex-1 pl-2 whitespace-normal"
-                      onClick={() => addToThread(themeItem.main_theme)}
+                      onClick={isCreatingNewThread? undefined: (() => addToThread(themeItem.main_theme))}
                       >{themeItem.main_theme}</Col>
                       <Col className='flex-shrink-0'>
                         <Button
@@ -140,7 +148,7 @@ const ThemeBox = () => {
                           justify="space-between"
                         >
                           <Col className="flex-1 pl-2 whitespace-normal"
-                          onClick={() => addToThread(exp)}>{exp}</Col>
+                          onClick={isCreatingNewThread? undefined: (() => addToThread(exp))}>{exp}</Col>
                           <Col className='flex-shrink-0'>
                             <Button
                               icon={<MdBookmarkBorder />}

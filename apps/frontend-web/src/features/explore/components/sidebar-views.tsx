@@ -80,8 +80,14 @@ export const PinnedThemesPanel = () => {
     async (selected: string) => {
       if (uid != null) {
         dispatch(unpinTheme(selected, false))
-        dispatch(populateNewThread(selected))
+        const tid = await dispatch(populateNewThread(selected))
         dispatch(setThemeSelectorOpen(false))
+        if(tid) {
+          ShortcutManager.instance.requestFocus({
+            id: tid as string,
+            type: 'thread',
+          })
+        }
         await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: selected}, {})
       }
     },

@@ -342,7 +342,7 @@ export function submitUserProfile(
   };
 }
 
-export function populateNewThread(theme: string): AppThunk {
+export function populateNewThread(theme: string): AppThunk<Promise<any>> {
   return async (dispatch, getState) => {
     const state = getState();
 
@@ -366,8 +366,7 @@ export function populateNewThread(theme: string): AppThunk {
           } finally {
             dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: false}))
           }
-
-
+          return newThread._id
         }
       }catch( ex) {
         console.log(ex)
@@ -375,6 +374,7 @@ export function populateNewThread(theme: string): AppThunk {
         dispatch(exploreSlice.actions.setCreatingNewThreadFlag(false))
       }
     }
+    return null;
   }
 }
 
