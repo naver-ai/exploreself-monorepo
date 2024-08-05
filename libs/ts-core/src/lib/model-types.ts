@@ -1,5 +1,6 @@
 export enum InteractionType {
-  LLMElicitedTheme = 'LLMElicitedTheme',
+  LLMElicitedTheme = 'LLMElicitedTheme', // O
+  UserRequestExpression = 'UserRequestExpression', // O
   UserPinsTheme = 'UserPinsTheme', //  O 
   UserUnpinsTheme = 'UserUnpinsTheme', // O
   UserSelectsTheme = 'UserSelectsTheme', // O
@@ -9,7 +10,6 @@ export enum InteractionType {
   UserSelectsQuestion = 'UserSelectsQuestion', // O
   UpdateInResponse = 'UpdateInResponse', // O
   LLMGeneratedKeyword = 'LLMGeneratedKeyword', // O
-  UserRequestsKeyword = 'UserRequestsKeyword',
   UserRequestsSynthesize = 'UserRequestsSynthesize',
 }
 

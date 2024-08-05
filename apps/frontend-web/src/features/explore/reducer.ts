@@ -549,6 +549,7 @@ export function getNewThemes (opt: number): AppThunk {
         const prevThemes = state.explore.newThemes.map(theme => theme.main_theme)
         const themes = await generateThemes(state.auth.token, prevThemes, opt)
         dispatch(exploreSlice.actions.addNewThemes(themes))
+        await postInteractionData(state.auth.token, opt == 1? InteractionType.UserRequestsTheme: InteractionType.LLMElicitedTheme, {themes: themes.map((theme: any) => theme.main_theme)}, {})
       } catch (ex) {
         console.log(ex)
       } finally {

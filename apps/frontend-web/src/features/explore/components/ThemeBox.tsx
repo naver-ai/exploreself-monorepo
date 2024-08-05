@@ -20,6 +20,7 @@ import { t } from 'i18next';
 import { ShortcutManager } from '../../../services/shortcut';
 
 const ThemeBox = () => {
+
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
 
   const themes = useSelector(state => state.explore.newThemes)
@@ -31,15 +32,14 @@ const ThemeBox = () => {
 
   const [currentExpressionIndex, setCurrentExpressionIndex] = useState<number[]>([]);
 
-  const handleShowNextExpression = (index: number) => {
-    setCurrentExpressionIndex((prevIndexes) => {
-      const newIndexes = [...prevIndexes];
-      newIndexes[index] = Math.min(
-        newIndexes[index] + 1,
-        (themes[index] as {main_theme: string, expressions: string[]}).expressions.length
-      );
-      return newIndexes;
-    });
+  const handleShowNextExpression = async (index: number) => {
+    const newIndexes = [...currentExpressionIndex];
+    newIndexes[index] = Math.min(
+      newIndexes[index] + 1,
+      (themes[index] as {main_theme: string, expressions: string[]}).expressions.length
+    );
+    setCurrentExpressionIndex(newIndexes);
+    await postInteractionData(token, InteractionType.UserRequestExpression, {main_theme: themes[index].main_theme, expression: themes[index].expressions[newIndexes[index]]}, {})
   };
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const ThemeBox = () => {
                           className="text-[10px]"
                         >
                           {' '}
-                          담아두기
+                          {t("Theme.Add")}
                         </Button>
                       </Col>
                     </Row>
@@ -158,7 +158,7 @@ const ThemeBox = () => {
                               className="text-[10px]"
                             >
                               {' '}
-                              담아두기
+                              {t("Theme.Add")}
                             </Button>
                           </Col>
                         </Row>
@@ -172,13 +172,13 @@ const ThemeBox = () => {
                         onClick={() => handleShowNextExpression(index)}
                         disabled={currentExpressionIndex[index] >= themeItem.expressions.length}
                       >
-                        + 다른 표현 보기
+                        + {t("Theme.AltExpressions")}
                       </Button>
                     </Row>
                   </Col>
                 )
               )}
-              {isLoadingThemes? <LoadingIndicator title='탐색해볼 주제 생성 중'/>: <Button onClick={() => fetchThemes(1)}>{t("ThemeSelection.MoreThemes")}</Button>}
+              {isLoadingThemes? <LoadingIndicator title={t('Theme.Generating')}/>: <Button onClick={() => fetchThemes(1)}>{t("Theme.MoreThemes")}</Button>}
             </Space>
           </div>
         
