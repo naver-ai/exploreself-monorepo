@@ -16,7 +16,6 @@ import useScrollbarSize from 'react-scrollbar-size';
 import {AlignLeftOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
-import { t } from 'i18next';
 
 const SidePanel = () => {
   const [open, setOpen] = useState(false)
@@ -43,6 +42,7 @@ const SidePanel = () => {
       }
     }
   },[open])
+  const [t] = useTranslation()
 
 
   return (
