@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { InteractionBase, InteractionType, IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds } from '@core';
+import { InteractionBase, InteractionType, IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds, ThemeWithExpressions } from '@core';
 import { Http } from '../../net/http';
 import { AppState, AppThunk } from '../../redux/store';
 import createThreadItem from '../../api_call/createThreadItem';
@@ -27,6 +27,7 @@ export type IExploreState = {
   isCreatingNewThread: boolean;
   isCreatingSynthesis: boolean;
   isLoadingThemes:  boolean;
+  newThemes: ThemeWithExpressions[];
 
   userId?: string;
 
@@ -50,6 +51,7 @@ const initialState: IExploreState = {
   isCreatingNewThread: false,
   isCreatingSynthesis: false,
   isLoadingThemes: false,
+  newThemes: [],
 
   userId: undefined,
 
@@ -212,7 +214,12 @@ const exploreSlice = createSlice({
         state.pinnedThemes.splice(index, 1)
       }
     },
-
+    addNewThemes: (state, action: PayloadAction<Array<ThemeWithExpressions>>) => {
+      state.newThemes.push(...action.payload)
+    },
+    resetNewThemes: (state) => {
+      state.newThemes = []
+    },
     resetState: (state) => initialState,
   },
 });
@@ -539,7 +546,8 @@ export function getNewThemes (): AppThunk {
     if (state.auth.token) {
       try {
         dispatch(exploreSlice.actions.setLoadingThemesFlag(true))
-        await generateThemes(state.auth.token)
+        const themes = await generateThemes(state.auth.token)
+        dispatch(exploreSlice.actions.addNewThemes(themes))
       } catch (ex) {
         console.log(ex)
       } finally {
@@ -578,6 +586,7 @@ export const {
   setFloatingHeaderFlag,
   updateQuestion,
   setQuestionShowKeywordsFlag,
-  setLoadingThemesFlag
+  setLoadingThemesFlag,
+  resetNewThemes
 } = exploreSlice.actions;
 export default exploreSlice.reducer;

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Row, Space, Col, Drawer, Spin } from 'antd';
 import {
+  getNewThemes,
   pinTheme,
+  resetNewThemes,
   setLoadingThemesFlag,
   setThemeSelectorOpen,
 } from '../reducer';
@@ -10,20 +12,14 @@ import { useDispatch, useSelector } from '../../../redux/hooks';
 import generateThemes from '../../../api_call/generateThemes';
 import { CloseOutlined } from '@ant-design/icons';
 import { postInteractionData } from '../../../api_call/postInteractionData';
-import { InteractionType } from '@core';
+import { InteractionType, ThemeWithExpressions } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { t } from 'i18next';
-
-type Theme = {
-  expressions: string[];
-  main_theme: string;
-  quote: string;
-};
 
 const ThemeBox = () => {
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
 
-  const [themes, setThemes] = useState<Array<Theme>>([]);
+  const themes = useSelector(state => state.explore.newThemes)
   const [selected, setSelected] = useState<string>('');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
@@ -52,11 +48,8 @@ const ThemeBox = () => {
 
 
   const fetchThemes = useCallback(async () => {
-    dispatch(setLoadingThemesFlag(true))
-    const data: Theme[] = await generateThemes(token);
-    setThemes((prevThemes) => [...prevThemes, ...data]);
-    dispatch(setLoadingThemesFlag(false))
-  }, [token]);
+    dispatch(getNewThemes())
+  }, []);
 
   const handleAddPinnedTheme = async (theme: string) => {
     dispatch(pinTheme(theme));
@@ -76,7 +69,7 @@ const ThemeBox = () => {
     if(isOpen) {
       fetchThemes();
     } else {
-      setThemes([])
+      dispatch(resetNewThemes())
     }
   }, [fetchThemes, isOpen]);
 

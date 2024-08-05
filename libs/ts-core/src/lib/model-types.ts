@@ -87,3 +87,9 @@ export interface IUserAllPopulated extends IUserBase {
   _id: string,
   threads: Array<IThreadAllPopulated>
 }
+
+export interface ThemeWithExpressions {
+  expressions: string[];
+  main_theme: string;
+  quote: string;
+}
