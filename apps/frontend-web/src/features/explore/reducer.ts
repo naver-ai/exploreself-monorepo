@@ -41,6 +41,8 @@ export type IExploreState = {
 
   isThemeSelectorOpen: boolean;
   reservedFloatingHeaders: {[key: string]: boolean}
+
+  recentRemovedTheme?: string | undefined
 } & Omit<
   IUserWithThreadIds,
   '_id' | 'passcode' | 'threads' | 'alias' | 'createdAt' | 'updatedAt'
@@ -59,6 +61,8 @@ const initialState: IExploreState = {
   isKorean: true,
   initialNarrative: undefined,
   pinnedThemes: [],
+  recentRemovedTheme: undefined,
+
   synthesis: [],
 
   threadQuestionCreationLoadingFlags : {},
@@ -107,7 +111,6 @@ const exploreSlice = createSlice({
     },
 
     setFloatingHeaderFlag: (state, action: PayloadAction<{tid: string, intersecting: boolean}>) => {
-      console.log("new header: ", action.payload)
       state.reservedFloatingHeaders[action.payload.tid] = action.payload.intersecting
     },
 
@@ -161,6 +164,7 @@ const exploreSlice = createSlice({
         });
       }
     },
+
     updateQuestionWithNewComment: (state, action: PayloadAction<{qid: string, comment: string}>) => {
       const { qid, comment } = action.payload;
       const questionObj = state.questionEntityState.entities[qid];
@@ -173,6 +177,7 @@ const exploreSlice = createSlice({
         console.log("Not found");
       }
     },
+    
     updateQuestionWithNewKeywords: (state, action: PayloadAction<{qid: string, keywords: Array<string>}>) => {
       const questionObj = state.questionEntityState.entities[action.payload.qid]
       if(questionObj) {
@@ -182,6 +187,7 @@ const exploreSlice = createSlice({
         questionObj.keywords.push(...action.payload.keywords)
       } 
     },
+
     updateQuestionResponse: (state, action: PayloadAction<{qid: string, response: string}>) => {
       const { qid, response } = action.payload;
       const questionObj = state.questionEntityState.entities[qid];
@@ -191,28 +197,42 @@ const exploreSlice = createSlice({
         console.log("Not found");
       }
     },
+
     setCreatingQuestionCommentFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
       state.questionCommentCreationLoadingFlags[action.payload.qid] = action.payload.flag;
     },
+
     setCreatingQuestionKeywordsFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
       state.questionKeywordCreationLoadingFlags[action.payload.qid] = action.payload.flag;
     },
+    
     setQuestionShowKeywordsFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
       state.questionShowKeywordsFlags[action.payload.qid] = action.payload.flag
     },
+
     addNewSynthesis: (state, action: PayloadAction<string>) => {
       state.synthesis.push(...action.payload)
     },
+
     appendPinnedTheme: (state, action: PayloadAction<string>) => {
       if(state.pinnedThemes.indexOf(action.payload) == -1){
         state.pinnedThemes.push(action.payload)
+
+        state.recentRemovedTheme = undefined
       }
     },
-    removePinnedTheme: (state, action: PayloadAction<string>) => {
-      const index = state.pinnedThemes.indexOf(action.payload)
+
+    removePinnedTheme: (state, action: PayloadAction<{theme: string, undoable: boolean}>) => {
+      const index = state.pinnedThemes.indexOf(action.payload.theme)
       if(index >= 0){
         state.pinnedThemes.splice(index, 1)
       }
+      if(action.payload.undoable){
+        state.recentRemovedTheme = action.payload.theme
+      }else{
+        state.recentRemovedTheme = undefined
+      }
+      
     },
     addNewThemes: (state, action: PayloadAction<Array<ThemeWithExpressions>>) => {
       state.newThemes.push(...action.payload)
@@ -269,7 +289,6 @@ export function fetchUserInfo(): AppThunk {
           headers: Http.makeSignedInHeader(state.auth.token),
         });
         const { user } = resp.data;
-        console.log(user);
         dispatch(exploreSlice.actions.updateUserInfo(user));
       } catch (ex) {
         console.log(ex);
@@ -342,7 +361,10 @@ export function submitUserProfile(
   };
 }
 
-export function populateNewThread(theme: string): AppThunk<Promise<any>> {
+export function populateNewThread(theme: string, handlers?: {
+  onThreadCreated?: (tid: string) => void,
+  onQuestionsGenerated?: (tid: string) => void
+}): AppThunk {
   return async (dispatch, getState) => {
     const state = getState();
 
@@ -355,18 +377,19 @@ export function populateNewThread(theme: string): AppThunk<Promise<any>> {
           dispatch(exploreSlice.actions.appendThread(newThread))
 
           dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: true}))
+          handlers?.onThreadCreated?.(newThread._id)
 
           try {
             const questions = await generateQuestions(state.auth.token, newThread._id, 3)
             if(questions){
               dispatch(exploreSlice.actions.setQuestions(questions))
+              handlers?.onQuestionsGenerated?.(newThread._id)
             }
           } catch (err) {
             console.log('Err in fetching questions: ', err);
           } finally {
             dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: false}))
           }
-          return newThread._id
         }
       }catch( ex) {
         console.log(ex)
@@ -374,7 +397,6 @@ export function populateNewThread(theme: string): AppThunk<Promise<any>> {
         dispatch(exploreSlice.actions.setCreatingNewThreadFlag(false))
       }
     }
-    return null;
   }
 }
 
@@ -507,7 +529,7 @@ export function pinTheme(theme: string): AppThunk {
 
       }catch(ex){
         console.log(ex)
-        dispatch(exploreSlice.actions.removePinnedTheme(theme))
+        dispatch(exploreSlice.actions.removePinnedTheme({theme, undoable: false}))
       }finally{
 
       }
@@ -515,12 +537,12 @@ export function pinTheme(theme: string): AppThunk {
   }
 }
 
-export function unpinTheme(theme: string, intentional: boolean=true): AppThunk {
+export function unpinTheme(theme: string, intentional: boolean): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if(state.auth.token){
       try{ 
-        dispatch(exploreSlice.actions.removePinnedTheme(theme))
+        dispatch(exploreSlice.actions.removePinnedTheme({theme, undoable: intentional}))
         const resp = await Http.axios.post("/themes/unpin", {
           theme
         }, {

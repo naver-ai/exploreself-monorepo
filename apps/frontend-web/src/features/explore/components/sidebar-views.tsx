@@ -1,15 +1,16 @@
-import { useCallback, useMemo, useState} from 'react';
-import { Timeline, Button, Input, Space } from 'antd';
+import { MouseEventHandler, useCallback, useMemo, useState} from 'react';
+import { Tooltip, ConfigProvider, Input, Space, Timeline, Button } from 'antd';
 import { pinTheme, populateNewThread, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
-import { ListBulletIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid';
+import { ListBulletIcon, ArchiveBoxIcon, ArrowTurnUpLeftIcon, MinusCircleIcon } from '@heroicons/react/20/solid';
 import { PanelGroup } from '../../../components/PanelGroup';
 import { ShortcutManager } from '../../../services/shortcut';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
-import {CloseOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
-import { t } from 'i18next';
+import { useHover } from '@uidotdev/usehooks';
+import colors from 'tailwindcss/colors';
+import { POPULATE_NEW_THREAD_OPTS } from './common';
 
 const OUTLINE_PANEL_CLASS =
   'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer';
@@ -21,22 +22,22 @@ export const OutlinePanel = () => {
 
   const themeListTimelineItems = useMemo(() => {
     const timelineItems = threads?.map((thread) => {
-        return {
-          children: (
-            <div
-              className={OUTLINE_PANEL_CLASS}
-              onClick={() => {
-                ShortcutManager.instance.requestFocus({
-                  id: thread._id,
-                  type: 'thread',
-                });
-              }}
-            >
-              {thread.theme}
-            </div>
-          ),
-        };
-      }) || [];
+      return {
+        children: (
+          <div
+            className={OUTLINE_PANEL_CLASS}
+            onClick={() => {
+              ShortcutManager.instance.requestFocus({
+                id: thread._id,
+                type: 'thread',
+              });
+            }}
+          >
+            {thread.theme}
+          </div>
+        ),
+      };
+    }) || [];
     return [
       {
         children: (
@@ -56,7 +57,7 @@ export const OutlinePanel = () => {
   return (
     <PanelGroup
       iconComponent={ListBulletIcon}
-      title={t("Sidebar.Outline")}
+      title={t("Outline.Title")}
       titleContainerClassName="!mb-5"
     >
       <Timeline className="px-1" items={themeListTimelineItems} />
@@ -64,36 +65,61 @@ export const OutlinePanel = () => {
   );
 };
 
-export const PinnedThemesPanel = () => {
+
+
+const ThemeElement = (props: { theme: string }) => {
+
+  const [t] = useTranslation()
+
   const token = useSelector((state) => state.auth.token) as string;
+
+  const [ref, hoveringRemoveButton] = useHover();
 
   const dispatch = useDispatch();
 
-  const uid = useSelector((state) => state.explore.userId);
-  const pinnedThemes = useSelector((state) => state.explore.pinnedThemes);
+  const handleRemovePinnedTheme = useCallback<MouseEventHandler<HTMLElement>>(async (ev) => {
+    ev.stopPropagation()
+    dispatch(unpinTheme(props.theme, true));
+    await postInteractionData(token, InteractionType.UserUnpinsTheme, { theme: props.theme }, {})
 
-  const handleRemovePinnedTheme = async (theme: string) => {
-    dispatch(unpinTheme(theme));
-    await postInteractionData(token, InteractionType.UserUnpinsTheme, {theme: theme}, {})
-  };
+  }, [token, props.theme])
 
   const addToThread = useCallback(
-    async (selected: string) => {
-      if (uid != null) {
-        dispatch(unpinTheme(selected, false))
-        const tid = await dispatch(populateNewThread(selected))
+    async () => {
+        dispatch(unpinTheme(props.theme, false))
         dispatch(setThemeSelectorOpen(false))
-        if(tid) {
-          ShortcutManager.instance.requestFocus({
-            id: tid as string,
-            type: 'thread',
-          })
-        }
-        await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: selected}, {})
-      }
+        dispatch(populateNewThread(props.theme, POPULATE_NEW_THREAD_OPTS))
+        await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: props.theme}, {})
     },
-    [uid]
+    [token, props.theme]
   );
+
+  return <Tooltip title={hoveringRemoveButton ? '' : t("Theme.Tooltip.NewThread")} mouseLeaveDelay={0}>
+    <div onClick={addToThread} className='group flex items-center rounded-lg p-2 pl-3 cursor-pointer transition-colors justify-between bg-slate-200/50 [&:hover:not(:has(*:hover))]:bg-slate-200 [&:has(*:hover)]:!bg-slate-50'>
+      <span className='flex-1 mr-2 pointer-events-none select-none leading-7'>{props.theme}</span>
+      <Button ref={ref} type="text" className='invisible group-hover:visible p-0' shape="circle" size="small" icon={<MinusCircleIcon className='w-5 h-5 text-rose-400'/>} onClick={handleRemovePinnedTheme} />
+    </div>
+  </Tooltip>
+}
+
+const UndoButtonTheme = {token: {colorPrimary: colors.rose["400"]}}
+
+export const PinnedThemesPanel = () => {
+
+  const [t] = useTranslation()
+
+  const dispatch = useDispatch()
+
+  const pinnedThemes = useSelector((state) => state.explore.pinnedThemes);
+  const recentRemovedTheme = useSelector(state => state.explore.recentRemovedTheme)
+  const token = useSelector((state) => state.auth.token) as string;
+
+  const onUndoClick = useCallback(()=>{
+    if(recentRemovedTheme){
+      dispatch(pinTheme(recentRemovedTheme))
+    }
+  }, [recentRemovedTheme])
+
   const [userTheme, setUserTheme] = useState<string>('')
 
   const handleAddTheme = useCallback(() => {
@@ -104,11 +130,10 @@ export const PinnedThemesPanel = () => {
     }
   },[userTheme, token, setUserTheme])
 
-
   return (
     <PanelGroup
       iconComponent={ArchiveBoxIcon}
-      title={t("Sidebar.Bookmark")}
+      title={t("Theme.Title")}
       titleContainerClassName="!mb-3"
     >
       {pinnedThemes.length == 0 ? (
@@ -116,22 +141,19 @@ export const PinnedThemesPanel = () => {
           {t("Theme.NoTheme")}
         </div>
       ) : (
-        <div>
-          {pinnedThemes.map((theme, i) => (
-            <div key={i} className='flex items-center border rounded-lg p-2'>
-              <div onClick={() => addToThread(theme)}>
-              {theme}
-              
-              {/* TODO: 삭제 시 취소 확인 modal*/}
-            </div>
-            <Button type="text" shape="circle" size="small" className="justift"icon={<CloseOutlined/>} onClick={() => handleRemovePinnedTheme(theme)}/>
-            </div>
-            
-          ))}
+        <div className='grid col-1 gap-y-2'>
+          {pinnedThemes.map((theme, i) => <ThemeElement key={i} theme={theme} />)}
         </div>
         
       )}
-      <Space direction="horizontal">
+      {
+        recentRemovedTheme != null ? <div className="text-right"><ConfigProvider theme={UndoButtonTheme}>
+          <Tooltip title={`"${recentRemovedTheme}"`}>
+            <Button type="primary" size="small" className='animate-zoom-in mt-3 text-sm' onClick={onUndoClick} icon={<ArrowTurnUpLeftIcon className='w-4 h-4'/>}>{t("Theme.UndoDelete")}</Button>
+            </Tooltip>
+          </ConfigProvider></div> : null
+      }
+      <Space direction="horizontal" className='mt-2 border-t-[1px] pt-2'>
         <Input
           placeholder={t("Theme.AddMyself")}
           value={userTheme}

@@ -1,23 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Button, Row, Space, Col, Drawer, Spin } from 'antd';
+import { Button, Row, Space, Col, Drawer } from 'antd';
 import {
   getNewThemes,
   pinTheme,
   populateNewThread,
   resetNewThemes,
-  setLoadingThemesFlag,
   setThemeSelectorOpen,
-  unpinTheme,
 } from '../reducer';
 import { MdBookmarkBorder } from 'react-icons/md';
 import { useDispatch, useSelector } from '../../../redux/hooks';
-import generateThemes from '../../../api_call/generateThemes';
 import { CloseOutlined } from '@ant-design/icons';
 import { postInteractionData } from '../../../api_call/postInteractionData';
-import { InteractionType, ThemeWithExpressions } from '@core';
+import { InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
-import { t } from 'i18next';
+import { PlusIcon } from '@heroicons/react/20/solid';
 import { ShortcutManager } from '../../../services/shortcut';
+import { useTranslation } from 'react-i18next';
+import { POPULATE_NEW_THREAD_OPTS } from './common';
 
 const ThemeBox = () => {
 
@@ -31,6 +30,8 @@ const ThemeBox = () => {
   const isCreatingNewThread = useSelector(state => state.explore.isCreatingNewThread)
 
   const [currentExpressionIndex, setCurrentExpressionIndex] = useState<number[]>([]);
+
+  const [t] = useTranslation()
 
   const handleShowNextExpression = async (index: number) => {
     const newIndexes = [...currentExpressionIndex];
@@ -53,17 +54,11 @@ const ThemeBox = () => {
 
   const addToThread = useCallback(
     async (selected: string) => {
-      const tid = await dispatch(populateNewThread(selected))
       dispatch(setThemeSelectorOpen(false))
-      if(tid) {
-        ShortcutManager.instance.requestFocus({
-          id: tid as string,
-          type: 'thread',
-        })
-      }
+      dispatch(populateNewThread(selected, POPULATE_NEW_THREAD_OPTS))
       await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: selected}, {})
     },
-    []);
+    [token]);
 
   const fetchThemes = useCallback(async (opt: number) => {
     dispatch(getNewThemes(opt))
@@ -115,7 +110,7 @@ const ThemeBox = () => {
             <Space direction="vertical" className="w-full pt-3">
               {themes.map(
                 (themeItem: { main_theme: string; expressions: string[], quote: string }, index) => (
-                  <Col className="border-2 border-slate-300 w-full rounded-lg p-3">
+                  <Col key={index} className="border-[1px] border-slate-300 w-full rounded-lg p-3">
                     <Row
                       key={index*10}
                       className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md justify-between"
@@ -143,7 +138,7 @@ const ThemeBox = () => {
                       return (
                         <Row
                           key={index*10 + i}
-                          className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md my-1 justify-between"
+                          className="flex items-center space-x-2 transition-colors bg-slate-100 hover:bg-slate-300 p-1 rounded-md my-1"
                           onClick={() => onChangeSelect(exp)}
                           justify="space-between"
                         >
@@ -171,8 +166,8 @@ const ThemeBox = () => {
                         size="small"
                         onClick={() => handleShowNextExpression(index)}
                         disabled={currentExpressionIndex[index] >= themeItem.expressions.length}
-                      >
-                        + {t("Theme.AltExpressions")}
+                        icon={<PlusIcon className='w-4 h-4'/>}>
+                        {t("Theme.AltExpressions")}
                       </Button>
                     </Row>
                   </Col>
