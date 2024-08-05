@@ -78,7 +78,6 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
   const chain = finalPromptTemplate.pipe(structuredLlm);
   const init_info = synthesizeProfilicInfo(userData.initialNarrative)
   const prev_session_log = await synthesizePrevThreads(uid)
-  console.log("prev themes: ", prev_session_log)
 
   const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log, pinned_themes: themeList.concat(pinnedThemes).concat(prev_themes).join(', ')});
 
