@@ -20,6 +20,7 @@ import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywor
 import { diffChars, Change } from 'diff';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionBase, InteractionType } from '@core';
+import { LoadingIndicator } from '../../../components/LoadingIndicator';
 
 
 export const QuestionBox = (props: { qid: string }) => {
@@ -35,11 +36,18 @@ export const QuestionBox = (props: { qid: string }) => {
   const [lastSavedResponse, setLastSavedResponse] = useState('');
   const [isActive, setIsActive] = useState(false);
   const isCreatingComment = useSelector(state => state.explore.questionCommentCreationLoadingFlags[props.qid] || false)
+  const isCreatingKeywords = useSelector(state => state.explore.questionKeywordCreationLoadingFlags[props.qid] || false)
 
 
   const getNewKeywordsHandler = useCallback((opt: number=2) => {
     dispatch(getNewKeywords(props.qid, opt))
   },[props.qid])
+
+  useEffect(() => {
+    if (!keywords.length) {
+      getNewKeywordsHandler()
+    }
+  },[keywords])
 
   const getNewCommentHandler = useCallback(() => {
     dispatch(getNewComment(props.qid, response))
@@ -112,7 +120,6 @@ export const QuestionBox = (props: { qid: string }) => {
   }, [response, isActive, saveResponse]);
 
   useEffect(() => {
-    console.log("AI: ", question.aiGuides)
     if(!comment) {
       console.log("Generating comment")
       getNewCommentHandler()
@@ -124,45 +131,36 @@ export const QuestionBox = (props: { qid: string }) => {
     <div className="border-2 border-[#B9DBDC]-600 p-3 rounded-lg my-3">
       <Flex vertical={false}>
         <div className="pb-2 pl-1"> {question.question.content} </div>
-        {/* <Switch className="" checkedChildren="단어 도우미" unCheckedChildren="단어 도우미" defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/> */}
       </Flex>
-      <Switch className="mb-1" checkedChildren="단어 도우미" unCheckedChildren="단어 도우미" defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/>
+      <Switch className="mb-1" checkedChildren="생각을 돕는 단어들" unCheckedChildren="생각을 돕는 단어들" defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/>
       {isQuestionKeywordsShown && 
       <Row>
         <div className={'border-dashed border-2 rounded-lg p-2 w-full mb-2'}>
-          <div className="text-xs pb-2">생각을 돕는 단어들</div>
-          {!question.keywords || question.keywords?.length == 0 ? (
+          {isCreatingKeywords? 
+          <Flex wrap gap="small" className="flex justify-center">
+             <LoadingIndicator title={("단어 생성 중")} className='mt-4'/>
+          </Flex>
+           : 
+          <Flex wrap gap="small" className="flex justify-center">
+            {keywords &&
+              (keywords as string[]).map((keyword, i) => (
+                <div
+                  key={i}
+                  className="border border-[#B9DBDC]-600 px-2 py-1 rounded-lg"
+                >
+                  {keyword}
+                </div>
+              ))}
             <Button
               type="text"
-              size="small"
+              className="px-2 py-1 text-black text-opacity-50"
               onClick={() => {
-                getNewKeywordsHandler(3);
+                getNewKeywordsHandler(1);
               }}
             >
-              생각 도우미 단어들 보기
+              단어 더보기
             </Button>
-          ) : (
-            <Flex wrap gap="small" className="flex justify-center">
-              {question.keywords &&
-                (question.keywords as string[]).map((keyword, i) => (
-                  <div
-                    key={i}
-                    className="border border-[#B9DBDC]-600 px-2 py-1 rounded-lg"
-                  >
-                    {keyword}
-                  </div>
-                ))}
-              <Button
-                type="text"
-                className="px-2 py-1 text-black text-opacity-50"
-                onClick={() => {
-                  getNewKeywordsHandler(1);
-                }}
-              >
-                단어 더보기
-              </Button>
-            </Flex>
-          )}
+          </Flex>}  
         </div>
       </Row>
       }
