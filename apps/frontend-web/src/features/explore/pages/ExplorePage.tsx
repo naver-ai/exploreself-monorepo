@@ -67,7 +67,7 @@ const SidePanel = () => {
           // closeIcon={false}
           extra={
             <Space>
-              <Button onClick={isCreatingSynthesis? undefined: (() => generateSynthesis())}>{t("Synthesis.More")}</Button>
+              <Button disabled={isCreatingSynthesis} onClick={() => generateSynthesis()}>{t("Synthesis.More")}</Button>
             </Space>
           }
         >
