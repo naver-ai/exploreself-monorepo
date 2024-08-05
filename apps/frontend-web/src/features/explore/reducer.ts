@@ -10,6 +10,7 @@ import generateKeywords from '../../api_call/generateKeywords';
 import { postInteractionData } from '../../api_call/postInteractionData';
 import generateSynthesis from '../../api_call/generateSynthesis';
 import generateThemes from '../../api_call/generateThemes';
+import exp from 'constants';
 
 const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>({
   selectId: (model: IThreadWithQuestionIds) => model._id
@@ -34,6 +35,7 @@ export type IExploreState = {
   threadEntityState: typeof initialThreadEntityState,
   questionEntityState: typeof initialQuestionEneityState,
 
+  threadInInitializationFlags: {[key: string] : boolean | undefined}
   threadQuestionCreationLoadingFlags: {[key: string] : boolean | undefined}
   questionCommentCreationLoadingFlags: {[key: string] :  boolean | undefined}
   questionKeywordCreationLoadingFlags: {[key: string] :  boolean | undefined}
@@ -41,6 +43,8 @@ export type IExploreState = {
 
   isThemeSelectorOpen: boolean;
   reservedFloatingHeaders: {[key: string]: boolean}
+
+  hoveringOutlineThreadId?: string | undefined
 
   recentRemovedTheme?: string | undefined
 } & Omit<
@@ -65,6 +69,7 @@ const initialState: IExploreState = {
 
   synthesis: [],
 
+  threadInInitializationFlags: {},
   threadQuestionCreationLoadingFlags : {},
   questionCommentCreationLoadingFlags: {},
   questionKeywordCreationLoadingFlags: {},
@@ -72,6 +77,8 @@ const initialState: IExploreState = {
 
   threadEntityState: initialThreadEntityState,
   questionEntityState: initialQuestionEneityState,
+
+  hoveringOutlineThreadId: undefined,
 
   isThemeSelectorOpen: false,
   reservedFloatingHeaders: {}
@@ -110,6 +117,10 @@ const exploreSlice = createSlice({
       state.isThemeSelectorOpen = action.payload;
     },
 
+    setHoveringOutlineThreadId: (state, action: PayloadAction<string | undefined>) => {
+      state.hoveringOutlineThreadId = action.payload
+    },
+
     setFloatingHeaderFlag: (state, action: PayloadAction<{tid: string, intersecting: boolean}>) => {
       state.reservedFloatingHeaders[action.payload.tid] = action.payload.intersecting
     },
@@ -127,6 +138,11 @@ const exploreSlice = createSlice({
     setLoadingThemesFlag: (state, action: PayloadAction<boolean>) => {
       state.isLoadingThemes = action.payload
     },
+
+    setInitializingThreadFlag: (state, action: PayloadAction<{tid: string, flag: boolean}>) => {
+      state.threadInInitializationFlags[action.payload.tid] = action.payload.flag;
+    },
+
     setCreatingThreadQuestionsFlag: (state, action: PayloadAction<{tid: string, flag: boolean}>) => {
       state.threadQuestionCreationLoadingFlags[action.payload.tid] = action.payload.flag;
     },
@@ -375,7 +391,7 @@ export function populateNewThread(theme: string, handlers?: {
         const newThread = await createThreadItem(state.auth.token, theme)
         if(newThread){
           dispatch(exploreSlice.actions.appendThread(newThread))
-
+          dispatch(exploreSlice.actions.setInitializingThreadFlag({tid: newThread._id, flag: true}))
           dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: true}))
           handlers?.onThreadCreated?.(newThread._id)
 
@@ -389,6 +405,7 @@ export function populateNewThread(theme: string, handlers?: {
             console.log('Err in fetching questions: ', err);
           } finally {
             dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: false}))
+            dispatch(exploreSlice.actions.setInitializingThreadFlag({tid: newThread._id, flag: false}))
           }
         }
       }catch( ex) {
@@ -611,6 +628,7 @@ export const {
   updateQuestion,
   setQuestionShowKeywordsFlag,
   setLoadingThemesFlag,
-  resetNewThemes
+  resetNewThemes,
+  setHoveringOutlineThreadId
 } = exploreSlice.actions;
 export default exploreSlice.reducer;

@@ -1,6 +1,6 @@
 import { MouseEventHandler, useCallback, useMemo, useState} from 'react';
 import { Tooltip, ConfigProvider, Input, Space, Timeline, Button } from 'antd';
-import { pinTheme, populateNewThread, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
+import { pinTheme, populateNewThread, setHoveringOutlineThreadId, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ListBulletIcon, ArchiveBoxIcon, ArrowTurnUpLeftIcon, MinusCircleIcon } from '@heroicons/react/20/solid';
 import { PanelGroup } from '../../../components/PanelGroup';
@@ -18,6 +18,8 @@ const OUTLINE_PANEL_CLASS =
 export const OutlinePanel = () => {
   const threads = useSelector(threadSelectors.selectAll);
 
+  const dispatch = useDispatch()
+
   const [t] = useTranslation()
 
   const themeListTimelineItems = useMemo(() => {
@@ -26,6 +28,8 @@ export const OutlinePanel = () => {
         children: (
           <div
             className={OUTLINE_PANEL_CLASS}
+            onMouseEnter={()=>{dispatch(setHoveringOutlineThreadId(thread._id))}}
+            onMouseLeave={()=>{dispatch(setHoveringOutlineThreadId(undefined))}}
             onClick={() => {
               ShortcutManager.instance.requestFocus({
                 id: thread._id,

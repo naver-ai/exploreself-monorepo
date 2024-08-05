@@ -16,17 +16,18 @@ import {AlignLeftOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
 
 const SidePanel = () => {
-  const [open, setOpen] = useState(false)
+
+  const [isSynthViewOpen, setSynthViewOpen] = useState(false)
   const synthesisList: string[] = useSelector(state => state.explore.synthesis)
   const isCreatingSynthesis = useSelector(state => state.explore.isCreatingSynthesis)
 
   const dispatch = useDispatch();
 
   const showDrawer = () => {
-    setOpen(true);
+    setSynthViewOpen(true);
   };
   const onClose = () => {
-    setOpen(false);
+    setSynthViewOpen(false);
   };
 
   const generateSynthesis = useCallback(async () => {
@@ -34,12 +35,12 @@ const SidePanel = () => {
   },[])
 
   useEffect(() => {
-    if(open) {
+    if(isSynthViewOpen) {
       if(!synthesisList || synthesisList.length == 0) {
         generateSynthesis()
       }
     }
-  },[open])
+  },[isSynthViewOpen])
 
 
   return (
@@ -54,20 +55,16 @@ const SidePanel = () => {
       <div className="flex-1 overflow-y-auto bg-gray-400/2">
         <OutlinePanel />
         <PinnedThemesPanel />
-        <div className='w-full flex justify-end '>
-          <Button onClick={showDrawer} icon={<AlignLeftOutlined/>}>AI 요약 보기</Button>
-        </div>
         
         <Drawer
           onClose={onClose}
-          open={open}
+          open={isSynthViewOpen}
           placement="bottom"
           title="AI 요약"
           // closeIcon={false}
           extra={
             <Space>
               <Button onClick={() => generateSynthesis()}>{isCreatingSynthesis? "요약중입니다": "새로운 요약 보기"}</Button>
-
             </Space>
           }
         >
@@ -88,6 +85,9 @@ const SidePanel = () => {
           </Carousel>
           
         </Drawer>
+      </div>
+      <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
+        <Button className='w-full' onClick={showDrawer} icon={<AlignLeftOutlined/>}>AI 요약 보기</Button>
       </div>
     </>
   );
@@ -156,7 +156,7 @@ export const ExplorerPage = () => {
     const themeButtonLabel = <span className={`${focusOnThemeButton ? 'animate-pulse font-semibold':''}`}>{threadIds.length == 0 ? t("Exploration.ShowMoreThemesInitial") : t("Exploration.ShowMoreThemes")}</span>
     return (
       <div className="h-screen flex justify-stretch">
-        <div className="basis-1/6 min-w-[200px] lg:min-w-[300px] bg-white border-r-[1px] flex flex-col">
+        <div className="basis-1/6 min-w-[200px] md:min-w-[300px] bg-white border-r-[1px] flex flex-col">
           <SidePanel />
         </div>
         <div className="flex-1 relative">

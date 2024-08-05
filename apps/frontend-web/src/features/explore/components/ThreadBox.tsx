@@ -60,14 +60,16 @@ const SelectedQuestionList = (props: { tid: string }) => {
 
   const questionIds = useSelector(state => selectedQuestionIdsSelector(state, props.tid))
   
+  const isThreadInCreation = useSelector(state=>state.explore.threadInInitializationFlags[props.tid])
+
   return questionIds.length > 0 ? <div>
       {questionIds.map((qid) => (
         <QuestionBox key={qid} qid={qid} />
       ))}
-    </div> : <div className='pb-6 pt-0 px-2 flex items-center font-base text-blue-500'>
+    </div> : (isThreadInCreation !== true ? <div className='pb-6 pt-0 px-2 flex items-center font-base text-blue-500'>
       <ArrowDownIcon className='w-6 h-6 mr-2 animate-bounce'/>
       <span>{t("Thread.Questions.NoQuestionPlaceholder")}</span>
-    </div>
+    </div> : null)
 };
 
 const UnselectedQuestionList = (props: { tid: string }) => {
@@ -149,6 +151,8 @@ export const ThreadBox = (props: { tid: string }) => {
 
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
+  const isHoveringInOutline = useSelector(state => state.explore.hoveringOutlineThreadId == props.tid)
+
   useEffect(() => {
     const focusRequestSubscription =
       ShortcutManager.instance.onFocusRequestedEvent.subscribe((event) => {
@@ -170,7 +174,7 @@ export const ThreadBox = (props: { tid: string }) => {
   return (<Card
         ref={ref}
         title={<span className='font-bold'>{thread.theme}</span>}
-        className="mt-4 relative rounded-xl"
+        className={`mt-4 relative rounded-xl transition-all outline outline-0 outline-orange-300 ${isHoveringInOutline === true ? 'outline outline-2 ' : ''}`}
       >
         <div
           ref={scrollAnchorRef}
