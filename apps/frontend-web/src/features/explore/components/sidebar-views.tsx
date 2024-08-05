@@ -2,7 +2,7 @@ import { MouseEventHandler, useCallback, useMemo, useState} from 'react';
 import { Tooltip, ConfigProvider, Input, Space, Timeline, Button } from 'antd';
 import { pinTheme, populateNewThread, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
-import { ListBulletIcon, ArchiveBoxIcon, ArrowTurnUpLeftIcon } from '@heroicons/react/20/solid';
+import { ListBulletIcon, ArchiveBoxIcon, ArrowTurnUpLeftIcon, MinusCircleIcon } from '@heroicons/react/20/solid';
 import { PanelGroup } from '../../../components/PanelGroup';
 import { ShortcutManager } from '../../../services/shortcut';
 import { postInteractionData } from '../../../api_call/postInteractionData';
@@ -57,7 +57,7 @@ export const OutlinePanel = () => {
   return (
     <PanelGroup
       iconComponent={ListBulletIcon}
-      title={t("Sidebar.Outline")}
+      title={t("Outline.Title")}
       titleContainerClassName="!mb-5"
     >
       <Timeline className="px-1" items={themeListTimelineItems} />
@@ -102,10 +102,10 @@ const ThemeElement = (props: { theme: string }) => {
     [uid, props.theme]
   );
 
-  return <Tooltip title={hoveringRemoveButton ? '' : t("PinnedTheme.Tooltip.NewThread")} mouseLeaveDelay={0}>
-    <div onClick={addToThread} className='group flex items-center border rounded-lg p-2 pl-3 cursor-pointer transition-colors justify-between [&:hover:not(:has(*:hover))]:bg-slate-100'>
+  return <Tooltip title={hoveringRemoveButton ? '' : t("Theme.Tooltip.NewThread")} mouseLeaveDelay={0}>
+    <div onClick={addToThread} className='group flex items-center rounded-lg p-2 pl-3 cursor-pointer transition-colors justify-between bg-slate-200/50 [&:hover:not(:has(*:hover))]:bg-slate-200 [&:has(*:hover)]:!bg-slate-50'>
       <span className='flex-1 mr-2 pointer-events-none select-none leading-7'>{props.theme}</span>
-      <Button ref={ref} type="text" className='invisible group-hover:visible' danger shape="circle" size="small" icon={<CloseOutlined />} onClick={handleRemovePinnedTheme} />
+      <Button ref={ref} type="text" className='invisible group-hover:visible p-0' shape="circle" size="small" icon={<MinusCircleIcon className='w-5 h-5 text-rose-400'/>} onClick={handleRemovePinnedTheme} />
     </div>
   </Tooltip>
 }
@@ -141,7 +141,7 @@ export const PinnedThemesPanel = () => {
   return (
     <PanelGroup
       iconComponent={ArchiveBoxIcon}
-      title={t("Sidebar.Bookmark")}
+      title={t("Theme.Title")}
       titleContainerClassName="!mb-3"
     >
       {pinnedThemes.length == 0 ? (
@@ -157,11 +157,11 @@ export const PinnedThemesPanel = () => {
       {
         recentRemovedTheme != null ? <div className="text-right"><ConfigProvider theme={UndoButtonTheme}>
           <Tooltip title={`"${recentRemovedTheme}"`}>
-            <Button type="primary" size="small" className='animate-zoom-in mt-3 text-sm' onClick={onUndoClick} icon={<ArrowTurnUpLeftIcon className='w-4 h-4'/>}>{t("PinnedTheme.UndoDelete")}</Button>
+            <Button type="primary" size="small" className='animate-zoom-in mt-3 text-sm' onClick={onUndoClick} icon={<ArrowTurnUpLeftIcon className='w-4 h-4'/>}>{t("Theme.UndoDelete")}</Button>
             </Tooltip>
           </ConfigProvider></div> : null
       }
-      <Space direction="horizontal">
+      <Space direction="horizontal" className='mt-2 border-t-[1px] pt-2'>
         <Input
           placeholder={t("Theme.AddMyself")}
           value={userTheme}

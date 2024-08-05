@@ -35,11 +35,6 @@
     "ShowMoreThemesInitial": "관련 주제 탐색하기"
   },
 
-  "Sidebar": {
-    "Outline": "개요",
-    "Bookmark": "주제 바구니"
-  },
-
   "Thread": {
     "Questions": {
       "Title": "생각해볼 질문들",
@@ -55,12 +50,17 @@
     }
   },
   "Theme": {
+    "Title": "주제 바구니",
     "MoreThemes": "주제 더 보기",
     "AltExpressions": "다른 표현도 보기",
     "Add": "담기",
     "AddMyself": "직접 추가하기",
     "Generating": "탐색해볼 주제 생성 중",
-    "NoTheme": "아직 담은 주제가 없습니다."
+    "NoTheme": "아직 담은 주제가 없습니다.",
+    "Tooltip":{
+      "NewThread": "이 주제로 새로운 생각 타래를 열려면 클릭하세요."
+    },
+    "UndoDelete": "주제 삭제 취소"
   },
 
   "Labels": {
@@ -70,14 +70,5 @@
 
   "Outline": {
     "Title": "개요"
-  },
-
-  "PinnedTheme": {
-    "Title": "주제 바구니",
-    "NoPins": "아직 담은 주제가 없습니다.",
-    "Tooltip":{
-      "NewThread": "이 주제로 새로운 생각 타래를 열려면 클릭하세요."
-    },
-    "UndoDelete": "주제 삭제 취소"
   }
 }
