@@ -1,18 +1,15 @@
 export enum InteractionType {
   LLMElicitedTheme = 'LLMElicitedTheme',
-  UserPinsTheme = 'UserPinsTheme',
-  UserUnpinsTheme = 'UserUnpinsTheme',
-  UserSelectsTheme = 'UserSelectsTheme',
-  UserAddsTheme = 'UserAddsTheme',
+  UserPinsTheme = 'UserPinsTheme', //  O 
+  UserUnpinsTheme = 'UserUnpinsTheme', // O
+  UserSelectsTheme = 'UserSelectsTheme', // O
+  UserAddsTheme = 'UserAddsTheme', // O
   UserRequestsTheme = 'UserRequestsTheme',
-  UserRequestsQuestion='UserRequestsQuestion',
-  UserSelectsQuestion = 'UserSelectsQuestion',
-  UpdateInResponse = 'UpdateInResponse',
-  LLMGeneratedKeyword = 'LLMGeneratedKeyword',
+  UserRequestsQuestion='UserRequestsQuestion', // O
+  UserSelectsQuestion = 'UserSelectsQuestion', // O
+  UpdateInResponse = 'UpdateInResponse', // O
+  LLMGeneratedKeyword = 'LLMGeneratedKeyword', // O
   UserRequestsKeyword = 'UserRequestsKeyword',
-  UserSelectsKeyword = 'UserSelectsKeyword',
-  LLMGeneratedKeywordPrompt = 'LLMGeneratedKeywordPrompt',
-  UserSelectsKeywordPrompt = 'UserSelectsKeywordPrompt',
   UserRequestsSynthesize = 'UserRequestsSynthesize',
 }
 

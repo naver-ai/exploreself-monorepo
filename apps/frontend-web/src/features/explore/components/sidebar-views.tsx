@@ -1,6 +1,6 @@
-import { useCallback, useMemo, } from 'react';
-import { Timeline, Button } from 'antd';
-import { populateNewThread, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
+import { useCallback, useMemo, useState} from 'react';
+import { Timeline, Button, Input, Space } from 'antd';
+import { pinTheme, populateNewThread, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ListBulletIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid';
 import { PanelGroup } from '../../../components/PanelGroup';
@@ -93,6 +93,16 @@ export const PinnedThemesPanel = () => {
     },
     [uid]
   );
+  const [userTheme, setUserTheme] = useState<string>('')
+  
+  const handleAddTheme = useCallback(() => {
+    async () => {
+      dispatch(pinTheme(userTheme))
+      setUserTheme('')
+      await postInteractionData(token, InteractionType.UserAddsTheme, {theme: userTheme}, {})
+    }
+  },[userTheme, token, setUserTheme])
+
 
   return (
     <PanelGroup
@@ -118,7 +128,21 @@ export const PinnedThemesPanel = () => {
             
           ))}
         </div>
+        
       )}
+      <Space direction="horizontal">
+        <Input
+          placeholder="직접 추가하기"
+          value={userTheme}
+          onChange={(e) => setUserTheme(e.target.value)}
+        />
+        <Button 
+          style={{ width: 80 }}
+          onClick={handleAddTheme}
+        >
+          {'담기'}
+        </Button>
+      </Space>
     </PanelGroup>
   );
 };
