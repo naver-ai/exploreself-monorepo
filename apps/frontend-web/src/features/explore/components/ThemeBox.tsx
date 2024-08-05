@@ -3,9 +3,11 @@ import { Button, Row, Space, Col, Drawer, Spin } from 'antd';
 import {
   getNewThemes,
   pinTheme,
+  populateNewThread,
   resetNewThemes,
   setLoadingThemesFlag,
   setThemeSelectorOpen,
+  unpinTheme,
 } from '../reducer';
 import { MdBookmarkBorder } from 'react-icons/md';
 import { useDispatch, useSelector } from '../../../redux/hooks';
@@ -45,6 +47,14 @@ const ThemeBox = () => {
       ]);
     }
   }, [themes]);
+
+  const addToThread = useCallback(
+    async (selected: string) => {
+      dispatch(populateNewThread(selected))
+      dispatch(setThemeSelectorOpen(false))
+      await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: selected}, {})
+    },
+    []);
 
 
   const fetchThemes = useCallback(async (opt: number) => {
@@ -104,7 +114,10 @@ const ThemeBox = () => {
                       onClick={() => onChangeSelect(themeItem.main_theme)}
                       justify="space-between"
                     >
-                      <Col className="flex-1 pl-2 whitespace-normal">{themeItem.main_theme}</Col>
+                      <Col 
+                      className="flex-1 pl-2 whitespace-normal"
+                      onClick={() => addToThread(themeItem.main_theme)}
+                      >{themeItem.main_theme}</Col>
                       <Col className='flex-shrink-0'>
                         <Button
                           icon={<MdBookmarkBorder />}
@@ -126,7 +139,8 @@ const ThemeBox = () => {
                           onClick={() => onChangeSelect(exp)}
                           justify="space-between"
                         >
-                          <Col className="flex-1 pl-2 whitespace-normal">{exp}</Col>
+                          <Col className="flex-1 pl-2 whitespace-normal"
+                          onClick={() => addToThread(exp)}>{exp}</Col>
                           <Col className='flex-shrink-0'>
                             <Button
                               icon={<MdBookmarkBorder />}
