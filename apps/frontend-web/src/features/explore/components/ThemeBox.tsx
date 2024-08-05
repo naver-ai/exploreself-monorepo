@@ -12,6 +12,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
+import { PlusIcon } from '@heroicons/react/20/solid';
 
 const ThemeBox = () => {
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
@@ -93,7 +94,7 @@ const ThemeBox = () => {
             <Space direction="vertical" className="w-full pt-3">
               {themes.map(
                 (themeItem: { main_theme: string; expressions: string[], quote: string }, index) => (
-                  <Col className="border-2 border-slate-300 w-full rounded-lg p-3">
+                  <Col key={index} className="border-[1px] border-slate-300 w-full rounded-lg p-3">
                     <Row
                       key={index*10}
                       className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md"
@@ -118,7 +119,7 @@ const ThemeBox = () => {
                       return (
                         <Row
                           key={index*10 + i}
-                          className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md my-1"
+                          className="flex items-center space-x-2 transition-colors bg-slate-100 hover:bg-slate-300 p-1 rounded-md my-1"
                           onClick={() => onChangeSelect(exp)}
                           justify="space-between"
                         >
@@ -145,9 +146,8 @@ const ThemeBox = () => {
                         size="small"
                         onClick={() => handleShowNextExpression(index)}
                         disabled={currentExpressionIndex[index] >= themeItem.expressions.length}
-                      >
-                        + 다른 표현 보기
-                      </Button>
+                        icon={<PlusIcon className='w-4 h-4'/>}
+                      >다른 표현 보기</Button>
                     </Row>
                   </Col>
                 )

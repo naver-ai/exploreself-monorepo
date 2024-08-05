@@ -43,6 +43,12 @@ module.exports = {
           '0%': { opacity: 0 },
           '100%': { opacity: 1 },
         },
+
+        zoomIn: {
+          '0%': { transform: 'scale(0)' },
+          '100%': { transform: 'scale(1)' },
+        },
+
         'bounce-emphasized': {
           '0%, 100%': {
             "transform": "translateY(-30%)scale(1.3)", 
@@ -63,6 +69,7 @@ module.exports = {
         "focus-indicate": "focus-indicate 0.7s linear infinite",
         fadein: 'fadeIn, 5s',
         "bounce-emphasized": "bounce-emphasized 0.7s infinite", 
+        "zoom-in": 'zoomIn .25s ease-out'
       },
     },
   },

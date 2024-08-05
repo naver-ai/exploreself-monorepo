@@ -48,5 +48,18 @@
   "Labels": {
     "Apply": "적용",
     "Submit": "제출"
+  },
+
+  "Outline": {
+    "Title": "개요"
+  },
+
+  "PinnedTheme": {
+    "Title": "주제 바구니",
+    "NoPins": "아직 담은 주제가 없습니다.",
+    "Tooltip":{
+      "NewThread": "이 주제로 새로운 생각 타래를 열려면 클릭하세요."
+    },
+    "UndoDelete": "주제 삭제 취소"
   }
 }
