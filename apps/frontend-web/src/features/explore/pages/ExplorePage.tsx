@@ -13,6 +13,7 @@ import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
 import useScrollbarSize from 'react-scrollbar-size';
 import {AlignLeftOutlined} from '@ant-design/icons'
+import { useTranslation } from 'react-i18next';
 
 const SidePanel = () => {
   const [open, setOpen] = useState(false)
@@ -93,6 +94,9 @@ const SidePanel = () => {
 };
 
 export const ExplorerPage = () => {
+
+  const [t] = useTranslation()
+
   const initialNarrative = useSelector(
     (state) => state.explore.initialNarrative
   );
@@ -163,7 +167,7 @@ export const ExplorerPage = () => {
           >
             <ThemeBox />
             <div className="container px-4 md:px-8 py-4 md:py-8 relative">
-              <Card ref={narrativeCardRef} title="처음 적었던 고민">
+              <Card ref={narrativeCardRef} title={t("Narrative.InitialNarrative")}>
                 <span className="text-gray-600 leading-7">
                   {initialNarrative}
                 </span>

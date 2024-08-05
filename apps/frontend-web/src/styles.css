@@ -61,3 +61,6 @@ label.ant-form-item-required {
   background-color: #888888; /* Customize the dot color */
 }
 
+.skeleton-sm .ant-skeleton-paragraph > li {
+  @apply !h-3 !mt-3 first:!mt-0;
+}

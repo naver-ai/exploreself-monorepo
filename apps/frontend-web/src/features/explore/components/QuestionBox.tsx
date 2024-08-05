@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import {
   Button,
   Input,
@@ -13,31 +13,29 @@ import {
 } from '@ant-design/icons';
 const { TextArea } = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
-import {
-  updateResponse,
-} from '../../../api_call/saveQASet';
 import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, updateQuestion, updateQuestionResponse } from '../reducer';
 import { diffChars, Change } from 'diff';
-import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionBase, InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
+import { SkeletonParagraphProps } from 'antd/es/skeleton/Paragraph';
+import { useTranslation } from 'react-i18next';
 
+const SKELETON_PARAG_PARAMS :SkeletonParagraphProps = {rows: 3,}
 
 export const QuestionBox = (props: { qid: string }) => {
-  const token = useSelector((state) => state.auth.token) as string;
   const dispatch = useDispatch()
 
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
-  const keywords = question.keywords
   const response = question.response
+  const keywords = question.keywords
   // const comment = question.aiGuides.length > 0 ? question.aiGuides[question.aiGuides.length-1] : null;
   const comment = question.aiGuides ? question.aiGuides[question.aiGuides.length -1]?.content: null
-  const [isSaving, setIsSaving] = useState(false);
   const [lastSavedResponse, setLastSavedResponse] = useState('');
   const [isActive, setIsActive] = useState(false);
   const isCreatingComment = useSelector(state => state.explore.questionCommentCreationLoadingFlags[props.qid] || false)
   const isCreatingKeywords = useSelector(state => state.explore.questionKeywordCreationLoadingFlags[props.qid] || false)
 
+  const [t] = useTranslation()
 
   const getNewKeywordsHandler = useCallback((opt: number=2) => {
     dispatch(getNewKeywords(props.qid, opt))
@@ -81,7 +79,6 @@ export const QuestionBox = (props: { qid: string }) => {
 
   const saveResponse = useCallback(async () => {
     if (response !== lastSavedResponse) {
-      setIsSaving(true);
       try {
         const interaction: InteractionBase = determineChangeType(lastSavedResponse, response) as InteractionBase
         await dispatch(updateQuestionResponse(props.qid, response, interaction))
@@ -89,7 +86,6 @@ export const QuestionBox = (props: { qid: string }) => {
       } catch (error) {
         console.error('Failed to save content:', error);
       } finally {
-        setIsSaving(false);
       }
     }
   }, [response, props.qid, lastSavedResponse]);
@@ -171,14 +167,14 @@ export const QuestionBox = (props: { qid: string }) => {
             onChange={handleChange}
             onBlur={handleBlur}
             onFocus={handleFocus}
-            placeholder="자유롭게 적어보아요"
+            placeholder={t("Thread.Questions.AnswerPlaceholder")}
           />
         </Col>
         <Col span={8} className="">
           <div className="bg-[#F1F8F8] p-3 rounded-lg text-xs flex flex-col">
             {
               isCreatingComment === true ? 
-                <Skeleton active /> : 
+                <Skeleton className='skeleton-sm' active title={false} paragraph={SKELETON_PARAG_PARAMS} /> : 
                 <>
                 <div className="pb-3">{comment}</div>
                 <Button
@@ -187,9 +183,7 @@ export const QuestionBox = (props: { qid: string }) => {
                 onClick={() => getNewCommentHandler()}
                 size="small"
                 className="text-xs self-end"
-              >
-                새로운 도움말 보기
-              </Button>
+              >{t("Thread.Questions.RequestHelp")}</Button>
               </>
             }
           </div>

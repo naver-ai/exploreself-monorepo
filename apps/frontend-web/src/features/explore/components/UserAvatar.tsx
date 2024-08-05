@@ -2,9 +2,12 @@ import { Button, Dropdown, MenuProps } from 'antd';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { useMemo } from 'react';
 import { signOut } from '../../auth/reducer';
+import { useTranslation } from 'react-i18next';
 
 export const UserAvatar = (props: { buttonClassName?: string }) => {
   const userName = useSelector((state) => state.explore.name);
+
+  const [t] = useTranslation()
 
   const dispatch = useDispatch();
 
@@ -14,13 +17,15 @@ export const UserAvatar = (props: { buttonClassName?: string }) => {
         {
           key: 'logout',
           danger: true,
-          label: '로그아웃',
+          label: t("SignOut.Title"),
         },
       ],
       onClick: (ev) => {
         switch (ev.key) {
           case 'logout':
-            dispatch(signOut());
+            if(confirm(t("SignOut.Confirm"))){
+              dispatch(signOut());
+            }
             break;
         }
       },
