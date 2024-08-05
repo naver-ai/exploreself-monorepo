@@ -18,7 +18,7 @@ import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { useTranslation } from 'react-i18next';
 import { t } from 'i18next';
 import { PencilIcon } from '@heroicons/react/20/solid';
-
+import { usePrevious } from "@uidotdev/usehooks";
 
 const UnselectedQuestionItem = (props: { qid: string }) => {
 
@@ -72,10 +72,19 @@ const UnselectedQuestionList = (props: { tid: string }) => {
   const dispatch = useDispatch();
   const questionIds = useSelector(state => unSelectedQuestionIdsSelector(state, props.tid))
   const isCreatingQuestions = useSelector(state => state.explore.threadQuestionCreationLoadingFlags[props.tid] || false)
+  const prevCreatingQuestions = usePrevious(isCreatingQuestions)
 
   const onMoreQuestionsClick = useCallback(() => {
     dispatch(getMoreQuestion(props.tid))
   }, [props.tid])
+
+  useEffect(()=>{
+    if(prevCreatingQuestions != isCreatingQuestions && isCreatingQuestions == false){
+
+    }
+  }, [prevCreatingQuestions, isCreatingQuestions])
+
+  const moreButton = <div className={'text-right pt-3'}><Button className='' disabled={isCreatingQuestions} onClick={onMoreQuestionsClick}>{t("Thread.Questions.More")}</Button></div>
 
   const items = useMemo(()=>{
     return [
@@ -83,30 +92,31 @@ const UnselectedQuestionList = (props: { tid: string }) => {
         key: '1',
         label: <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}개)</span>,
         children: (
-          <p>
-            {
+          <div>
+            <div>{
               questionIds.map((qid) => (
                 <UnselectedQuestionItem key={qid} qid={qid} />
               ))
-            }
+            }</div>
             {
-              !isCreatingQuestions ? <div className='text-right pt-3'>
-                  <Button className='' disabled={isCreatingQuestions} onClick={onMoreQuestionsClick}>{t("Thread.Questions.More")}</Button>
-                </div> : null
+            !isCreatingQuestions ? moreButton : <LoadingIndicator className='!justify-end' title={t("Thread.Questions.Generating")}/>
             }
-            
-          </p>
+          </div>
         ),
       },
     ]
   }, [questionIds, onMoreQuestionsClick, isCreatingQuestions, t])
 
-  return questionIds.length > 0 || isCreatingQuestions == false ? <Collapse
+
+
+  return <>
+  {
+    questionIds.length > 0 ?<Collapse
         className='bg-slate-100'
-        defaultActiveKey={['1']}
+        defaultActiveKey={1}
         ghost
         items={items}
-      /> : null
+      /> : (!isCreatingQuestions ? moreButton : <LoadingIndicator title={t("Thread.Questions.Generating")}/>)}</>
 };
 
 function buildThresholdList(numSteps: number): Array<number> {
@@ -127,8 +137,6 @@ export const ThreadBox = (props: { tid: string }) => {
   const dispatch = useDispatch()
 
   const thread = useSelector(state => threadSelectors.selectById(state, props.tid))
-
-  const isCreatingQuestions = useSelector(state => state.explore.threadQuestionCreationLoadingFlags[props.tid] || false)
 
   const [t] = useTranslation()
 
@@ -167,9 +175,5 @@ export const ThreadBox = (props: { tid: string }) => {
         />
             <SelectedQuestionList tid={props.tid} />
             <UnselectedQuestionList tid={props.tid} />
-
-        {
-          isCreatingQuestions === true ? <LoadingIndicator title={t("Thread.Questions.Generating")} className='mt-4'/> : null
-        }
       </Card>)
 };

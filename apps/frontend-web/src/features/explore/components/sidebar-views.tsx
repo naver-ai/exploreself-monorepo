@@ -95,14 +95,14 @@ export const PinnedThemesPanel = () => {
       titleContainerClassName="!mb-3"
     >
       {pinnedThemes.length == 0 ? (
-        <div className="bg-slate-100 rounded-lg p-2 py-1 text-sm text-gray-400">
+        <div className="select-none bg-slate-100 rounded-lg p-2 py-1 text-sm text-gray-400">
           아직 담은 주제가 없습니다.
         </div>
       ) : (
         <div>
           {pinnedThemes.map((theme, i) => (
-            <div className='flex items-center border rounded-lg p-2'>
-              <div key={i} onClick={() => addToThread(theme)}>
+            <div key={i} className='flex items-center border rounded-lg p-2'>
+              <div onClick={() => addToThread(theme)}>
               {theme}
               
               {/* TODO: 삭제 시 취소 확인 modal*/}

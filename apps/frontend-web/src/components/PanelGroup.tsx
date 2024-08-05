@@ -7,7 +7,7 @@ export const PanelGroup = (props: {
   return (
     <div className="p-3">
       <div
-        className={`font-bold text-sm flex items-center gap-1 mb-2 ${props.titleContainerClassName}`}
+        className={`font-bold text-sm flex items-center gap-1 mb-2 select-none ${props.titleContainerClassName}`}
       >
         {props.iconComponent != null ? (
           <props.iconComponent className="w-4 h-4" />
