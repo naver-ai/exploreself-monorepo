@@ -39,7 +39,7 @@ export type IExploreState = {
   questionShowKeywordsFlags: {[key: string] :  boolean | undefined}
 
   isThemeSelectorOpen: boolean;
-  floatingHeader: string | undefined
+  reservedFloatingHeaders: {[key: string]: boolean}
 } & Omit<
   IUserWithThreadIds,
   '_id' | 'passcode' | 'threads' | 'alias' | 'createdAt' | 'updatedAt'
@@ -68,7 +68,7 @@ const initialState: IExploreState = {
   questionEntityState: initialQuestionEneityState,
 
   isThemeSelectorOpen: false,
-  floatingHeader: undefined
+  reservedFloatingHeaders: {}
 };
 
 const exploreSlice = createSlice({
@@ -104,8 +104,9 @@ const exploreSlice = createSlice({
       state.isThemeSelectorOpen = action.payload;
     },
 
-    setFloatingHeader: (state, action: PayloadAction<string|undefined>) => {
-      state.floatingHeader = action.payload
+    setFloatingHeaderFlag: (state, action: PayloadAction<{tid: string, intersecting: boolean}>) => {
+      console.log("new header: ", action.payload)
+      state.reservedFloatingHeaders[action.payload.tid] = action.payload.intersecting
     },
 
     setLoadingUserInfoFlag: (state, action: PayloadAction<boolean>) => {
@@ -236,6 +237,18 @@ export const unSelectedQuestionsSelector = createSelector([questionSelectors.sel
 export const unSelectedQuestionIdsSelector = createSelector([unSelectedQuestionsSelector], (questions) => {
   return questions.map(q => q._id)
 } )
+
+
+export const selectFloatingHeader = createSelector([(state: AppState) => state.explore.reservedFloatingHeaders, threadSelectors.selectAll], 
+  (headerFlags, threads) => {
+    const tid = Object.keys(headerFlags).find(tid =>headerFlags[tid] === true)
+    if(tid != null){
+      const thread = threads.find(t => t._id == tid)
+      return thread?.theme
+    }else{
+      return undefined
+    }
+  })
 
 // User Info ====================================================================
 
@@ -540,7 +553,7 @@ export const {
   updateUserInfo,
   resetState,
   setThemeSelectorOpen,
-  setFloatingHeader,
+  setFloatingHeaderFlag,
   updateQuestion,
   setQuestionShowKeywordsFlag,
   setLoadingThemesFlag

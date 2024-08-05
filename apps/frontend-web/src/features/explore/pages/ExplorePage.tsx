@@ -7,7 +7,7 @@ const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
-import { getNewSynthesis, setThemeSelectorOpen, threadSelectors } from '../reducer';
+import { getNewSynthesis, selectFloatingHeader, setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
@@ -103,7 +103,7 @@ export const ExplorerPage = () => {
   const userName = useSelector((state) => state.explore.name);
   const threadIds = useSelector(threadSelectors.selectIds);
 
-  const floatingHeader = useSelector(state => state.explore.floatingHeader)
+  const floatingHeader = useSelector(selectFloatingHeader)
 
   const { ref, inView, entry } = useInView({
     /* Optional options */
