@@ -60,7 +60,7 @@ const SelectedQuestionList = (props: { tid: string }) => {
   return (
     <div>
       {questionIds.map((qid) => (
-        <QuestionBox qid={qid} />
+        <QuestionBox key={qid} qid={qid} />
       ))}
     </div>
   );

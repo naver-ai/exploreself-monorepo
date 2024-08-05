@@ -14,8 +14,8 @@ import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { PlusIcon } from '@heroicons/react/20/solid';
-import { ShortcutManager } from '../../../services/shortcut';
 import { useTranslation } from 'react-i18next';
+import { POPULATE_NEW_THREAD_OPTS } from './common';
 
 const ThemeBox = () => {
 
@@ -53,17 +53,11 @@ const ThemeBox = () => {
 
   const addToThread = useCallback(
     async (selected: string) => {
-      const tid = await dispatch(populateNewThread(selected))
       dispatch(setThemeSelectorOpen(false))
-      if(tid) {
-        ShortcutManager.instance.requestFocus({
-          id: tid as string,
-          type: 'thread',
-        })
-      }
+      dispatch(populateNewThread(selected, POPULATE_NEW_THREAD_OPTS))
       await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: selected}, {})
     },
-    []);
+    [token]);
 
   const fetchThemes = useCallback(async (opt: number) => {
     dispatch(getNewThemes(opt))

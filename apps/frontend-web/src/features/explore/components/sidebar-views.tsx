@@ -7,10 +7,10 @@ import { PanelGroup } from '../../../components/PanelGroup';
 import { ShortcutManager } from '../../../services/shortcut';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
-import { CloseOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
 import { useHover } from '@uidotdev/usehooks';
 import colors from 'tailwindcss/colors';
+import { POPULATE_NEW_THREAD_OPTS } from './common';
 
 const OUTLINE_PANEL_CLASS =
   'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer';
@@ -65,13 +65,13 @@ export const OutlinePanel = () => {
   );
 };
 
+
+
 const ThemeElement = (props: { theme: string }) => {
 
   const [t] = useTranslation()
 
   const token = useSelector((state) => state.auth.token) as string;
-
-  const uid = useSelector((state) => state.explore.userId);
 
   const [ref, hoveringRemoveButton] = useHover();
 
@@ -86,20 +86,12 @@ const ThemeElement = (props: { theme: string }) => {
 
   const addToThread = useCallback(
     async () => {
-      if (uid != null) {
         dispatch(unpinTheme(props.theme, false))
-        const tid = await dispatch(populateNewThread(props.theme))
         dispatch(setThemeSelectorOpen(false))
-        if(tid) {
-          ShortcutManager.instance.requestFocus({
-            id: tid as string,
-            type: 'thread',
-          })
-        }
+        dispatch(populateNewThread(props.theme, POPULATE_NEW_THREAD_OPTS))
         await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: props.theme}, {})
-      }
     },
-    [uid, props.theme]
+    [token, props.theme]
   );
 
   return <Tooltip title={hoveringRemoveButton ? '' : t("Theme.Tooltip.NewThread")} mouseLeaveDelay={0}>

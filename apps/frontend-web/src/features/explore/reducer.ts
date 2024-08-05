@@ -361,7 +361,10 @@ export function submitUserProfile(
   };
 }
 
-export function populateNewThread(theme: string): AppThunk<Promise<any>> {
+export function populateNewThread(theme: string, handlers?: {
+  onThreadCreated?: (tid: string) => void,
+  onQuestionsGenerated?: (tid: string) => void
+}): AppThunk {
   return async (dispatch, getState) => {
     const state = getState();
 
@@ -374,18 +377,19 @@ export function populateNewThread(theme: string): AppThunk<Promise<any>> {
           dispatch(exploreSlice.actions.appendThread(newThread))
 
           dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: true}))
+          handlers?.onThreadCreated?.(newThread._id)
 
           try {
             const questions = await generateQuestions(state.auth.token, newThread._id, 3)
             if(questions){
               dispatch(exploreSlice.actions.setQuestions(questions))
+              handlers?.onQuestionsGenerated?.(newThread._id)
             }
           } catch (err) {
             console.log('Err in fetching questions: ', err);
           } finally {
             dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: false}))
           }
-          return newThread._id
         }
       }catch( ex) {
         console.log(ex)
@@ -393,7 +397,6 @@ export function populateNewThread(theme: string): AppThunk<Promise<any>> {
         dispatch(exploreSlice.actions.setCreatingNewThreadFlag(false))
       }
     }
-    return null;
   }
 }
 
