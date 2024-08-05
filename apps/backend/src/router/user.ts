@@ -1,5 +1,5 @@
 import express from 'express';
-import { User } from "../config/schema";
+import { QASet, ThreadItem, User } from "../config/schema";
 import { signedInUserMiddleware } from './middlewares';
 import type {RequestWithUser} from './middlewares'
 import { body } from 'express-validator';
@@ -34,6 +34,35 @@ router.post('/profile', signedInUserMiddleware, body("name").exists().trim(), as
   console.log('Update User: ', updatedUser)
   res.json({
     name: updatedUser.name
+  })
+})
+
+router.delete("/reset", signedInUserMiddleware, async (req: RequestWithUser, res) => {
+  
+
+  console.log(`Reset user narrative data of user ${req.user._id}`)
+
+  const {deletedCount: deletedQACount} = await QASet.deleteMany({tid: {$in: req.user.threads}})
+  const {deletedCount: deletedThreadCount} = await ThreadItem.deleteMany({uid: req.user._id})
+
+  console.log(`Deleted ${deletedQACount} QASets, ${deletedThreadCount} threads.`)
+  req.user.initialNarrative = null
+  req.user.threads = []
+  req.user.pinnedThemes = []
+  req.user.synthesis = []
+  await req.user.save()
+
+  const updatedUser = await req.user.populate({
+    path: "threads",
+    populate: {
+      path: "questions"
+    }
+  })
+
+  res.json({
+    deletedQACount,
+    deletedThreadCount,
+    updatedUser
   })
 })
 

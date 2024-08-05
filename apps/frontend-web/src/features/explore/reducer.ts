@@ -549,6 +549,28 @@ export function getNewThemes (): AppThunk {
   }
 }
 
+export function dangerousReset(): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState()
+    if(state.auth.token != null) {
+      dispatch(exploreSlice.actions.setLoadingUserInfoFlag(true))
+      try {
+        const resp = await Http.axios.delete("/user/reset", {
+          headers: Http.makeSignedInHeader(state.auth.token)
+        })
+
+        const {updatedUser} = resp.data
+        dispatch(exploreSlice.actions.updateUserInfo(updatedUser))
+      }catch(ex){
+        console.log(ex)
+      }finally{
+
+      dispatch(exploreSlice.actions.setLoadingUserInfoFlag(false))
+      }
+    }
+  }
+}
+
 export const {
   updateUserInfo,
   resetState,

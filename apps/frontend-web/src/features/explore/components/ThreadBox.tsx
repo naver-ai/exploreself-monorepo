@@ -1,24 +1,19 @@
-import { useCallback, useEffect, useState, useRef, useMemo } from 'react';
+import { useCallback, useEffect, useRef, useMemo } from 'react';
 import {
   Button,
   Input,
   Card,
   Flex,
   Collapse,
-  Spin,
-  Divider,
 } from 'antd';
 import {
-  PlusOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-const { TextArea } = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ShortcutManager } from '../../../services/shortcut';
 import { getMoreQuestion, questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeaderFlag, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
 import { useInView } from 'react-intersection-observer';
 import { QuestionBox } from './QuestionBox';
-import { usePrevious } from "@uidotdev/usehooks";
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { useTranslation } from 'react-i18next';
 import { t } from 'i18next';
