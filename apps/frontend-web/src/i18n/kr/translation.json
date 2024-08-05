@@ -62,7 +62,12 @@
     "Generating": "탐색해볼 주제 생성 중",
     "NoTheme": "아직 담은 주제가 없습니다."
   },
-
+  "Synthesis": {
+    "Title": "AI 요약",
+    "Open": "AI 요약 보기",
+    "Generating": "새로운 요약 생성 중",
+    "More": "새로운 요약 보기"
+  },
   "Labels": {
     "Apply": "적용",
     "Submit": "제출"
