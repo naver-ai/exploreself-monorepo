@@ -34,7 +34,7 @@ export interface IQASetBase {
   keywords: string[],
   selected: boolean,
   response: string,
-  aiGuides?: IAIGuide[];
+  aiGuides: IAIGuide[];
   createdAt?: Date;
   updatedAt?: Date;
 }

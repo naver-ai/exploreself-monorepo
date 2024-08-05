@@ -47,7 +47,7 @@ const generateCommentHandler = async (req: RequestWithUser, res) => {
   const response = req.body.response
   try {
     const comments = await generateComment(user, qid, response)
-    const updatedQuestion = await QASet.findByIdAndUpdate(qid, {$push: {aiGuides: comments}})
+    const updatedQuestion = await QASet.findByIdAndUpdate(qid, {$push: {aiGuides: {content: comments.selected.comment}}})
     return res.json({
       comments: (comments as any).selected
     })

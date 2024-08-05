@@ -28,8 +28,7 @@ export const QuestionBox = (props: { qid: string }) => {
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
   const response = question.response
   const keywords = question.keywords
-  // const comment = question.aiGuides.length > 0 ? question.aiGuides[question.aiGuides.length-1] : null;
-  const comment = question.aiGuides ? question.aiGuides[question.aiGuides.length -1]?.content: null
+  const comment = question.aiGuides.length > 0 ? question.aiGuides[question.aiGuides.length-1].content : null;
   const [lastSavedResponse, setLastSavedResponse] = useState('');
   const [isActive, setIsActive] = useState(false);
   const isCreatingComment = useSelector(state => state.explore.questionCommentCreationLoadingFlags[props.qid] || false)
@@ -116,11 +115,10 @@ export const QuestionBox = (props: { qid: string }) => {
   }, [response, isActive, saveResponse]);
 
   useEffect(() => {
-    if(!comment) {
-      console.log("Generating comment")
+    if(question.aiGuides.length == 0) {
       getNewCommentHandler()
-    }
-  },[])
+    } 
+  },[question])
 
 
   return (
