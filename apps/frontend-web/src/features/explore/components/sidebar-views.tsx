@@ -9,6 +9,7 @@ import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
 import {CloseOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const OUTLINE_PANEL_CLASS =
   'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer';
@@ -55,7 +56,7 @@ export const OutlinePanel = () => {
   return (
     <PanelGroup
       iconComponent={ListBulletIcon}
-      title={'개요'}
+      title={t("Sidebar.Outline")}
       titleContainerClassName="!mb-5"
     >
       <Timeline className="px-1" items={themeListTimelineItems} />
@@ -94,7 +95,7 @@ export const PinnedThemesPanel = () => {
     [uid]
   );
   const [userTheme, setUserTheme] = useState<string>('')
-  
+
   const handleAddTheme = useCallback(() => {
     async () => {
       dispatch(pinTheme(userTheme))
@@ -107,12 +108,12 @@ export const PinnedThemesPanel = () => {
   return (
     <PanelGroup
       iconComponent={ArchiveBoxIcon}
-      title={'주제 바구니'}
+      title={t("Sidebar.Bookmark")}
       titleContainerClassName="!mb-3"
     >
       {pinnedThemes.length == 0 ? (
         <div className="select-none bg-slate-100 rounded-lg p-2 py-1 text-sm text-gray-400">
-          아직 담은 주제가 없습니다.
+          {t("Theme.NoTheme")}
         </div>
       ) : (
         <div>
@@ -132,7 +133,7 @@ export const PinnedThemesPanel = () => {
       )}
       <Space direction="horizontal">
         <Input
-          placeholder="직접 추가하기"
+          placeholder={t("Theme.AddMyself")}
           value={userTheme}
           onChange={(e) => setUserTheme(e.target.value)}
         />
@@ -140,7 +141,7 @@ export const PinnedThemesPanel = () => {
           style={{ width: 80 }}
           onClick={handleAddTheme}
         >
-          {'담기'}
+          {t("Theme.Add")}
         </Button>
       </Space>
     </PanelGroup>
