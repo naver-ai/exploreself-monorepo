@@ -6,6 +6,10 @@
     },
     "Enter": "로그인"
   },
+  "SignOut": {
+    "Title": "로그아웃",
+    "Confirm": "로그아웃 하시겠습니까? 진행사항은 저장됩니다."
+  },
   "Profile": {
     "Title": "사용자 정보 입력하기",
     "Name": {
@@ -18,14 +22,17 @@
     "Title": "고민 이야기 작성하기",
     "Prompt": "사람들은 각자의 고민이 있습니다. 옛 친구와의 갈등, 다이어트에 집착하는 것 등... 좀 더 이해하고 싶은 당신의 이야기가 있나요? 아래에 적어 주세요!",
     "Placeholder": "당신의 고민 이야기를 적어주세요.",
-    "Complete": "고민 탐색 시작하기"
+    "Complete": "고민 탐색 시작하기",
+    "InitialNarrative": "나의 고민 이야기"
   },
 
   "Thread": {
     "Questions": {
       "Title": "생각해볼 질문들",
       "Generating": "질문거리 생성중...",
-      "More": "질문 더 추천받기"
+      "More": "질문 더 추천받기",
+      "RequestHelp": "새로운 도움말 보기",
+      "AnswerPlaceholder": "자유롭게 적어보아요"
     }
   },
 

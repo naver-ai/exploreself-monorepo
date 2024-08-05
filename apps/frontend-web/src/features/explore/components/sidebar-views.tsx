@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Timeline, Button, Flex } from 'antd';
+import { useCallback, useMemo, } from 'react';
+import { Timeline, Button } from 'antd';
 import { populateNewThread, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
-import { IThreadWithQuestionIds } from '@core';
 import { ListBulletIcon, ArchiveBoxIcon } from '@heroicons/react/20/solid';
 import { PanelGroup } from '../../../components/PanelGroup';
 import { ShortcutManager } from '../../../services/shortcut';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
 import {CloseOutlined} from '@ant-design/icons'
+import { useTranslation } from 'react-i18next';
 
 const OUTLINE_PANEL_CLASS =
   'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer';
@@ -16,7 +16,7 @@ const OUTLINE_PANEL_CLASS =
 export const OutlinePanel = () => {
   const threads = useSelector(threadSelectors.selectAll);
 
-  const token = useSelector((state) => state.auth.token) as string;
+  const [t] = useTranslation()
 
   const themeListTimelineItems = useMemo(() => {
     const timelineItems = threads?.map((thread) => {
@@ -45,7 +45,7 @@ export const OutlinePanel = () => {
               ShortcutManager.instance.requestFocus({ type: 'narrative' });
             }}
           >
-            {'처음 적었던 고민'}
+            {t("Narrative.InitialNarrative")}
           </div>
         ),
       },
