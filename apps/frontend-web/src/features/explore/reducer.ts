@@ -540,13 +540,14 @@ export function unpinTheme(theme: string, intentional: boolean=true): AppThunk {
   }
 }
 
-export function getNewThemes (): AppThunk {
+export function getNewThemes (opt: number): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if (state.auth.token) {
       try {
         dispatch(exploreSlice.actions.setLoadingThemesFlag(true))
-        const themes = await generateThemes(state.auth.token)
+        const prevThemes = state.explore.newThemes.map(theme => theme.main_theme)
+        const themes = await generateThemes(state.auth.token, prevThemes, opt)
         dispatch(exploreSlice.actions.addNewThemes(themes))
       } catch (ex) {
         console.log(ex)

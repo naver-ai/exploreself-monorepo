@@ -47,8 +47,8 @@ const ThemeBox = () => {
   }, [themes]);
 
 
-  const fetchThemes = useCallback(async () => {
-    dispatch(getNewThemes())
+  const fetchThemes = useCallback(async (opt: number) => {
+    dispatch(getNewThemes(opt))
   }, []);
 
   const handleAddPinnedTheme = async (theme: string) => {
@@ -67,8 +67,11 @@ const ThemeBox = () => {
 
   useEffect(() => {
     if(isOpen) {
-      fetchThemes();
+      setCurrentExpressionIndex([])
+      dispatch(resetNewThemes())
+      fetchThemes(3);
     } else {
+      setCurrentExpressionIndex([])
       dispatch(resetNewThemes())
     }
   }, [fetchThemes, isOpen]);
@@ -97,12 +100,12 @@ const ThemeBox = () => {
                   <Col className="border-2 border-slate-300 w-full rounded-lg p-3">
                     <Row
                       key={index*10}
-                      className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md"
+                      className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md justify-between"
                       onClick={() => onChangeSelect(themeItem.main_theme)}
                       justify="space-between"
                     >
-                      <Col className="pl-2">{themeItem.main_theme}</Col>
-                      <Col>
+                      <Col className="flex-1 pl-2 whitespace-normal">{themeItem.main_theme}</Col>
+                      <Col className='flex-shrink-0'>
                         <Button
                           icon={<MdBookmarkBorder />}
                           onClick={() => handleAddPinnedTheme(themeItem.main_theme)}
@@ -119,12 +122,12 @@ const ThemeBox = () => {
                       return (
                         <Row
                           key={index*10 + i}
-                          className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md my-1"
+                          className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md my-1 justify-between"
                           onClick={() => onChangeSelect(exp)}
                           justify="space-between"
                         >
-                          <Col className="pl-2">{exp}</Col>
-                          <Col>
+                          <Col className="flex-1 pl-2 whitespace-normal">{exp}</Col>
+                          <Col className='flex-shrink-0'>
                             <Button
                               icon={<MdBookmarkBorder />}
                               onClick={() => handleAddPinnedTheme(exp)}
@@ -153,7 +156,7 @@ const ThemeBox = () => {
                   </Col>
                 )
               )}
-              {isLoadingThemes? <LoadingIndicator title='탐색해볼 주제 생성 중'/>: <Button onClick={fetchThemes}>{t("ThemeSelection.MoreThemes")}</Button>}
+              {isLoadingThemes? <LoadingIndicator title='탐색해볼 주제 생성 중'/>: <Button onClick={() => fetchThemes(1)}>{t("ThemeSelection.MoreThemes")}</Button>}
             </Space>
           </div>
         
