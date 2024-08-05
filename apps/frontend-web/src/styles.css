@@ -64,3 +64,7 @@ label.ant-form-item-required {
 .skeleton-sm .ant-skeleton-paragraph > li {
   @apply !h-3 !mt-3 first:!mt-0;
 }
+
+.ant-collapse-header{
+  @apply !items-center;
+}

@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useRef, useMemo } from 'react';
+import { useCallback, useEffect, useRef, useMemo, MouseEventHandler, useState } from 'react';
 import {
   Button,
-  Input,
   Card,
   Flex,
   Collapse,
@@ -81,7 +80,10 @@ const UnselectedQuestionList = (props: { tid: string }) => {
   const isCreatingQuestions = useSelector(state => state.explore.threadQuestionCreationLoadingFlags[props.tid] || false)
   const prevCreatingQuestions = usePrevious(isCreatingQuestions)
 
-  const onMoreQuestionsClick = useCallback(() => {
+  const [isPanelExpanded, setIsPanelExpanded] = useState(true)
+
+  const onMoreQuestionsClick = useCallback<MouseEventHandler<HTMLElement>>((ev) => {
+    ev.stopPropagation()
     dispatch(getMoreQuestion(props.tid))
   }, [props.tid])
 
@@ -91,38 +93,46 @@ const UnselectedQuestionList = (props: { tid: string }) => {
     }
   }, [prevCreatingQuestions, isCreatingQuestions])
 
-  const moreButton = <div className={'text-right pt-3'}><Button className='' disabled={isCreatingQuestions} onClick={onMoreQuestionsClick}>{t("Thread.Questions.More")}</Button></div>
+  const moreButton = <Button className='' disabled={isCreatingQuestions} onClick={onMoreQuestionsClick}>{t("Thread.Questions.More")}</Button>
+
 
   const items = useMemo(()=>{
     return [
       {
         key: '1',
-        label: <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}개)</span>,
-        children: (
-          <div>
-            <div>
-            {
-            !isCreatingQuestions ? moreButton : <LoadingIndicator className='!justify-end' title={t("Thread.Questions.Generating")}/>
+        label: <div className='flex items-center justify-between'>
+              <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}개)</span>
+              {
+            isCreatingQuestions === false ? (isPanelExpanded === true ? moreButton : null) : <LoadingIndicator className='!justify-end' title={t("Thread.Questions.Generating")}/>
             }
+          </div>,
+        children: (
+            <div>
             {
               [...questionIds].reverse().map((qid) => (
                 <UnselectedQuestionItem key={qid} qid={qid} />
               ))
             }</div>
-            
-          </div>
         ),
       },
     ]
-  }, [questionIds, onMoreQuestionsClick, isCreatingQuestions, t])
+  }, [questionIds, onMoreQuestionsClick, isCreatingQuestions, t, isPanelExpanded])
 
-
+  const onPanelChange =useCallback((key: string | string[])=>{
+    if(key == '1'){
+      setIsPanelExpanded(true)
+    }else{
+      setIsPanelExpanded(false)
+    }
+  }, [])
 
   return <>
   {
     questionIds.length > 0 ?<Collapse
+        onChange={onPanelChange}
         className='bg-slate-100'
         defaultActiveKey={1}
+        activeKey={isPanelExpanded ? 1 : undefined}
         ghost
         items={items}
       /> : (!isCreatingQuestions ? moreButton : <LoadingIndicator title={t("Thread.Questions.Generating")}/>)}</>
