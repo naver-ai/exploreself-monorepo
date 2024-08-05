@@ -15,7 +15,7 @@ import {
 const { TextArea } = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ShortcutManager } from '../../../services/shortcut';
-import { getMoreQuestion, questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeader, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
+import { getMoreQuestion, questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeaderFlag, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
 import { useInView } from 'react-intersection-observer';
 import { QuestionBox } from './QuestionBox';
 import { usePrevious } from "@uidotdev/usehooks";
@@ -114,6 +114,19 @@ const UnselectedQuestionList = (props: { tid: string }) => {
       /> : null
 };
 
+function buildThresholdList(numSteps: number): Array<number> {
+  let thresholds = [];
+
+  for (let i = 1.0; i <= numSteps; i++) {
+    let ratio = i / numSteps;
+    thresholds.push(ratio);
+  }
+
+  thresholds.push(0);
+  return thresholds;
+}
+const THRESHOLDS = buildThresholdList(20)
+
 export const ThreadBox = (props: { tid: string }) => {
 
   const dispatch = useDispatch()
@@ -125,8 +138,7 @@ export const ThreadBox = (props: { tid: string }) => {
   const [t] = useTranslation()
 
   const [ref, inView, entry] = useInView({
-    threshold: [0,1],
-    rootMargin: '0px 0px -100% 0px',
+    threshold: THRESHOLDS,
   })
 
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
@@ -144,13 +156,10 @@ export const ThreadBox = (props: { tid: string }) => {
     };
   }, [props.tid]);
 
-  const isIntersectingTop = entry?.isIntersecting && entry.boundingClientRect && entry.boundingClientRect.top <= 0;
-  const prevIsIntersectingTop = usePrevious(isIntersectingTop)
   useEffect(()=>{
-    if(isIntersectingTop != prevIsIntersectingTop){
-      dispatch(setFloatingHeader(isIntersectingTop ? thread.theme : undefined))
-    }
-  }, [isIntersectingTop, prevIsIntersectingTop, thread.theme])
+    const isIntersectingTop = entry?.isIntersecting === true && entry.boundingClientRect && entry.boundingClientRect.top < -20 && entry.boundingClientRect.bottom > 64;
+    dispatch(setFloatingHeaderFlag({tid: props.tid, intersecting: isIntersectingTop}))
+  }, [props.tid, entry?.isIntersecting, entry?.boundingClientRect?.top, entry?.boundingClientRect?.bottom, inView])
 
   return (<Card
         ref={ref}
