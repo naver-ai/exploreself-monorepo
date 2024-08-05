@@ -124,18 +124,12 @@ export const QuestionBox = (props: { qid: string }) => {
   return (
     <div className="border-2 border-[#B9DBDC]-600 p-3 rounded-lg my-3">
       <Flex vertical={false}>
-        <div className="pb-2 pl-1"> {question.question.content} </div>
+        <div className="pb-2 pl-1"><span className='text-teal-500 text-3xl font-light italic'>Q.</span> {question.question.content} </div>
       </Flex>
-      <Switch className="mb-1" checkedChildren="생각을 돕는 단어들" unCheckedChildren="생각을 돕는 단어들" defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/>
-      {isQuestionKeywordsShown && 
-      <Row>
-        <div className={'border-dashed border-2 rounded-lg p-2 w-full mb-2'}>
-          {isCreatingKeywords? 
-          <Flex wrap gap="small" className="flex justify-center">
-             <LoadingIndicator title={("단어 생성 중")} className='mt-4'/>
-          </Flex>
-           : 
-          <Flex wrap gap="small" className="flex justify-center">
+       {<Row>
+        <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-gray-100" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
+          <Switch className="mb-2 last:mb-0" checkedChildren="생각을 돕는 단어들" unCheckedChildren="생각을 돕는 단어들" defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/>
+          {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
             {keywords &&
               (keywords as string[]).map((keyword, i) => (
                 <div
@@ -145,7 +139,8 @@ export const QuestionBox = (props: { qid: string }) => {
                   {keyword}
                 </div>
               ))}
-            <Button
+            {
+              isCreatingKeywords == true? <LoadingIndicator title={("단어 생성 중")} className='ml-2'/> : <Button
               type="text"
               className="px-2 py-1 text-black text-opacity-50"
               onClick={() => {
@@ -154,13 +149,15 @@ export const QuestionBox = (props: { qid: string }) => {
             >
               단어 더보기
             </Button>
-          </Flex>}  
+            }
+          </Flex>}
         </div>
       </Row>
       }
       <Row justify="space-between">
         <Col span={15}>
           <TextArea
+            autoFocus
             value={response}
             onChange={handleChange}
             onBlur={handleBlur}
