@@ -44,6 +44,10 @@
       "AnswerPlaceholder": "자유롭게 적어보아요"
     }
   },
+  "ThemeSelection": {
+    "MoreThemes": "주제 더 보기",
+    "AltExpressions": "다른 표현도 보기"
+  },
 
   "Labels": {
     "Apply": "적용",

@@ -12,11 +12,18 @@ import { CloseOutlined } from '@ant-design/icons';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
+import { t } from 'i18next';
+
+type Theme = {
+  expressions: string[];
+  main_theme: string;
+  quote: string;
+};
 
 const ThemeBox = () => {
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
 
-  const [themes, setThemes] = useState([]);
+  const [themes, setThemes] = useState<Array<Theme>>([]);
   const [selected, setSelected] = useState<string>('');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
@@ -44,10 +51,10 @@ const ThemeBox = () => {
   }, [themes]);
 
 
-  const fetchInitThemes = useCallback(async () => {
+  const fetchThemes = useCallback(async () => {
     dispatch(setLoadingThemesFlag(true))
-    const data = await generateThemes(token);
-    setThemes(data);
+    const data: Theme[] = await generateThemes(token);
+    setThemes((prevThemes) => [...prevThemes, ...data]);
     dispatch(setLoadingThemesFlag(false))
   }, [token]);
 
@@ -67,9 +74,11 @@ const ThemeBox = () => {
 
   useEffect(() => {
     if(isOpen) {
-      fetchInitThemes();
+      fetchThemes();
+    } else {
+      setThemes([])
     }
-  }, [fetchInitThemes, isOpen]);
+  }, [fetchThemes, isOpen]);
 
   return (
     <Drawer
@@ -81,7 +90,6 @@ const ThemeBox = () => {
       rootStyle={{ position: 'absolute', height: '100vh' }}
     >
       <div>
-        {!isLoadingThemes ? (
           <div>
             <div className="w-full flex justify-end">
               <Button
@@ -152,11 +160,10 @@ const ThemeBox = () => {
                   </Col>
                 )
               )}
+              {isLoadingThemes? <LoadingIndicator title='탐색해볼 주제 생성 중'/>: <Button onClick={fetchThemes}>{t("ThemeSelection.MoreThemes")}</Button>}
             </Space>
           </div>
-        ) : (
-          <LoadingIndicator title='탐색해볼 주제 생성 중'/>
-        )}
+        
       </div>
     </Drawer>
   );
