@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from '../../../redux/hooks';
 import { useMemo } from 'react';
 import { signOut } from '../../auth/reducer';
 import { useTranslation } from 'react-i18next';
+import { dangerousReset } from '../reducer';
 
 export const UserAvatar = (props: { buttonClassName?: string }) => {
   const userName = useSelector((state) => state.explore.name);
@@ -15,6 +16,11 @@ export const UserAvatar = (props: { buttonClassName?: string }) => {
     return {
       items: [
         {
+          key: 'reset',
+          danger: true,
+          label: t("Reset.Title")
+        },
+        {
           key: 'logout',
           danger: true,
           label: t("SignOut.Title"),
@@ -25,6 +31,11 @@ export const UserAvatar = (props: { buttonClassName?: string }) => {
           case 'logout':
             if(confirm(t("SignOut.Confirm"))){
               dispatch(signOut());
+            }
+            break;
+          case 'reset':
+            if(confirm(t("Reset.Confirm"))){
+              dispatch(dangerousReset())
             }
             break;
         }
