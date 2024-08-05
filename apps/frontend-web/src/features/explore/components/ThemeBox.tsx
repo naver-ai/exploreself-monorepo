@@ -11,17 +11,38 @@ import generateThemes from '../../../api_call/generateThemes';
 import { CloseOutlined } from '@ant-design/icons';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
+import { LoadingIndicator } from '../../../components/LoadingIndicator';
 
 const ThemeBox = () => {
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
 
   const [themes, setThemes] = useState([]);
-  const [respThemes, setRespThemes] = useState([]);
   const [selected, setSelected] = useState<string>('');
-  const [inputValue, setInputValue] = useState<string>('');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
   const isLoadingThemes = useSelector(state => state.explore.isLoadingThemes)
+  const [currentExpressionIndex, setCurrentExpressionIndex] = useState<number[]>([]);
+
+  const handleShowNextExpression = (index: number) => {
+    setCurrentExpressionIndex((prevIndexes) => {
+      const newIndexes = [...prevIndexes];
+      newIndexes[index] = Math.min(
+        newIndexes[index] + 1,
+        (themes[index] as {main_theme: string, expressions: string[]}).expressions.length
+      );
+      return newIndexes;
+    });
+  };
+
+  useEffect(() => {
+    if (themes.length > currentExpressionIndex.length) {
+      setCurrentExpressionIndex(prevIndexes => [
+        ...prevIndexes,
+        ...Array(themes.length - prevIndexes.length).fill(0)
+      ]);
+    }
+  }, [themes]);
+
 
   const fetchInitThemes = useCallback(async () => {
     dispatch(setLoadingThemesFlag(true))
@@ -45,10 +66,8 @@ const ThemeBox = () => {
   }, []);
 
   useEffect(() => {
-    console.log("NEW")
     if(isOpen) {
       fetchInitThemes();
-      console.log("FETCHED")
     }
   }, [fetchInitThemes, isOpen]);
 
@@ -91,12 +110,11 @@ const ThemeBox = () => {
                           className="text-[10px]"
                         >
                           {' '}
-                          저장해두기
+                          담아두기
                         </Button>
-                        {/* <MdBookmarkBorder onClick={() => handleAddPinnedTheme(themeItem.theme)} className="cursor-pointer"/> */}
                       </Col>
                     </Row>
-                    {themeItem?.expressions?.map((exp, i) => {
+                    {themeItem.expressions.slice(0, currentExpressionIndex[index]).map((exp, i) => {
                       return (
                         <Row
                           key={index*10 + i}
@@ -114,7 +132,7 @@ const ThemeBox = () => {
                               className="text-[10px]"
                             >
                               {' '}
-                              저장해두기
+                              담아두기
                             </Button>
                           </Col>
                         </Row>
@@ -125,6 +143,8 @@ const ThemeBox = () => {
                         className="w-full mt-2 text-gray-500 text-xs"
                         type="text"
                         size="small"
+                        onClick={() => handleShowNextExpression(index)}
+                        disabled={currentExpressionIndex[index] >= themeItem.expressions.length}
                       >
                         + 다른 표현 보기
                       </Button>
@@ -135,7 +155,7 @@ const ThemeBox = () => {
             </Space>
           </div>
         ) : (
-          <Spin/>
+          <LoadingIndicator title='탐색해볼 주제 생성 중'/>
         )}
       </div>
     </Drawer>
