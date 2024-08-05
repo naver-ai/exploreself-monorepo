@@ -35,6 +35,11 @@
     "ShowMoreThemesInitial": "관련 주제 탐색하기"
   },
 
+  "Sidebar": {
+    "Outline": "개요",
+    "Bookmark": "주제 바구니"
+  },
+
   "Thread": {
     "Questions": {
       "Title": "생각해볼 질문들",
@@ -42,7 +47,20 @@
       "More": "질문 더 추천받기",
       "RequestHelp": "새로운 도움말 보기",
       "AnswerPlaceholder": "자유롭게 적어보아요"
+    },
+    "Keywords": {
+      "More": "단어 더보기",
+      "Generating": "단어 생성 중",
+      "HelperKeywords": "생각을 돕는 단어들"
     }
+  },
+  "Theme": {
+    "MoreThemes": "주제 더 보기",
+    "AltExpressions": "다른 표현도 보기",
+    "Add": "담기",
+    "AddMyself": "직접 추가하기",
+    "Generating": "탐색해볼 주제 생성 중",
+    "NoTheme": "아직 담은 주제가 없습니다."
   },
 
   "Labels": {

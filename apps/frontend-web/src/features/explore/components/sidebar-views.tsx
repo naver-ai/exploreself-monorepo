@@ -1,5 +1,5 @@
-import { MouseEventHandler, useCallback, useMemo, } from 'react';
-import { Timeline, Button, Tooltip, ConfigProvider, theme } from 'antd';
+import { MouseEventHandler, useCallback, useMemo, useState} from 'react';
+import { Tooltip, ConfigProvider, Input, Space, Timeline, Button } from 'antd';
 import { pinTheme, populateNewThread, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ListBulletIcon, ArchiveBoxIcon, ArrowTurnUpLeftIcon } from '@heroicons/react/20/solid';
@@ -57,7 +57,7 @@ export const OutlinePanel = () => {
   return (
     <PanelGroup
       iconComponent={ListBulletIcon}
-      title={t("Outline.Title")}
+      title={t("Sidebar.Outline")}
       titleContainerClassName="!mb-5"
     >
       <Timeline className="px-1" items={themeListTimelineItems} />
@@ -88,15 +88,19 @@ const ThemeElement = (props: { theme: string }) => {
     async () => {
       if (uid != null) {
         dispatch(unpinTheme(props.theme, false))
-        dispatch(populateNewThread(props.theme))
+        const tid = await dispatch(populateNewThread(props.theme))
         dispatch(setThemeSelectorOpen(false))
-        await postInteractionData(token, InteractionType.UserSelectsTheme, { theme: props.theme }, {})
+        if(tid) {
+          ShortcutManager.instance.requestFocus({
+            id: tid as string,
+            type: 'thread',
+          })
+        }
+        await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: props.theme}, {})
       }
     },
     [uid, props.theme]
   );
-
-
 
   return <Tooltip title={hoveringRemoveButton ? '' : t("PinnedTheme.Tooltip.NewThread")} mouseLeaveDelay={0}>
     <div onClick={addToThread} className='group flex items-center border rounded-lg p-2 pl-3 cursor-pointer transition-colors justify-between [&:hover:not(:has(*:hover))]:bg-slate-100'>
@@ -116,6 +120,7 @@ export const PinnedThemesPanel = () => {
 
   const pinnedThemes = useSelector((state) => state.explore.pinnedThemes);
   const recentRemovedTheme = useSelector(state => state.explore.recentRemovedTheme)
+  const token = useSelector((state) => state.auth.token) as string;
 
   const onUndoClick = useCallback(()=>{
     if(recentRemovedTheme){
@@ -123,18 +128,31 @@ export const PinnedThemesPanel = () => {
     }
   }, [recentRemovedTheme])
 
+  const [userTheme, setUserTheme] = useState<string>('')
+
+  const handleAddTheme = useCallback(() => {
+    async () => {
+      dispatch(pinTheme(userTheme))
+      setUserTheme('')
+      await postInteractionData(token, InteractionType.UserAddsTheme, {theme: userTheme}, {})
+    }
+  },[userTheme, token, setUserTheme])
+
   return (
     <PanelGroup
       iconComponent={ArchiveBoxIcon}
-      title={t("PinnedTheme.Title")}
+      title={t("Sidebar.Bookmark")}
       titleContainerClassName="!mb-3"
     >
       {pinnedThemes.length == 0 ? (
-        <div className="select-none bg-slate-100 rounded-lg p-2 py-1 text-sm text-gray-400">{t("PinnedTheme.NoPins")}</div>
+        <div className="select-none bg-slate-100 rounded-lg p-2 py-1 text-sm text-gray-400">
+          {t("Theme.NoTheme")}
+        </div>
       ) : (
         <div className='grid col-1 gap-y-2'>
           {pinnedThemes.map((theme, i) => <ThemeElement key={i} theme={theme} />)}
         </div>
+        
       )}
       {
         recentRemovedTheme != null ? <div className="text-right"><ConfigProvider theme={UndoButtonTheme}>
@@ -143,6 +161,19 @@ export const PinnedThemesPanel = () => {
             </Tooltip>
           </ConfigProvider></div> : null
       }
+      <Space direction="horizontal">
+        <Input
+          placeholder={t("Theme.AddMyself")}
+          value={userTheme}
+          onChange={(e) => setUserTheme(e.target.value)}
+        />
+        <Button 
+          style={{ width: 80 }}
+          onClick={handleAddTheme}
+        >
+          {t("Theme.Add")}
+        </Button>
+      </Space>
     </PanelGroup>
   );
 };

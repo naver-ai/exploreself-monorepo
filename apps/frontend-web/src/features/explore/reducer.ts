@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { InteractionBase, InteractionType, IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds } from '@core';
+import { InteractionBase, InteractionType, IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds, ThemeWithExpressions } from '@core';
 import { Http } from '../../net/http';
 import { AppState, AppThunk } from '../../redux/store';
 import createThreadItem from '../../api_call/createThreadItem';
@@ -27,6 +27,7 @@ export type IExploreState = {
   isCreatingNewThread: boolean;
   isCreatingSynthesis: boolean;
   isLoadingThemes:  boolean;
+  newThemes: ThemeWithExpressions[];
 
   userId?: string;
 
@@ -52,6 +53,7 @@ const initialState: IExploreState = {
   isCreatingNewThread: false,
   isCreatingSynthesis: false,
   isLoadingThemes: false,
+  newThemes: [],
 
   userId: undefined,
 
@@ -232,7 +234,12 @@ const exploreSlice = createSlice({
       }
       
     },
-
+    addNewThemes: (state, action: PayloadAction<Array<ThemeWithExpressions>>) => {
+      state.newThemes.push(...action.payload)
+    },
+    resetNewThemes: (state) => {
+      state.newThemes = []
+    },
     resetState: (state) => initialState,
   },
 });
@@ -354,7 +361,7 @@ export function submitUserProfile(
   };
 }
 
-export function populateNewThread(theme: string): AppThunk {
+export function populateNewThread(theme: string): AppThunk<Promise<any>> {
   return async (dispatch, getState) => {
     const state = getState();
 
@@ -378,8 +385,7 @@ export function populateNewThread(theme: string): AppThunk {
           } finally {
             dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: false}))
           }
-
-
+          return newThread._id
         }
       }catch( ex) {
         console.log(ex)
@@ -387,6 +393,7 @@ export function populateNewThread(theme: string): AppThunk {
         dispatch(exploreSlice.actions.setCreatingNewThreadFlag(false))
       }
     }
+    return null;
   }
 }
 
@@ -552,13 +559,16 @@ export function unpinTheme(theme: string, intentional: boolean): AppThunk {
   }
 }
 
-export function getNewThemes (): AppThunk {
+export function getNewThemes (opt: number): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if (state.auth.token) {
       try {
         dispatch(exploreSlice.actions.setLoadingThemesFlag(true))
-        await generateThemes(state.auth.token)
+        const prevThemes = state.explore.newThemes.map(theme => theme.main_theme)
+        const themes = await generateThemes(state.auth.token, prevThemes, opt)
+        dispatch(exploreSlice.actions.addNewThemes(themes))
+        await postInteractionData(state.auth.token, opt == 1? InteractionType.UserRequestsTheme: InteractionType.LLMElicitedTheme, {themes: themes.map((theme: any) => theme.main_theme)}, {})
       } catch (ex) {
         console.log(ex)
       } finally {
@@ -597,6 +607,7 @@ export const {
   setFloatingHeaderFlag,
   updateQuestion,
   setQuestionShowKeywordsFlag,
-  setLoadingThemesFlag
+  setLoadingThemesFlag,
+  resetNewThemes
 } = exploreSlice.actions;
 export default exploreSlice.reducer;

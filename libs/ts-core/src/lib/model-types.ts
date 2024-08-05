@@ -1,18 +1,15 @@
 export enum InteractionType {
-  LLMElicitedTheme = 'LLMElicitedTheme',
-  UserPinsTheme = 'UserPinsTheme',
-  UserUnpinsTheme = 'UserUnpinsTheme',
-  UserSelectsTheme = 'UserSelectsTheme',
-  UserAddsTheme = 'UserAddsTheme',
+  LLMElicitedTheme = 'LLMElicitedTheme', // O
+  UserRequestExpression = 'UserRequestExpression', // O
+  UserPinsTheme = 'UserPinsTheme', //  O 
+  UserUnpinsTheme = 'UserUnpinsTheme', // O
+  UserSelectsTheme = 'UserSelectsTheme', // O
+  UserAddsTheme = 'UserAddsTheme', // O
   UserRequestsTheme = 'UserRequestsTheme',
-  UserRequestsQuestion='UserRequestsQuestion',
-  UserSelectsQuestion = 'UserSelectsQuestion',
-  UpdateInResponse = 'UpdateInResponse',
-  LLMGeneratedKeyword = 'LLMGeneratedKeyword',
-  UserRequestsKeyword = 'UserRequestsKeyword',
-  UserSelectsKeyword = 'UserSelectsKeyword',
-  LLMGeneratedKeywordPrompt = 'LLMGeneratedKeywordPrompt',
-  UserSelectsKeywordPrompt = 'UserSelectsKeywordPrompt',
+  UserRequestsQuestion='UserRequestsQuestion', // O
+  UserSelectsQuestion = 'UserSelectsQuestion', // O
+  UpdateInResponse = 'UpdateInResponse', // O
+  LLMGeneratedKeyword = 'LLMGeneratedKeyword', // O
   UserRequestsSynthesize = 'UserRequestsSynthesize',
 }
 
@@ -86,4 +83,10 @@ export interface IUserWithThreadIds extends IUserBase {
 export interface IUserAllPopulated extends IUserBase {
   _id: string,
   threads: Array<IThreadAllPopulated>
+}
+
+export interface ThemeWithExpressions {
+  expressions: string[];
+  main_theme: string;
+  quote: string;
 }

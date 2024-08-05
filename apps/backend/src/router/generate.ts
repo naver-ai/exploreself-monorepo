@@ -78,9 +78,11 @@ const generateKeywordsHandler = async(req:RequestWithUser, res) => {
 
 const generateThemesHandler = async (req: RequestWithUser, res) => {
   const user = req.user;
-  const uid = user._id
+  const uid = user._id;
+  const prevThemes = req.body.prevThemes
+  const opt = req.body.opt
   try {
-    const themes = await generateThemes(uid)
+    const themes = await generateThemes(uid, prevThemes, opt)
     res.json({
       themes: themes
     })
@@ -124,7 +126,7 @@ const generatePromptHandler = async(req: RequestWithUser, res) => {
 router.post('/comment/:qid', signedInUserMiddleware, generateCommentHandler)
 router.get('/question/:tid', signedInUserMiddleware, generateQuestionsHandler)
 router.get('/keywords/:qid', signedInUserMiddleware, generateKeywordsHandler)
-router.get('/themes', signedInUserMiddleware, generateThemesHandler)
+router.post('/themes', signedInUserMiddleware, generateThemesHandler)
 router.put('/synthesis', signedInUserMiddleware, generateSynthesisHandler)
 router.post('/prompt/:qid', signedInUserMiddleware, generatePromptHandler)
 

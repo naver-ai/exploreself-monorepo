@@ -9,11 +9,13 @@ import { synthesizeProfilicInfo } from './synthesizeProfilicInfo';
 import {synthesizePrevThreads} from './synthesizeThread'
 import mongoose from 'mongoose';
 
-const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructions='') => {
+const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<string> = [], opt: number=1) => {
 
   const userData = await User.findById(uid).populate({path: 'threads'}) as IUserBase & {threads: IThreadORM[]}
   const themeList = userData.threads?.map(iteme => iteme.theme)
   const pinnedThemes = userData.pinnedThemes
+  console.log("PREV: ", prev_themes)
+  console.log("OPT: ", opt)
   
   const system_message =  nunjucks.renderString(`
   [Role] You are a therapeutic assistant specializing in generating socratic questions to facilitate self-reflection and personal growth in clients. 
@@ -30,11 +32,14 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty narrative, and the client's background.
   {% if threadLength > 0 %}
-    <previous_session_log>: Logs of sessions before the current session. Try not to overlap with the previously selected themes.
+    <previous_session_log>: Logs of sessions before the current session. DO NOT overlap with the previously selected themes.
   {% endif %}
   {% if pinnedLength > 0 %}
-    <already_pinned_themes>: The themes that the user has already selected. Try not to overlap with the previously selected themes.
+    <already_pinned_themes>: The themes that the user has already selected. DO NOT overlap with the previously selected themes.
   {% endif %}
+
+  [Output]
+  Generate a themes list of just ${opt}. However, if there is no additional theme to elicit from the input provided, or do not create, and provide an empty themes array of length 0.
 
   `,{threadLength: themeList.length, pinnedLength: pinnedThemes.length})
 
@@ -73,7 +78,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, additional_instructi
   const init_info = synthesizeProfilicInfo(userData.initialNarrative)
   const prev_session_log = await synthesizePrevThreads(uid)
 
-  const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log, pinned_themes: themeList.concat(pinnedThemes).join(', ')});
+  const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log, pinned_themes: themeList.concat(pinnedThemes).concat(prev_themes).join(', ')});
 
   return (result as any).themes;
 } 

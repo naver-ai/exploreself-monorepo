@@ -128,7 +128,7 @@ export const QuestionBox = (props: { qid: string }) => {
       </Flex>
        {<Row>
         <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-gray-100" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
-          <Switch className="mb-2 last:mb-0" checkedChildren="생각을 돕는 단어들" unCheckedChildren="생각을 돕는 단어들" defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/>
+          <Switch className="mb-2 last:mb-0" checkedChildren={t("Thread.Keywords.HelperKeywords")} unCheckedChildren={t("Thread.Keywords.HelperKeywords")} defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/>
           {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
             {keywords &&
               (keywords as string[]).map((keyword, i) => (
@@ -140,14 +140,14 @@ export const QuestionBox = (props: { qid: string }) => {
                 </div>
               ))}
             {
-              isCreatingKeywords == true? <LoadingIndicator title={("단어 생성 중")} className='ml-2'/> : <Button
+              isCreatingKeywords == true? <LoadingIndicator title={t("Thread.Keywords.Generating")} className='ml-2'/> : <Button
               type="text"
               className="px-2 py-1 text-black text-opacity-50"
               onClick={() => {
                 getNewKeywordsHandler(1);
               }}
             >
-              단어 더보기
+              {t("Thread.Keywords.More")}
             </Button>
             }
           </Flex>}
