@@ -163,7 +163,7 @@ export const QuestionBox = (props: { qid: string }) => {
             onBlur={handleBlur}
             onFocus={handleFocus}
             placeholder={t("Thread.Questions.AnswerPlaceholder")}
-            className='border-none outline-none p-2'
+            className='p-2'
             autoSize={{ minRows: 2, maxRows: 10 }}
           />
         </Col>
