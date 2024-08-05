@@ -103,6 +103,8 @@ export const ExplorerPage = () => {
   const userName = useSelector((state) => state.explore.name);
   const threadIds = useSelector(threadSelectors.selectIds);
 
+  const isThemeSelectorOpen = useSelector(state => state.explore.isThemeSelectorOpen)
+
   const floatingHeader = useSelector(selectFloatingHeader)
 
   const { ref, inView, entry } = useInView({
@@ -143,11 +145,15 @@ export const ExplorerPage = () => {
     return {right: scrollBarWidth}
   }, [scrollBarWidth])
 
+  const focusOnThemeButton = threadIds.length === 0 && isThemeSelectorOpen === false
+
   if (userName == null || userName.length == 0) {
     return <Navigate to="/app/profile" />;
   } else if (initialNarrative == null || initialNarrative.length == 0) {
     return <Navigate to="/app/narrative" />;
-  } else
+  } else {
+    const themeButtonIcon = <LightBulbIcon className={`w-5 h-5 ${focusOnThemeButton ? "animate-bounce-emphasized text-yellow-200":""}`} />
+    const themeButtonLabel = <span className={`${focusOnThemeButton ? 'animate-pulse font-semibold':''}`}>{threadIds.length == 0 ? t("Exploration.ShowMoreThemesInitial") : t("Exploration.ShowMoreThemes")}</span>
     return (
       <div className="h-screen flex justify-stretch">
         <div className="basis-1/6 min-w-[200px] lg:min-w-[300px] bg-white border-r-[1px] flex flex-col">
@@ -181,12 +187,10 @@ export const ExplorerPage = () => {
                 key={'new-theme-btn-bottom'}
                 ref={ref}
                 type="primary"
-                className="w-full border-none shadow-lg h-12 mt-4"
-                icon={<LightBulbIcon className="w-5 h-5" />}
+                className={`w-full border-none shadow-lg h-12 mt-4 ${focusOnThemeButton ? 'outline animate-focus-indicate':''}`}
+                icon={themeButtonIcon}
                 onClick={onThemeSelectionButtonClick}
-              >
-                <span>다른 주제 탐색하기</span>
-              </Button>
+              >{themeButtonLabel}</Button>
             </div>
 
             {inView === false ? (
@@ -195,11 +199,9 @@ export const ExplorerPage = () => {
                   <Button
                     type="primary"
                     className="w-full border-none h-12 mt-4 shadow-lg shadow-teal-900/50 animate-slidein-up"
-                    icon={<LightBulbIcon className="w-5 h-5" />}
+                    icon={themeButtonIcon}
                     onClick={onThemeSelectionButtonClick}
-                  >
-                    <span>다른 주제 탐색하기</span>
-                  </Button>
+                  >{themeButtonLabel}</Button>
                 </div>
               </div>
             ) : null}
@@ -207,4 +209,5 @@ export const ExplorerPage = () => {
         </div>
       </div>
     );
+  }
 };

@@ -30,6 +30,11 @@
     "InitialNarrative": "나의 고민 이야기"
   },
 
+  "Exploration": {
+    "ShowMoreThemes": "다른 주제 탐색하기",
+    "ShowMoreThemesInitial": "관련 주제 탐색하기"
+  },
+
   "Thread": {
     "Questions": {
       "Title": "생각해볼 질문들",
