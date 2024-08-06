@@ -173,16 +173,14 @@ export const PinnedThemesPanel = () => {
             </Tooltip>
           </ConfigProvider></div> : null
       }
-      <Space direction="horizontal" className='mt-2 border-t-[1px] pt-2'>
-        <Form onFinish={handleSubmit(handleAddTheme)}>
+      <Space direction="horizontal" className='flex mt-2 border-t-[1px] pt-2'>
+        <Form onFinish={handleSubmit(handleAddTheme)} className='flex items-center'>
           <FormItem control={control} name="theme">
             <Input
             placeholder={t("Theme.AddMyself")}
             />
           </FormItem>
-          <div className='flex justify-end'>
-          <Button disabled={!isValid} htmlType="submit">{t("Theme.Add")} </Button>
-          </div>
+          <Button disabled={!isValid} htmlType="submit" className='ml-2'>{t("Theme.Add")} </Button>
         </Form>
         
         
