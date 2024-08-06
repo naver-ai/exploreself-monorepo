@@ -16,7 +16,6 @@ import useScrollbarSize from 'react-scrollbar-size';
 import {AlignLeftOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
-import SynthesisBox from '../components/SynthesisBox';
 import classNames from 'classnames'
 
 const SidePanel = () => {
@@ -138,7 +137,7 @@ export const ExplorerPage = () => {
             ref={scrollViewRef}
           >
             <ThemeBox />
-            <SynthesisBox/>
+            {/* <SynthesisBox/> */}
             <div className="container px-4 md:px-8 py-4 md:py-8 relative">
               <Card ref={narrativeCardRef} title={t("Narrative.InitialNarrative")}>
                 <span className="text-gray-600 leading-7">
