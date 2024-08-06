@@ -1,5 +1,5 @@
 import { MouseEventHandler, useCallback, useMemo, useState} from 'react';
-import { Tooltip, ConfigProvider, Input, Space, Timeline, Button } from 'antd';
+import { Tooltip, ConfigProvider, Input, Space, Timeline, Button, Form } from 'antd';
 import { pinTheme, populateNewThread, setHoveringOutlineThreadId, setThemeSelectorOpen, threadSelectors, unpinTheme } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ListBulletIcon, ArchiveBoxIcon, ArrowTurnUpLeftIcon, MinusCircleIcon } from '@heroicons/react/20/solid';
@@ -11,6 +11,11 @@ import { useTranslation } from 'react-i18next';
 import { useHover } from '@uidotdev/usehooks';
 import colors from 'tailwindcss/colors';
 import { POPULATE_NEW_THREAD_OPTS } from './common';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { FormItem } from 'react-hook-form-antd';
+
 
 const OUTLINE_PANEL_CLASS =
   'select-none hover:bg-slate-100 hover:outline outline-slate-100 hover:outline-4 rounded-sm cursor-pointer';
@@ -118,19 +123,32 @@ export const PinnedThemesPanel = () => {
   const recentRemovedTheme = useSelector(state => state.explore.recentRemovedTheme)
   const token = useSelector((state) => state.auth.token) as string;
 
+  const schema = yup.object({
+    theme: yup.string().trim().min(1).required(),
+  })
+
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+    reset
+  } = useForm({
+    resolver: yupResolver(schema),
+    reValidateMode: 'onChange',
+  });
+
   const onUndoClick = useCallback(()=>{
     if(recentRemovedTheme){
       dispatch(pinTheme(recentRemovedTheme))
     }
   }, [recentRemovedTheme])
 
-  const [userTheme, setUserTheme] = useState<string>('')
 
-  const handleAddTheme = useCallback(async() => {
-    dispatch(pinTheme(userTheme))
-    await postInteractionData(token, InteractionType.UserAddsTheme, {theme: userTheme}, {})
-    setUserTheme('')
-  },[userTheme, token, setUserTheme])
+  const handleAddTheme = useCallback(async(values: {theme: string}) => {
+    dispatch(pinTheme(values.theme))
+    reset();
+    await postInteractionData(token, InteractionType.UserAddsTheme, {theme: values.theme}, {})
+  },[token])
 
   return (
     <PanelGroup
@@ -156,17 +174,18 @@ export const PinnedThemesPanel = () => {
           </ConfigProvider></div> : null
       }
       <Space direction="horizontal" className='mt-2 border-t-[1px] pt-2'>
-        <Input
-          placeholder={t("Theme.AddMyself")}
-          value={userTheme}
-          onChange={(e) => setUserTheme(e.target.value)}
-        />
-        <Button 
-          style={{ width: 80 }}
-          onClick={handleAddTheme}
-        >
-          {t("Theme.Add")}
-        </Button>
+        <Form onFinish={handleSubmit(handleAddTheme)}>
+          <FormItem control={control} name="theme">
+            <Input
+            placeholder={t("Theme.AddMyself")}
+            />
+          </FormItem>
+          <div className='flex justify-end'>
+          <Button disabled={!isValid} htmlType="submit">{t("Theme.Add")} </Button>
+          </div>
+        </Form>
+        
+        
       </Space>
     </PanelGroup>
   );
