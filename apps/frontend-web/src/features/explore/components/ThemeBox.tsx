@@ -113,7 +113,7 @@ const ThemeBox = () => {
                   <Col key={index} className="border-[1px] border-slate-300 w-full rounded-lg p-3">
                     <Row
                       key={index*10}
-                      className="flex items-center space-x-2 bg-slate-100 p-1 rounded-md justify-between"
+                      className="flex items-center space-x-2 transition-colors bg-slate-100 hover:bg-slate-300 p-1 rounded-md justify-between"
                       onClick={() => onChangeSelect(themeItem.main_theme)}
                       justify="space-between"
                     >
