@@ -65,7 +65,7 @@ app.use("/api/v1", apiRouter)
 
 const port = process.env.BACKEND_PORT || 3000;
 const server = app.listen(port, () => {
-  console.log(`Listening at ${process.env.BACKEND_HOST}:${port}`);
+  console.log(`Listening at ${process.env.BACKEND_HOSTNAME}:${port}`);
 });
 
 server.on('error', console.error);
