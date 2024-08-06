@@ -21,10 +21,12 @@ import SynthesisBox from '../components/SynthesisBox';
 const SidePanel = () => {
 
   const dispatch = useDispatch();
+  const isSynthesisBoxOpen = useSelector(state => state.explore.isSynthesisBoxOpen)
+  const isThemeSelectorOpen = useSelector(state => state.explore.isThemeSelectorOpen)
 
   const showSynthesis = useCallback(() => {
-    dispatch(setSynthesisBoxOpen(true))
-  },[])
+    dispatch(setSynthesisBoxOpen(!isSynthesisBoxOpen))
+  },[isSynthesisBoxOpen])
 
   const [t] = useTranslation()
 
@@ -42,7 +44,7 @@ const SidePanel = () => {
         <PinnedThemesPanel />
       </div>
       <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
-        <Button className='w-full' onClick={showSynthesis} icon={<AlignLeftOutlined/>}>AI 요약 보기</Button>
+        <Button disabled={isThemeSelectorOpen} className='w-full' onClick={showSynthesis} icon={<AlignLeftOutlined/>}>{t("Synthesis.Open")}</Button>
       </div>
     </>
   );

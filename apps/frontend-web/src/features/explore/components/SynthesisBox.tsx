@@ -10,6 +10,8 @@ import { InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { getNewSynthesis} from '../reducer';
 import { useTranslation } from 'react-i18next';
+import { CloseOutlined } from '@ant-design/icons';
+
 
 const SynthesisBox = () => {
 
@@ -51,10 +53,18 @@ const SynthesisBox = () => {
       extra={
         <Space>
           <Button disabled={isCreatingSynthesis} onClick={() => generateSynthesis()}>{t("Synthesis.More")}</Button>
+          <Button
+                type="text"
+                icon={<CloseOutlined />}
+                onClick={onCloseSynthesis}
+              />
         </Space>
       }
     >
       <div>
+      <div className="w-full flex justify-end">
+              
+            </div>
       {isCreatingSynthesis? <LoadingIndicator title={t("Synthesis.Generating")}/>: null}
           {[...synthesisList].reverse().map((item, i) => {
           return (
