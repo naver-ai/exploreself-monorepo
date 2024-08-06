@@ -23,8 +23,8 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
   [Task] 
   Your specific task is to identify new themes that the client can navigate on. You can think of it as a list of topic of the follow-up question of the user's previous responses.
   For each main_theme, also provide the referred part/quote of user input of the previous session "in Korean". 
-  Try not do 'inference' in generating cards, and go ahead by assuming, but stick to the user's expression. Being synced with user's language/expression is important. 
-  Avoid interpretation and stick to the language and expressions that the user used in their log for eliciting the main_theme.  
+  Try not do interpret in generating cards by going ahead by assuming, but stick to the user's expression. Being synced with user's language/expression is important. 
+  Try at most to adopt language and expressions that the user used in their log for eliciting the main_theme.  
   If therapeutically important asepcts(e.g., emotion, new character, etc), do include them in the theme.
   For each elicited main_theme (sticking to user's expression), come up with diverse different expressions of the main_theme. It could be altered in diverse ways expression-wise.  
   If there is a good metaphoric expression, or in a therapeutically meaningful way, feel free to fetch some metaphoric expressions, too.
@@ -62,9 +62,9 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
 
   const edgeSchema = z.object({
     themes: z.array(z.object({
-      main_theme: z.string().describe("Each theme from the user's initial narrative and previous log. (in Korean). This main theme should directly borrow expression/language of the user."),
+      main_theme: z.string().describe("Each theme from the user's initial narrative and previous log. (in Korean). Try most to adopt expression/language of the user."),
       expressions: z.array(z.string()).describe("An array of diverse different expressions of the main_theme (in Korean)."),
-      quote: z.string().describe("Most relevant part of the user's narrative to the theme")
+      quote: z.string().describe("Most relevant part of the user's log to the theme")
     }))
   })
 
