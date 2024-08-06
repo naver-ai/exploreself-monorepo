@@ -80,7 +80,7 @@ if(fs.existsSync(frontend_dist_path)){
 
 
 const port = process.env.BACKEND_PORT != null ? Number.parseInt(process.env.BACKEND_PORT) : 3000;
-const server = app.listen(port, process.env.BACKEND_HOSTNAME, () => {
+const server = app.listen(port, "0.0.0.0", () => {
   console.log(`Listening at ${process.env.BACKEND_HOSTNAME}:${port}`);
 });
 
