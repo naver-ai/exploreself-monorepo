@@ -17,6 +17,7 @@ import {AlignLeftOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import SynthesisBox from '../components/SynthesisBox';
+import classNames from 'classnames'
 
 const SidePanel = () => {
 
@@ -39,7 +40,15 @@ const SidePanel = () => {
         <span className="text-sm font-black">MeSense</span>
         <UserAvatar buttonClassName="" />
       </div>
-      <div className="flex-1 overflow-y-auto bg-gray-400/2">
+      <div className={classNames(
+        'flex-1 overflow-y-auto bg-gray-400/2',
+        {
+          'pointer-events-none opacity-50': isSynthesisBoxOpen || isThemeSelectorOpen,
+        },
+        {
+          'opacity-100': !(isSynthesisBoxOpen || isThemeSelectorOpen),
+        }
+      )}>
         <OutlinePanel />
         <PinnedThemesPanel />
       </div>
