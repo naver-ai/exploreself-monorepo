@@ -41,6 +41,13 @@
       "options": {
         "command": "node apps/backend/admin.mjs"
       }
+    },
+    "pm2": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pm2 restart ./ecosystem.config.js"
+      },
+      "dependsOn": ["prebuild-frontend"]
     }
   }
 }
