@@ -68,7 +68,7 @@ const SynthesisBox = () => {
       {isCreatingSynthesis? <LoadingIndicator title={t("Synthesis.Generating")}/>: null}
           {[...synthesisList].reverse().map((item, i) => {
           return (
-            <div className='flex flex-row border justify-between mx-10 px-10 py-7 my-5 rounded-lg shadow-md'>
+            <div className='flex flex-row border justify-between mx-10 px-10 py-7 my-5 rounded-lg shadow-md transition-colors hover:bg-slate-100'>
               {item}
               {/* <OutlineBookmarkIcon className="w-8 h-8"/> */}
             </div>
