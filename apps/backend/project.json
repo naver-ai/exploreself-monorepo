@@ -6,6 +6,14 @@
   "type": "module",
   "tags": [],
   "targets": {
+    "prebuild-frontend": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx build frontend-web --configuration=production"
+        ]
+      }
+    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
@@ -19,7 +27,8 @@
         "production": {
           "buildTarget": "backend:build:production"
         }
-      }
+      },
+      "dependsOn": ["prebuild-frontend"]
     },
     "setup": {
       "executor": "nx:run-commands",

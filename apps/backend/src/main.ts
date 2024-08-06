@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import * as path from 'path';
+import * as fs from 'fs-extra'
 import * as bodyParser from 'body-parser';
 import userRouter from './router/user'
 import authRouter from './router/auth'
@@ -63,9 +64,24 @@ apiRouter.get("/ping", (req, res) => {
 
 app.use("/api/v1", apiRouter)
 
-const port = process.env.BACKEND_PORT || 3000;
-const server = app.listen(port, () => {
-  console.log(`Listening at ${process.env.BACKEND_HOST}:${port}`);
+const frontend_dist_path = path.join(__dirname, '../frontend-web')
+console.log(frontend_dist_path)
+if(fs.existsSync(frontend_dist_path)){
+  console.log("Serve frontend file on backend.")
+  const frontend_dist_index_path = path.join(frontend_dist_path, 'index.html')
+  app.use(express.static(frontend_dist_path))
+  app.get("*", (req, res) => {
+    res.sendFile(frontend_dist_index_path)
+  })
+}else{
+  console.log("No distribution files for frontend was found. If you want to serve it on the backend, please run 'nx build frontend-web' in advance.")
+}
+
+
+
+const port = process.env.BACKEND_PORT != null ? Number.parseInt(process.env.BACKEND_PORT) : 3000;
+const server = app.listen(port, process.env.BACKEND_HOSTNAME, () => {
+  console.log(`Listening at ${process.env.BACKEND_HOSTNAME}:${port}`);
 });
 
 server.on('error', console.error);
