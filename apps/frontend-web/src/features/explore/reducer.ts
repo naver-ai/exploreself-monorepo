@@ -8,7 +8,7 @@ import generateQuestions from '../../api_call/generateQuestions';
 import generateComment from '../../api_call/generateComment';
 import generateKeywords from '../../api_call/generateKeywords';
 import { postInteractionData } from '../../api_call/postInteractionData';
-import generateSynthesis from '../../api_call/generateSynthesis';
+import generateSynthesisMappings from '../../api_call/generateSynthesisMapping';
 import generateThemes from '../../api_call/generateThemes';
 import exp from 'constants';
 
@@ -230,7 +230,7 @@ const exploreSlice = createSlice({
       state.questionShowKeywordsFlags[action.payload.qid] = action.payload.flag
     },
 
-    addNewSynthesis: (state, action: PayloadAction<string>) => {
+    addNewSynthesis: (state, action: PayloadAction<string[]>) => {
       state.synthesis.push(...action.payload)
     },
 
@@ -506,9 +506,9 @@ export function getNewSynthesis(): AppThunk {
     if(state.auth.token){
       try{ 
         dispatch(exploreSlice.actions.setCreatingSynthesisFlag(true))
-        const synthesis = await generateSynthesis(state.auth.token)
-        const comments = synthesis.map((item: any) => item.comment)
-        dispatch(exploreSlice.actions.addNewSynthesis(comments))
+        const synthesisMappings = await generateSynthesisMappings(state.auth.token)
+        const synthesis = synthesisMappings.map((item: any) => item.sentence)
+        dispatch(exploreSlice.actions.addNewSynthesis(synthesis))
       }catch(ex){
         console.log(ex)
       }finally{

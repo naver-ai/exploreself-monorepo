@@ -9,6 +9,8 @@ import generateQuestions from '../utils/generateQuestions';
 import { InteractionType } from '@core';
 import generateSynthesis from '../utils/generateSynthesis';
 import generatePrompt from '../utils/generatePrompt';
+import generateFinalSynthesis from '../utils/generateSynthesis';
+import mapSynthesisToQIDs from '../utils/mapSynthesisWithQid';
 
 const router = express.Router()
 
@@ -93,20 +95,6 @@ const generateThemesHandler = async (req: RequestWithUser, res) => {
   }
 }
 
-const generateSynthesisHandler = async(req: RequestWithUser, res) => {
-  const user = req.user;
-  try {
-    const comments = await generateSynthesis(user)
-    const userUpdated = await User.findByIdAndUpdate(user._id, {$push: {synthesis: {$each: comments.map(comment => comment.comment)}}})
-    // TODO: Add log interaction data
-    res.json({comments: comments})
-  } catch (err) {
-    res.json({
-      err: err.message
-    })
-  }
-}
-
 const generatePromptHandler = async(req: RequestWithUser, res) => {
   const user = req.user;
   const {qid, keyword, curr_response, opt} = req.body
@@ -123,12 +111,42 @@ const generatePromptHandler = async(req: RequestWithUser, res) => {
   }
 }
 
+const generateSynthesisHandler = async(req: RequestWithUser, res) => {
+  const user = req.user;
+  try {
+    const synthesisItems = await generateFinalSynthesis(user)
+    console.log("ITEMS: ", synthesisItems)
+    const userUpdated = await User.findByIdAndUpdate(user._id, {$push: {synthesis: synthesisItems}})
+    // TODO: Add log interaction data
+    res.json({synthesis: synthesisItems})
+  } catch (err) {
+    res.json({
+      err: err.message
+    })
+  }
+}
+
+const generateAndMapSynthesis = async(req: RequestWithUser, res) => {
+  const user = req.user;
+  try {
+    const synthesis = await generateFinalSynthesis(user)
+    const mappings = await mapSynthesisToQIDs(user, synthesis);
+    const userUpdated = await User.findByIdAndUpdate(user._id, {$push: {synthesis: synthesis}})
+    // TODO: Add log interaction data
+    res.json({synthesisMappings: mappings})
+  } catch (err) {
+    res.json({
+      err: err.message
+    })
+  }
+}
 router.post('/comment/:qid', signedInUserMiddleware, generateCommentHandler)
 router.get('/question/:tid', signedInUserMiddleware, generateQuestionsHandler)
 router.get('/keywords/:qid', signedInUserMiddleware, generateKeywordsHandler)
 router.post('/themes', signedInUserMiddleware, generateThemesHandler)
 router.put('/synthesis', signedInUserMiddleware, generateSynthesisHandler)
 router.post('/prompt/:qid', signedInUserMiddleware, generatePromptHandler)
+router.put('/synthesis_mappings', signedInUserMiddleware, generateAndMapSynthesis)
 
 
 export default router;

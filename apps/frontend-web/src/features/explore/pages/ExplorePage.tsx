@@ -2,20 +2,18 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { OutlinePanel, PinnedThemesPanel } from '../components/sidebar-views';
 import ThemeBox from '../components/ThemeBox';
 import { ThreadBox } from '../components/ThreadBox';
-import { Card,  Button, Drawer, Space, Carousel, Input } from 'antd';
+import { Card,  Button, Input } from 'antd';
 const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
-import { getNewSynthesis, selectFloatingHeader, setSynthesisBoxOpen, setThemeSelectorOpen, threadSelectors } from '../reducer';
+import {selectFloatingHeader, setSynthesisBoxOpen, setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon, BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/24/solid';
-import {BookmarkIcon as OutlineBookmarkIcon} from '@heroicons/react/24/outline'
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
 import useScrollbarSize from 'react-scrollbar-size';
 import {AlignLeftOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
-import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import classNames from 'classnames'
 
 const SidePanel = () => {
