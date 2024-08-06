@@ -42,6 +42,7 @@ export type IExploreState = {
   questionShowKeywordsFlags: {[key: string] :  boolean | undefined}
 
   isThemeSelectorOpen: boolean;
+  isSynthesisBoxOpen: boolean;
   reservedFloatingHeaders: {[key: string]: boolean}
 
   hoveringOutlineThreadId?: string | undefined
@@ -81,6 +82,7 @@ const initialState: IExploreState = {
   hoveringOutlineThreadId: undefined,
 
   isThemeSelectorOpen: false,
+  isSynthesisBoxOpen: false,
   reservedFloatingHeaders: {}
 };
 
@@ -116,7 +118,9 @@ const exploreSlice = createSlice({
     setThemeSelectorOpen: (state, action: PayloadAction<boolean>) => {
       state.isThemeSelectorOpen = action.payload;
     },
-
+    setSynthesisBoxOpen: (state, action: PayloadAction<boolean>) => {
+      state.isSynthesisBoxOpen = action.payload;
+    },
     setHoveringOutlineThreadId: (state, action: PayloadAction<string | undefined>) => {
       state.hoveringOutlineThreadId = action.payload
     },
@@ -624,6 +628,7 @@ export const {
   updateUserInfo,
   resetState,
   setThemeSelectorOpen,
+  setSynthesisBoxOpen,
   setFloatingHeaderFlag,
   updateQuestion,
   setQuestionShowKeywordsFlag,

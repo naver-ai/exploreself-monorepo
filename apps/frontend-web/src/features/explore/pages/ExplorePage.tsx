@@ -7,7 +7,7 @@ const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
-import { getNewSynthesis, selectFloatingHeader, setThemeSelectorOpen, threadSelectors } from '../reducer';
+import { getNewSynthesis, selectFloatingHeader, setSynthesisBoxOpen, setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon, BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/24/solid';
 import {BookmarkIcon as OutlineBookmarkIcon} from '@heroicons/react/24/outline'
 import { useInView } from 'react-intersection-observer';
@@ -16,33 +16,15 @@ import useScrollbarSize from 'react-scrollbar-size';
 import {AlignLeftOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
+import SynthesisBox from '../components/SynthesisBox';
 
 const SidePanel = () => {
 
-  const [isSynthViewOpen, setSynthViewOpen] = useState(false)
-  const synthesisList: string[] = useSelector(state => state.explore.synthesis)
-  const isCreatingSynthesis = useSelector(state => state.explore.isCreatingSynthesis)
-
   const dispatch = useDispatch();
 
-  const showDrawer = () => {
-    setSynthViewOpen(true);
-  };
-  const onClose = () => {
-    setSynthViewOpen(false);
-  };
-
-  const generateSynthesis = useCallback(async () => {
-    dispatch(getNewSynthesis())
+  const showSynthesis = useCallback(() => {
+    dispatch(setSynthesisBoxOpen(true))
   },[])
-
-  useEffect(() => {
-    if(isSynthViewOpen) {
-      if(!synthesisList || synthesisList.length == 0) {
-        generateSynthesis()
-      }
-    }
-  },[isSynthViewOpen])
 
   const [t] = useTranslation()
 
@@ -58,32 +40,9 @@ const SidePanel = () => {
       <div className="flex-1 overflow-y-auto bg-gray-400/2">
         <OutlinePanel />
         <PinnedThemesPanel />
-        
-        <Drawer
-          onClose={onClose}
-          open={isSynthViewOpen}
-          placement="bottom"
-          title={t("Synthesis.Title")}
-          // closeIcon={false}
-          extra={
-            <Space>
-              <Button disabled={isCreatingSynthesis} onClick={() => generateSynthesis()}>{t("Synthesis.More")}</Button>
-            </Space>
-          }
-        >
-          {isCreatingSynthesis? <LoadingIndicator title={t("Synthesis.Generating")}/>: null}
-          {[...synthesisList].reverse().map((item, i) => {
-          return (
-            <div className='flex flex-row border justify-between mx-10 px-10 py-7 my-5 rounded-lg shadow-md'>
-              {item}
-              {/* <OutlineBookmarkIcon className="w-8 h-8"/> */}
-            </div>
-          )
-        })}          
-        </Drawer>
       </div>
       <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
-        <Button className='w-full' onClick={showDrawer} icon={<AlignLeftOutlined/>}>AI 요약 보기</Button>
+        <Button className='w-full' onClick={showSynthesis} icon={<AlignLeftOutlined/>}>AI 요약 보기</Button>
       </div>
     </>
   );
@@ -168,6 +127,7 @@ export const ExplorerPage = () => {
             ref={scrollViewRef}
           >
             <ThemeBox />
+            <SynthesisBox/>
             <div className="container px-4 md:px-8 py-4 md:py-8 relative">
               <Card ref={narrativeCardRef} title={t("Narrative.InitialNarrative")}>
                 <span className="text-gray-600 leading-7">
