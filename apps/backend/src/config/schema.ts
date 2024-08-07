@@ -110,8 +110,18 @@ const InteractionSchema = new Schema<InteractionORM>({
 });
 
 InteractionSchema.set('timestamps', true);
+
+export const AdminUserSchema = new Schema({
+  passcode: {type: String, required: true, unique: true, default: () => nanoid.customAlphabet('1234567890', 6)}
+})
+
+
+export interface IAdminUserORM extends Document {
+  passcode: string
+}
  
 export const QASet = mongoose.model<IQASetORM>('QASet', QASetSchema)
 export const ThreadItem = mongoose.model<IThreadORM>('ThreadItem', ThreadItemSchema)
 export const User = mongoose.model<IUserORM>('User', UserSchema)
 export const Interaction = mongoose.model<InteractionORM>('Interaction', InteractionSchema);
+export const AdminUser = mongoose.model<IAdminUserORM>('AdminUser', AdminUserSchema)

@@ -91,3 +91,12 @@ export interface ThemeWithExpressions {
   main_theme: string;
   quote: string;
 }
+
+export interface IAdminUser {
+  passcode: string;
+}
+
+export interface IAdminUserWithId extends IAdminUser {
+  _id: string,
+  passcode: string
+}

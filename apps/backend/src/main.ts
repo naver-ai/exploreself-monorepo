@@ -10,10 +10,11 @@ import threadRouter from './router/thread'
 import themeRouter from './router/theme'
 import generateRouter from './router/generate'
 import interactionRouter from './router/interaction'
+import adminAuthRouter from './router/admin/auth'
 
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
-import { User } from './config/schema';
+import { AdminUser, User } from './config/schema';
 
 process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production' ) ? 'production' : 'development';
 if (process.env.NODE_ENV == 'production') {
@@ -44,6 +45,15 @@ mongoose.connect(process.env.MONGODB_URL+process.env.MONGODB_DBNAME)
       }).save()
       console.log("Created new user: ", newUser.toJSON())
     }
+
+    const testAdminUser = await AdminUser.findOne({passcode: "12345"})
+    if(!testAdminUser) {
+      console.log("Create admin")
+      const newAdminUser = await new AdminUser({
+        passcode: "12345"
+      }).save()
+      console.log("Created admin: ", newAdminUser.toJSON())
+    }
   })
   .catch(error => console.log(error))
 app.use(express.json());
@@ -57,6 +67,7 @@ apiRouter.use("/threads", threadRouter)
 apiRouter.use("/themes", themeRouter)
 apiRouter.use("/generate", generateRouter)
 apiRouter.use("/interaction", interactionRouter)
+apiRouter.use("/admin/auth", adminAuthRouter)
 
 apiRouter.get("/ping", (req, res) => {
   res.send("Server responds.")
