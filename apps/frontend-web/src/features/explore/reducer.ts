@@ -65,6 +65,7 @@ const initialState: IExploreState = {
   name: undefined,
   isKorean: true,
   initialNarrative: undefined,
+  debriefing: undefined,
   pinnedThemes: [],
   recentRemovedTheme: undefined,
 
@@ -376,6 +377,39 @@ export function submitUserProfile(
         console.log('Err in setting profile: ', err);
       } finally {
         dispatch(exploreSlice.actions.setLoadingUserInfoFlag(false));
+      }
+    }
+  };
+}
+
+export function submitDebriefing(
+  debriefing: string,
+  onSuccess?: () => void
+): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState();
+    if (state.auth.token) {
+      try {
+        const response = await Http.axios.post(
+          `/user/debriefing`,
+          {
+            debriefing: debriefing,
+          },
+          {
+            headers: Http.makeSignedInHeader(state.auth.token),
+          }
+        );
+
+        dispatch(
+          exploreSlice.actions.updateUserInfo({
+            debriefing: response.data.debriefing,
+          })
+        );
+
+        onSuccess?.();
+      } catch (err) {
+        console.log('Err in setting debriefing: ', err);
+      } finally {
       }
     }
   };

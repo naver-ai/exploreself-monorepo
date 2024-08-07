@@ -116,6 +116,7 @@ export const QuestionBox = (props: { qid: string }) => {
 
   useEffect(() => {
     if(question.aiGuides.length == 0) {
+      console.log("LEN: ", question.aiGuides)
       getNewCommentHandler()
     } 
   },[question])

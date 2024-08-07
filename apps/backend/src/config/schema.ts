@@ -87,7 +87,8 @@ export const UserSchema = new Schema({
     synthesis: {type: [String], required: true, default: []},
     pinnedThemes: {type: [String], required: true, default: []},
     createdAt: {type: Date, default: Date.now},
-    updatedAt: {type: Date}
+    updatedAt: {type: Date},
+    debriefing: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter}
  });
  
 UserSchema.set('timestamps', true);

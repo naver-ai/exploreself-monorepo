@@ -68,11 +68,12 @@ export interface IUserBase {
   passcode: string;
   name?: string | undefined;
   isKorean: boolean;
-  initialNarrative: string | undefined
+  initialNarrative: string | undefined;
   pinnedThemes: Array<string>
   synthesis: string[];
   createdAt: Date;
   updatedAt: Date;
+  debriefing: string | undefined;
 }
 
 export interface IUserWithThreadIds extends IUserBase {

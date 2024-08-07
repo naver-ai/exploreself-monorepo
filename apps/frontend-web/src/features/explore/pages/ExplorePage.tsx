@@ -5,7 +5,7 @@ import { ThreadBox } from '../components/ThreadBox';
 import { Card,  Button, Input } from 'antd';
 const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
 import {selectFloatingHeader, setSynthesisBoxOpen, setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon, BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/24/solid';
@@ -19,14 +19,13 @@ import classNames from 'classnames'
 const SidePanel = () => {
 
   const dispatch = useDispatch();
-  const isSynthesisBoxOpen = useSelector(state => state.explore.isSynthesisBoxOpen)
   const isThemeSelectorOpen = useSelector(state => state.explore.isThemeSelectorOpen)
-
-  const showSynthesis = useCallback(() => {
-    dispatch(setSynthesisBoxOpen(!isSynthesisBoxOpen))
-  },[isSynthesisBoxOpen])
-
   const [t] = useTranslation()
+  const navigate = useNavigate();
+
+  const handleEndSession = useCallback(() => {
+    navigate('/app/synthesis')
+  },[])
 
   return (
     <>
@@ -40,17 +39,17 @@ const SidePanel = () => {
       <div className={classNames(
         'flex-1 overflow-y-auto bg-gray-400/2',
         {
-          'pointer-events-none opacity-50': isSynthesisBoxOpen || isThemeSelectorOpen,
+          'pointer-events-none opacity-50': isThemeSelectorOpen,
         },
         {
-          'opacity-100': !(isSynthesisBoxOpen || isThemeSelectorOpen),
+          'opacity-100': !isThemeSelectorOpen,
         }
       )}>
         <OutlinePanel />
         <PinnedThemesPanel />
       </div>
       <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
-        <Button disabled={isThemeSelectorOpen} className='w-full' onClick={showSynthesis} icon={<AlignLeftOutlined/>}>{t("Synthesis.Open")}</Button>
+        <Button disabled={isThemeSelectorOpen} className='w-full' onClick={handleEndSession}>{t("Labels.WrapUp")}</Button>
       </div>
     </>
   );

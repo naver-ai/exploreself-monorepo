@@ -4,7 +4,8 @@ export type FocusRequestEventArgs =
   | {
       type: 'narrative';
     }
-  | { type: 'thread'; id: string };
+  | { type: 'thread'; id: string }
+  | { type: 'question'; id: string}
 
 export class ShortcutManager {
   private static _instance: ShortcutManager | undefined = undefined;

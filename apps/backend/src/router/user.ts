@@ -37,6 +37,16 @@ router.post('/profile', signedInUserMiddleware, body("name").exists().trim(), as
   })
 })
 
+router.post('/debriefing', signedInUserMiddleware, body("debriefing").exists().trim(), async (req: RequestWithUser, res) => {
+  const debriefing = req.body.debriefing;
+  const uid = req.user._id
+  const updatedUser = await User.findByIdAndUpdate(uid, {$set: {debriefing: debriefing}}, {new: true})
+  res.json({
+    debriefing: updatedUser.debriefing
+  })
+})
+
+
 router.delete("/reset", signedInUserMiddleware, async (req: RequestWithUser, res) => {
   
 
