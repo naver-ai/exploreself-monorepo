@@ -11,6 +11,7 @@ import themeRouter from './router/theme'
 import generateRouter from './router/generate'
 import interactionRouter from './router/interaction'
 import adminAuthRouter from './router/admin/auth'
+import adminManageRouter from './router/admin/manage'
 
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
@@ -68,6 +69,8 @@ apiRouter.use("/themes", themeRouter)
 apiRouter.use("/generate", generateRouter)
 apiRouter.use("/interaction", interactionRouter)
 apiRouter.use("/admin/auth", adminAuthRouter)
+apiRouter.use("/admin/manage", adminManageRouter)
+
 
 apiRouter.get("/ping", (req, res) => {
   res.send("Server responds.")

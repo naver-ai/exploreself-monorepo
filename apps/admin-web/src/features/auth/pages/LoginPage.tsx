@@ -27,7 +27,7 @@ export const LoginPage = () => {
     (values: { passcode: string }) => {
       dispatch(
         loginAdminThunk(values.passcode, () => {
-          navigate('/manage');
+          navigate('/users');
         })
       );
     },

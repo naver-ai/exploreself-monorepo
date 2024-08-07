@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 import { AdminUser, IAdminUserORM } from '../../config/schema'
 
 
-export type RequestWithUser = JWTRequest & { adminUser: IAdminUserORM }
+export type RequestWithAdminUser = JWTRequest & { adminUser: IAdminUserORM }
 
 export const signedInAdminUserMiddleware = [expressjwt({
         secret: process.env.AUTH_SECRET,

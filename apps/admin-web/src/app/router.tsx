@@ -8,7 +8,8 @@ import {
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { useVerifyToken } from '../features/auth/hooks';
 import { useEffect } from 'react';
-import { Main } from '../features/manage/pages/Main';
+import { UserListPage } from '../features/manage/pages/UserListPage';
+import UserDetailPage from '../features/manage/pages/UserDetailPage';
 
 const LoggedInRoute = () => {
   const { verify, isSignedIn } = useVerifyToken();
@@ -35,12 +36,15 @@ export const MainRouter = () => {
     <BrowserRouter basename="/admin">
       <Routes>
       <Route path="login" element={<LoginPage/>}/>
-        <Route index element={<Navigate to={'manage'} />} />
-        <Route path="manage">
-          <Route element={<LoggedInRoute/>}>
-            <Route index element={<Main/>} />
+      <Route element={<LoggedInRoute/>}>
+      <Route index element={<Navigate to={'users'} />} />
+        <Route path="users">
+          <Route index element={<UserListPage/>} />
+          <Route path=":id" element={<UserDetailPage/>}>
+            
           </Route>
         </Route>
+      </Route>
       </Routes>
     </BrowserRouter>
   );

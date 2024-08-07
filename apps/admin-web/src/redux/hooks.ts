@@ -3,7 +3,7 @@ import {
   useDispatch as stockUseDispatch,
   useSelector as stockUseSelector,
 } from 'react-redux';
-import { AppDispatch, AppState } from './store';
+import { AdminDispatch, AdminReduxState } from './store';
 
-export const useDispatch = () => stockUseDispatch<AppDispatch>();
-export const useSelector: TypedUseSelectorHook<AppState> = stockUseSelector;
+export const useDispatch = () => stockUseDispatch<AdminDispatch>();
+export const useSelector: TypedUseSelectorHook<AdminReduxState> = stockUseSelector;

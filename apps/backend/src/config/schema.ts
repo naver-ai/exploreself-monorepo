@@ -115,7 +115,6 @@ export const AdminUserSchema = new Schema({
   passcode: {type: String, required: true, unique: true, default: () => nanoid.customAlphabet('1234567890', 6)}
 })
 
-
 export interface IAdminUserORM extends Document {
   passcode: string
 }
