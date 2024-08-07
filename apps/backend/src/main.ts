@@ -12,10 +12,10 @@ import generateRouter from './router/generate'
 import interactionRouter from './router/interaction'
 import adminAuthRouter from './router/admin/auth'
 import adminManageRouter from './router/admin/manage'
-
+import * as morgan from 'morgan'
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
-import { AdminUser, User } from './config/schema';
+import { User } from './config/schema';
 
 process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production' ) ? 'production' : 'development';
 if (process.env.NODE_ENV == 'production') {
@@ -31,6 +31,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.options("*", cors());
 
+app.use(morgan("combined"))
+
 mongoose.connect(process.env.MONGODB_URL+process.env.MONGODB_DBNAME)
   .then(async () => {
     console.log('MongoDB connected!')
@@ -45,15 +47,6 @@ mongoose.connect(process.env.MONGODB_URL+process.env.MONGODB_DBNAME)
         isKorean: true
       }).save()
       console.log("Created new user: ", newUser.toJSON())
-    }
-
-    const testAdminUser = await AdminUser.findOne({passcode: "12345"})
-    if(!testAdminUser) {
-      console.log("Create admin")
-      const newAdminUser = await new AdminUser({
-        passcode: "12345"
-      }).save()
-      console.log("Created admin: ", newAdminUser.toJSON())
     }
   })
   .catch(error => console.log(error))

@@ -1,33 +1,36 @@
 import express, { Request, Response } from "express"
-import { AdminUser, IAdminUserORM, IUserORM, User } from "../../config/schema"
 import { body, validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 import { signedInAdminUserMiddleware } from "./middleware"
+import bcrypt from 'bcrypt'
+import path from "path"
+import dotenv from 'dotenv'
 
 const router = express.Router()
 
-const createPasscodeValidation = () => body("passcode").trim().notEmpty().isAlphanumeric()
+const createPasswordValidation = () => body("password").trim().notEmpty()
 
-function makeUserToken(adminUser: IAdminUserORM): string {
+function makeUserToken(): string {
     return jwt.sign({
-        sub: adminUser._id.toString(),
+        sub: process.env["ADMIN_ID"],
         iat: Date.now()/1000,
         exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365) // 1 year expiration
     }, process.env.AUTH_SECRET, {algorithm: 'HS256'})
 }
 
-router.post('/login', createPasscodeValidation(), async (req: Request, res: Response) => {
+const envPath = path.resolve(process.cwd(), ".env")
+
+router.post('/login', createPasswordValidation(), async (req: Request, res: Response) => {
     const vErrors = validationResult(req)
-    console.log("V: ", vErrors)
 
     if(vErrors.isEmpty()){
         try {
-            const passcode = req.body.passcode
-            console.log('find user with passcode - ', passcode)
-            let user = await AdminUser.findOne({ passcode });
-            console.log(user)
-            if (user) {  
-              res.status(200).send({ token: makeUserToken(user), user: user.toJSON() })
+            const password = req.body.password
+            const env = dotenv.config({path: envPath})?.parsed || {}
+            
+            const passwordMatches = await bcrypt.compare(password, env.ADMIN_HASHED_PW)
+            if (passwordMatches) {  
+              res.status(200).send({ token: makeUserToken() })
             } else {
               res.status(400).send("WrongCredential")
             }
@@ -45,26 +48,6 @@ router.post('/login', createPasscodeValidation(), async (req: Request, res: Resp
 
 router.get("/verify", signedInAdminUserMiddleware, (req, res) => {
   res.status(200).send(true)
-})
-
-router.post("/register", createPasscodeValidation(), 
-    body("alias").trim().notEmpty(), body("isKorean").isBoolean().exists(), async (req, res) => {
-    const vErrors = validationResult(req)
-    if(vErrors.isEmpty()){
-        const passcode = req.body.passcode
-        const alias = req.body.alias
-        const isKorean = req.body.isKorean
-        const newUser = new User({ 
-          alias,
-          passcode,
-          isKorean
-        });
-        const savedUser = await newUser.save();
-        console.log("SAVED: ", savedUser)
-        res.status(200).send({ token: makeUserToken(savedUser), user: newUser.toJSON() })
-    }else{
-        res.status(500).send({errors: vErrors.array()})
-    }
 })
 
 export default router;

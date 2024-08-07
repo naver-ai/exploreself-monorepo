@@ -1,7 +1,9 @@
 import fs from 'fs-extra'
 import dotenv from 'dotenv'
 import path from 'path'
-import { input } from '@inquirer/prompts';
+import { nanoid } from 'nanoid'
+import { input, password } from '@inquirer/prompts';
+import bcrypt from 'bcrypt';
 
 const envPath = path.resolve(process.cwd(), ".env")
 console.log(envPath)
@@ -20,7 +22,13 @@ function makeExistingValidator(message) {
     }
 }
 
-const VITE_BLACKLISTS = [/*"OPENAI_API_KEY",*/ "AUTH_SECRET", "MONGODB_URL", "MONGODB_DBNAME"]
+const VITE_BLACKLISTS = ["OPENAI_API_KEY", "AUTH_SECRET", "MONGODB_URL", "MONGODB_DBNAME", "ADMIN_ID", "ADMIN_HASHED_PASSWORD"]
+
+async function hashPassword(password){
+    let hp = await bcrypt.hash(password.trim(), 10)
+    console.log(hp)
+    return hp
+}
 
 async function setup(){
     const env = dotenv.config({path: envPath})?.parsed || {}
@@ -73,7 +81,14 @@ async function setup(){
             message: 'Insert OpenAI API Key:',
             required: true,
             validate: makeExistingValidator("Please enter a valid API key.")
-        })
+        }),
+        "ADMIN_HASHED_PW": env["ADMIN_HASHED_PW"] || await hashPassword(await password({
+            message: 'Enter password for admin:',
+            required: true,
+            validate: makeExistingValidator("Please enter a valid password.")
+        })),
+
+        "ADMIN_ID": env["ADMIN_ID"] || nanoid()
     }
 
     for(const key of Object.keys(answers)){

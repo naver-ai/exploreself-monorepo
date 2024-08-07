@@ -11,22 +11,22 @@ import { useTranslation } from 'react-i18next';
 
 const schema = yup
   .object({
-    passcode: yup.string().trim().min(5).required(),
+    password: yup.string().trim().min(5).required(),
   })
   .required();
 
 export const LoginPage = () => {
-  const { control, handleSubmit } = useForm<{ passcode: string }>({
+  const { control, handleSubmit } = useForm<{ password: string }>({
     resolver: yupResolver(schema),
   });
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const signIn: SubmitHandler<{ passcode: string }> = useCallback(
-    (values: { passcode: string }) => {
+  const signIn: SubmitHandler<{ password: string }> = useCallback(
+    (values: { password: string }) => {
       dispatch(
-        loginAdminThunk(values.passcode, () => {
+        loginAdminThunk(values.password, () => {
           navigate('/users');
         })
       );
@@ -46,7 +46,7 @@ export const LoginPage = () => {
         <Form onFinish={handleSubmit(signIn)} className="w-full flex gap-2">
           <FormItem
             control={control}
-            name="passcode"
+            name="password"
             rootClassName="m-0 flex-1"
           >
             <Input.Password placeholder={t("SignIn.Passcode.Prompt")} autoFocus/>

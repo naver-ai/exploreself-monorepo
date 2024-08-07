@@ -47,12 +47,12 @@ const authSlice = createSlice({
 
 
 
-export function loginAdminThunk(passcode: string, onSuccess?: ()=>void): AdminCoreThunk {
+export function loginAdminThunk(password: string, onSuccess?: ()=>void): AdminCoreThunk {
   return async (dispatch, getState) => {
       dispatch(authSlice.actions._authorizingFlagOn());
 
       try {
-          const tokenResponse = await Http.axios.post('/admin/auth/login', { passcode });
+          const tokenResponse = await Http.axios.post('/admin/auth/login', { password });
           console.log("token resp: ", tokenResponse)
 
           const { token } = tokenResponse.data

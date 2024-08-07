@@ -1,12 +1,12 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { RequestWithAdminUser, signedInAdminUserMiddleware } from './middleware';
+import { signedInAdminUserMiddleware } from './middleware';
 import { User } from '../../config/schema';
 
 const router = express.Router();
 
 
-const getUserList = async (req: RequestWithAdminUser, res) => {
+const getUserList = async (req, res) => {
   try {
     const userList = await User.find()
     console.log("ULIST: ", userList)
@@ -18,7 +18,7 @@ const getUserList = async (req: RequestWithAdminUser, res) => {
   }
 };
 
-const createUser = async (req: RequestWithAdminUser, res) => {
+const createUser = async (req, res) => {
   try {
     const userInfo: {passcode: string, alias: string} = req.body.userInfo
     const newUser = await new User({

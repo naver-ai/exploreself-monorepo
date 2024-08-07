@@ -27,7 +27,7 @@ const LoggedInRoute = () => {
   } else if (isSignedIn == null) {
     return <div>Verifying user...</div>;
   } else {
-    return <Navigate to="/app/login" />;
+    return <Navigate to="/login" />;
   }
 };
 
