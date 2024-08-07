@@ -1,8 +1,7 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AdminCoreState, AdminCoreThunk } from '../../redux/store';
-import { jwtDecode } from 'jwt-decode';
-import { Http } from '../../net/http';
-import { IAdminUserWithId, IUserWithThreadIds } from '@core';
+import { Http } from '../../../net/http';
+import { IUserWithThreadIds } from '@core';
+import { AppState, AppThunk } from '../../../redux/store';
 
 
 const userEntityAdapter = createEntityAdapter<IUserWithThreadIds, string>({
@@ -48,16 +47,16 @@ const manageSlice = createSlice({
   },
 });
 
-export const usersSelectors = userEntityAdapter.getSelectors((state: AdminCoreState) => state.users.userEntityState)
+export const usersSelectors = userEntityAdapter.getSelectors((state: AppState) => state.admin.users.userEntityState)
 
-export const loadUsers = ():AdminCoreThunk => {
+export const loadUsers = (): AppThunk => {
   return async(dispatch, getState) => {
     const state = getState();
-    if(state.auth.token != null) {
+    if(state.admin.auth.token != null) {
       dispatch(manageSlice.actions._setLoadingUserListFlag(true))
       try {
         const resp = await Http.axios.get('/admin/manage/users', {
-          headers: Http.makeSignedInHeader(state.auth.token)
+          headers: Http.makeSignedInHeader(state.admin.auth.token)
         })
         const users: IUserWithThreadIds[] = resp.data.userList
         dispatch(manageSlice.actions._setLoadedUsers(users))
@@ -70,16 +69,16 @@ export const loadUsers = ():AdminCoreThunk => {
   }
 }
 
-export const createUser = (info: {passcode: string, alias: string}, onCreated: (user: IUserWithThreadIds) => void, onError?: (error: any) => void): AdminCoreThunk => {
+export const createUser = (info: {passcode: string, alias: string}, onCreated: (user: IUserWithThreadIds) => void, onError?: (error: any) => void): AppThunk => {
   return async(dispatch, getState) => {
     const state = getState();
-    if (state.auth.token != null) {
+    if (state.admin.auth.token != null) {
       dispatch(manageSlice.actions._setCreatingUserFlag(true))
       try {
         const resp = await Http.axios.post('/admin/manage/user', {
           userInfo: info
         },{
-          headers: Http.makeSignedInHeader(state.auth.token)
+          headers: Http.makeSignedInHeader(state.admin.auth.token)
         })
         dispatch(manageSlice.actions._appendUser(resp.data.user))
         onCreated(resp.data.user)

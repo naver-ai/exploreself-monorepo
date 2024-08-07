@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
-import { useSelector } from '../../redux/hooks';
-import { Http } from '../../net/http';
+import { useSelector } from '../../../redux/hooks';
+import { Http } from '../../../net/http';
 
-export function useVerifyToken(): {
+export function useVerifyAdminToken(): {
   verify: () => Promise<boolean>;
   isSignedIn: boolean | null;
 } {
-  const token = useSelector((state) => state.auth.token);
+  const token = useSelector((state) => state.admin.auth.token);
   const [isSignedIn, setIsSignedIn] = useState<boolean | null>(null);
 
   const verify = useCallback(async () => {

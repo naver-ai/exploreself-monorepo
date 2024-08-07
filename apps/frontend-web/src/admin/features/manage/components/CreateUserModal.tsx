@@ -1,5 +1,5 @@
 import {Button, Form, Input, Modal, Space} from 'antd'
-import { useDispatch, useSelector } from '../../../redux/hooks';
+import { useDispatch, useSelector } from '../../../../redux/hooks';
 import { useForm } from 'react-hook-form'
 import { FormItem } from 'react-hook-form-antd'
 import * as yup from 'yup'
@@ -31,7 +31,7 @@ const CreateUserModal = (props:{
     }))
   },[clearAndClose])
 
-  const isCreating = useSelector(state => state.users.isCreatingUser)
+  const isCreating = useSelector(state => state.admin.users.isCreatingUser)
 
   const okButtonProps: ButtonProps = useMemo(()=>{
     return {"htmlType": "submit", form: "new-user-form", disabled: isCreating}

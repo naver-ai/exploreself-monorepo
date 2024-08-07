@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useDispatch } from '../../../redux/hooks';
+import { useDispatch } from '../../../../redux/hooks';
 import { FormItem } from 'react-hook-form-antd';
 import { loginAdminThunk } from '../reducer';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,7 @@ const schema = yup
   })
   .required();
 
-export const LoginPage = () => {
+export const AdminLoginPage = () => {
   const { control, handleSubmit } = useForm<{ password: string }>({
     resolver: yupResolver(schema),
   });
@@ -27,7 +27,7 @@ export const LoginPage = () => {
     (values: { password: string }) => {
       dispatch(
         loginAdminThunk(values.password, () => {
-          navigate('/users');
+          navigate('/admin/users');
         })
       );
     },

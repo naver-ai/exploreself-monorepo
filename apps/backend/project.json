@@ -9,9 +9,7 @@
     "prebuild-frontend": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx build frontend-web --configuration=production"
-        ]
+        "commands": ["nx build frontend-web --configuration=production"]
       }
     },
     "serve": {

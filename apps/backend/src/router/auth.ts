@@ -9,11 +9,11 @@ const router = express.Router()
 const createPasscodeValidation = () => body("passcode").trim().notEmpty().isAlphanumeric()
 
 function makeUserToken(user: IUserORM): string {
-    return jwt.sign({
-        sub: user._id.toString(),
-        iat: Date.now()/1000,
-        exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365) // 1 year expiration
-    }, process.env.AUTH_SECRET, {algorithm: 'HS256'})
+  return jwt.sign({
+    sub: user._id.toString(),
+    iat: Date.now()/1000,
+    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365) // 1 year expiration
+  }, process.env.AUTH_SECRET, {algorithm: 'HS256'})
 }
 
 router.post('/login', createPasscodeValidation(), async (req: Request, res: Response) => {

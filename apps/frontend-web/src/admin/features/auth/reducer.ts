@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IUserWithThreadIds } from '@core';
-import { AdminCoreThunk } from '../../redux/store';
 import { jwtDecode } from 'jwt-decode';
-import { Http } from '../../net/http';
+import { Http } from '../../../net/http';
+import { AppThunk } from '../../../redux/store';
 
 export type IAdminAuthState = {
   isAuthorizing: boolean;
@@ -17,7 +17,7 @@ const initialState: IAdminAuthState = {
 };
 
 const authSlice = createSlice({
-  name: 'AUTH',
+  name: 'ADMIN_AUTH',
   initialState,
   reducers: {
     initialize: () => {
@@ -47,7 +47,7 @@ const authSlice = createSlice({
 
 
 
-export function loginAdminThunk(password: string, onSuccess?: ()=>void): AdminCoreThunk {
+export function loginAdminThunk(password: string, onSuccess?: ()=>void): AppThunk {
   return async (dispatch, getState) => {
       dispatch(authSlice.actions._authorizingFlagOn());
 
@@ -80,7 +80,7 @@ export function loginAdminThunk(password: string, onSuccess?: ()=>void): AdminCo
   };
 }
 
-export function signOutAdminThunk(): AdminCoreThunk {
+export function signOutAdminThunk(): AppThunk {
   return async (dispatch, getState) => {
       dispatch(authSlice.actions.initialize())
   }

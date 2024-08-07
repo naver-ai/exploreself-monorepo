@@ -17,6 +17,7 @@ import {
   REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import { adminReducer } from '../admin/reducer';
 
 const rootReducer = combineReducers({
   auth: persistReducer(
@@ -29,6 +30,8 @@ const rootReducer = combineReducers({
   ),
 
   explore: exploreReducer,
+
+  admin: adminReducer
 });
 
 const store = configureStore({
@@ -41,7 +44,7 @@ const store = configureStore({
     }),
 });
 
-export const peresistor = persistStore(store);
+export const persistor = persistStore(store);
 export default store;
 
 // The following are type hints for redux methods.

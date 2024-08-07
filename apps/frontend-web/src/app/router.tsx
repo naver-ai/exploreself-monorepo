@@ -13,6 +13,30 @@ import { useEffect } from 'react';
 import { SignedInScreenFrame } from '../features/explore/components/SignedInScreenFrame';
 import { ProfilePage } from '../features/explore/pages/ProfilePage';
 import { SynthesisPage } from '../features/explore/pages/SynthesisPage';
+import { useVerifyAdminToken } from '../admin/features/auth/hooks';
+import { AdminLoginPage } from '../admin/features/auth/pages/AdminLoginPage';
+import { UserListPage } from '../admin/features/manage/pages/UserListPage';
+import UserDetailPage from '../admin/features/manage/pages/UserDetailPage';
+
+const AdminLoggedInRoute = () => {
+  const { verify, isSignedIn } = useVerifyAdminToken();
+
+  useEffect(() => {
+    verify().then((isSignedIn) => {
+      if (!isSignedIn) {
+        console.log('Should redirect to login');
+      }
+    });
+  }, [verify]);
+
+  if (isSignedIn) {
+    return <Outlet />;
+  } else if (isSignedIn == null) {
+    return <div>Verifying user...</div>;
+  } else {
+    return <Navigate to="/admin/login" />;
+  }
+};
 
 const SignedInRoute = () => {
   const { verify, isSignedIn } = useVerifyToken();
@@ -49,6 +73,17 @@ export const MainRouter = () => {
               <Route path="narrative" element={<InitialNarrativePage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="synthesis" element={<SynthesisPage/>}/>
+            </Route>
+          </Route>
+        </Route>
+        <Route path="admin">
+          <Route path="login" element={<AdminLoginPage/>}/>
+          <Route element={<AdminLoggedInRoute/>}>
+          <Route index element={<Navigate to={'users'} />} />
+            <Route path="users">
+              <Route index element={<UserListPage/>} />
+              <Route path=":id" element={<UserDetailPage/>}>
+              </Route>
             </Route>
           </Route>
         </Route>
