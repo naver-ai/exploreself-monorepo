@@ -94,7 +94,7 @@ export const UserSchema = new Schema({
 UserSchema.set('timestamps', true);
 UserSchema.set('toJSON', {
   transform: function(doc, ret, options) {
-      delete ret.passcode;
+      // delete ret.passcode;
       if(ret.initialNarrative != null && ret.initialNarrative == ''){
         ret.initialNarrative = undefined
       }
