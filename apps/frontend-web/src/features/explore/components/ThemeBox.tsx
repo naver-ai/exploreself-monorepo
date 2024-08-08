@@ -18,6 +18,8 @@ import { ShortcutManager } from '../../../services/shortcut';
 import { useTranslation } from 'react-i18next';
 import { POPULATE_NEW_THREAD_OPTS } from './common';
 
+const THEME_CLASSNAME = "flex items-center space-x-2 transition-colors bg-slate-100 hover:bg-slate-200 p-1 rounded-md cursor-pointer"
+
 const ThemeBox = () => {
 
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
@@ -113,7 +115,7 @@ const ThemeBox = () => {
                   <Col key={index} className="border-[1px] border-slate-300 w-full rounded-lg p-3">
                     <Row
                       key={index*10}
-                      className="flex items-center space-x-2 transition-colors bg-slate-100 hover:bg-slate-300 p-1 rounded-md justify-between"
+                      className={`${THEME_CLASSNAME} justify-between`}
                       onClick={() => onChangeSelect(themeItem.main_theme)}
                       justify="space-between"
                     >

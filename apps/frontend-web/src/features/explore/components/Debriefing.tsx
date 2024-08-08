@@ -4,13 +4,14 @@ import * as yup from 'yup';
 import { useCallback } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { terminateSession } from "../reducer";
+import { abortReviewStage, terminateSession } from "../reducer";
 import { Form, Input, Button } from "antd";
 import { FormItem } from 'react-hook-form-antd';
 const {TextArea} = Input
 import { useTranslation } from 'react-i18next';
 import { SessionStatus } from "@core";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 
 
 const schema = yup.object({
@@ -36,6 +37,10 @@ const Debriefing = () => {
     dispatch(terminateSession(values.debriefing));
   }, []);
 
+  const onReturnClick = useCallback(() => {
+    dispatch(abortReviewStage())
+  }, [])
+
   console.log(sessionStatus)
 
   return (<div>{sessionStatus == SessionStatus.Reviewing ? <Form onFinish={handleSubmit(handleSubmitDebriefing)}>
@@ -47,13 +52,14 @@ const Debriefing = () => {
       placeholder="이번 탐색을 통해 자신과 상황에 대해 어떤 것을 배우거나 새로 깨닫게 되었나요? 무엇이든 생각 나는대로 자유롭게 적어보아요."
     />
   </FormItem>
-  <div className="flex justify-end mt-10">
-    <Button disabled={!isValid} htmlType="submit" type="primary">{t("Labels.Finish")}</Button>
+  <div className="flex justify-end mt-10 gap-3">
+    <Button type="text" icon={<ArrowLeftIcon className="w-4 h-4"/>} onClick={onReturnClick}>{t("Synthesis.BackToExplore")}</Button>
+    <Button disabled={!isValid} htmlType="submit" type="primary">{t("Synthesis.Complete")}</Button>
   </div></Form> : <div>
     <div>{debriefing}</div>
     <div className="text-center text-lg text-gray-500 flex items-center justify-center gap-x-2">
       <CheckCircleIcon className="w-6 h-6 text-green-500"/> 
-      <span className="leading-0">고민 탐색이 종료되었습니다. 감사합니다.</span>
+      <span className="leading-0">{t("Synthesis.CompleteMessage")}</span>
     </div>
   </div>
     }</div>)

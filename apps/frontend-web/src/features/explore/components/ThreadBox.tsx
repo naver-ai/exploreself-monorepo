@@ -37,7 +37,7 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
       vertical={false}
       align="center"
       justify="space-between"
-      className="group border-b-[1px] pl-5 py-2 hover:bg-slate-200/50 cursor-pointer"
+      className="group border-b-[1px] last:border-none pl-5 py-2 hover:bg-slate-200/50 cursor-pointer"
       onClick={onSelect}
     >
       <span className='my-2'>{question?.question?.content}</span>

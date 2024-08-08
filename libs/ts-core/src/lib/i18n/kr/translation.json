@@ -68,7 +68,9 @@
     "Open": "AI 요약 보기",
     "Generating": "요약 생성 중",
     "More": "새로운 요약 보기",
-    "Complete": "고민 탐색 마치기"
+    "Complete": "고민 탐색 마치기",
+    "CompleteMessage": "고민 탐색이 종료되었습니다. 감사합니다.",
+    "BackToExplore": "탐색 화면으로 돌아가기"
   },
   "Labels": {
     "Apply": "적용",

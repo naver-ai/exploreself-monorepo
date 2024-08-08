@@ -121,6 +121,7 @@ export const QuestionBox = (props: { qid: string }) => {
     } 
   },[question])
 
+  const switch_id = `switch-qk-${props.qid}`
 
   return (
     <div className="border-2 border-[#B9DBDC]-600 p-3 rounded-lg my-3">
@@ -129,7 +130,9 @@ export const QuestionBox = (props: { qid: string }) => {
       </Flex>
        {<Row>
         <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-gray-100" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
-          <Switch className="mb-2 last:mb-0" checkedChildren={t("Thread.Keywords.HelperKeywords")} unCheckedChildren={t("Thread.Keywords.HelperKeywords")} defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/>
+          <div className='flex items-center gap-x-2 mb-2 last:mb-0'>
+            <Switch id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/><label className='select-none text-sm' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
+          </div>
           {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
             {keywords &&
               (keywords as string[]).map((keyword, i) => (
