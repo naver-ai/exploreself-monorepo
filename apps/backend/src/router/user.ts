@@ -52,7 +52,7 @@ router.put("/status", signedInUserMiddleware, body("status").exists().isIn(Objec
   req.user.sessionStatus = newStatus
   await req.user.save()
   res.json({
-    status: req.user.sessionStatus
+    sessionStatus: req.user.sessionStatus
   })
 })
 

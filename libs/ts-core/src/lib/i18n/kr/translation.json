@@ -67,20 +67,19 @@
     "Title": "AI 요약",
     "Open": "AI 요약 보기",
     "Generating": "요약 생성 중",
-    "More": "새로운 요약 보기"
+    "More": "새로운 요약 보기",
+    "Complete": "고민 탐색 마치기"
   },
   "Labels": {
     "Apply": "적용",
     "Submit": "제출",
     "WrapUp": "탐색 마무리",
-    "Press": "눌러서 확인하기",
-    "Finish": "완료하기"
+    "Press": "눌러서 확인하기"
   },
 
   "Outline": {
     "Title": "개요"
   },
   "Auth": {
-    
   }
 }

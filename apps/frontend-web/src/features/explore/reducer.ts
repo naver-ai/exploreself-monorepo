@@ -420,7 +420,7 @@ export function enterReviewStage(): AppThunk {
       try{
         const response = await Http.axios.put("/user/status", {status: SessionStatus.Reviewing}, {headers: Http.makeSignedInHeader(state.auth.token)})
 
-        dispatch(exploreSlice.actions.updateUserInfo({sessionStatus: response.data}))
+        dispatch(exploreSlice.actions.updateUserInfo(response.data))
       }catch(ex){
         console.log(ex)
       }finally{

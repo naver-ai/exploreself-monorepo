@@ -36,6 +36,8 @@ const Debriefing = () => {
     dispatch(terminateSession(values.debriefing));
   }, []);
 
+  console.log(sessionStatus)
+
   return (<div>{sessionStatus == SessionStatus.Reviewing ? <Form onFinish={handleSubmit(handleSubmitDebriefing)}>
   <FormItem control={control} name="debriefing">
     <TextArea
