@@ -7,7 +7,7 @@ const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
-import {selectFloatingHeader, setSynthesisBoxOpen, setThemeSelectorOpen, threadSelectors } from '../reducer';
+import {enterReviewStage, selectFloatingHeader, setSynthesisBoxOpen, setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon, BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
@@ -15,6 +15,7 @@ import useScrollbarSize from 'react-scrollbar-size';
 import {AlignLeftOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames'
+import { SessionStatus } from '@core';
 
 const SidePanel = () => {
 
@@ -23,8 +24,9 @@ const SidePanel = () => {
   const [t] = useTranslation()
   const navigate = useNavigate();
 
-  const handleEndSession = useCallback(() => {
-    navigate('/app/synthesis')
+  const handleEndSession = useCallback(async () => {
+    await dispatch(enterReviewStage())
+    navigate("/app/synthesis")
   },[])
 
   return (
@@ -62,6 +64,9 @@ export const ExplorerPage = () => {
   const initialNarrative = useSelector(
     (state) => state.explore.initialNarrative
   );
+
+  const sessionStatus = useSelector(state => state.explore.sessionStatus)
+
   const userName = useSelector((state) => state.explore.name);
   const threadIds = useSelector(threadSelectors.selectIds);
 
@@ -109,10 +114,14 @@ export const ExplorerPage = () => {
 
   const focusOnThemeButton = threadIds.length === 0 && isThemeSelectorOpen === false
 
+  console.log(sessionStatus)
+
   if (userName == null || userName.length == 0) {
     return <Navigate to="/app/profile" />;
   } else if (initialNarrative == null || initialNarrative.length == 0) {
     return <Navigate to="/app/narrative" />;
+  } else if (sessionStatus == SessionStatus.Reviewing || sessionStatus == SessionStatus.Terminated){
+    return <Navigate to="/app/synthesis"/>;
   } else {
     const themeButtonIcon = <LightBulbIcon className={`w-5 h-5 ${focusOnThemeButton ? "animate-bounce-emphasized text-yellow-200":""}`} />
     const themeButtonLabel = <span className={`${focusOnThemeButton ? 'animate-pulse font-semibold':''}`}>{threadIds.length == 0 ? t("Exploration.ShowMoreThemesInitial") : t("Exploration.ShowMoreThemes")}</span>

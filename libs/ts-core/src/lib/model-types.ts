@@ -62,6 +62,11 @@ export interface IThreadAllPopulated extends IThreadBase {
   uid: string
 }
 
+export enum SessionStatus{
+  Exploring = "Exploring", 
+  Reviewing = "Reviewing",
+  Terminated = "Terminated"
+}
 
 export interface IUserBase {
   alias: string;
@@ -74,6 +79,7 @@ export interface IUserBase {
   createdAt: Date;
   updatedAt: Date;
   debriefing: string | undefined;
+  sessionStatus: SessionStatus
 }
 
 export interface IUserWithThreadIds extends IUserBase {

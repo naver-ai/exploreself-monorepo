@@ -6,6 +6,8 @@ import { useSelector } from "../../../redux/hooks"
 import { questionSelectors } from "../reducer"
 import { useRef } from "react"
 import Debriefing from "../components/Debriefing"
+import { SessionStatus } from "@core"
+import { Navigate } from "react-router-dom"
 
 type QuestionRefs = {
   [key: string]: HTMLDivElement | null;
@@ -21,20 +23,26 @@ export const SynthesisPage = () => {
     questionRefs.current[id]?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  return (
-    <div className="flex py-10">
-      <div className="flex-none w-1/2 px-20">
-        <AggregateBox/>
-      </div>
-      
-      <div className="flex flex-col w-1/2 pr-20">
-        <div className="pb-10">
-          <SynthesisBox/>
+  const sessionStatus = useSelector(state => state.explore.sessionStatus)
+
+  if(sessionStatus == SessionStatus.Exploring){
+    return <Navigate to="/app"/>
+  }else{
+    return (
+      <div className="flex py-10">
+        <div className="flex-none w-1/2 px-20">
+          <AggregateBox/>
         </div>
-        <div>
-          <Debriefing/>
+        
+        <div className="flex flex-col w-1/2 pr-20">
+          <div className="pb-10">
+            <SynthesisBox/>
+          </div>
+          <div>
+            <Debriefing/>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 }

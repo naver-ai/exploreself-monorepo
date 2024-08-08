@@ -1,4 +1,4 @@
-import { IThreadBase, IUserBase, IQASetBase } from "@core";
+import { IThreadBase, IUserBase, IQASetBase, SessionStatus } from "@core";
 import mongoose, {Schema, Document, mongo} from "mongoose";
 import { InteractionType, InteractionBase } from "@core";
 import * as nanoid from 'nanoid'
@@ -88,7 +88,8 @@ export const UserSchema = new Schema({
     pinnedThemes: {type: [String], required: true, default: []},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date},
-    debriefing: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter}
+    debriefing: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
+    sessionStatus: {type: String, enum: Object.keys(SessionStatus), default: SessionStatus.Exploring}
  });
  
 UserSchema.set('timestamps', true);

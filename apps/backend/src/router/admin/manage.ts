@@ -1,5 +1,4 @@
 import express from 'express';
-import { body } from 'express-validator';
 import { signedInAdminUserMiddleware } from './middleware';
 import { User } from '../../config/schema';
 

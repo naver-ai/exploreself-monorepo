@@ -3,6 +3,7 @@ import { QASet, ThreadItem, User } from "../config/schema";
 import { signedInUserMiddleware } from './middlewares';
 import type {RequestWithUser} from './middlewares'
 import { body } from 'express-validator';
+import { SessionStatus } from '@core';
 
 const router = express.Router()
 
@@ -39,13 +40,36 @@ router.post('/profile', signedInUserMiddleware, body("name").exists().trim(), as
 
 router.post('/debriefing', signedInUserMiddleware, body("debriefing").exists().trim(), async (req: RequestWithUser, res) => {
   const debriefing = req.body.debriefing;
-  const uid = req.user._id
-  const updatedUser = await User.findByIdAndUpdate(uid, {$set: {debriefing: debriefing}}, {new: true})
+  req.user.debriefing = debriefing
+  await req.user.save()
   res.json({
-    debriefing: updatedUser.debriefing
+    debriefing: req.user.debriefing
   })
 })
 
+router.put("/status", signedInUserMiddleware, body("status").exists().isIn(Object.keys(SessionStatus)), async (req: RequestWithUser, res) => {
+  const newStatus = req.body.status
+  req.user.sessionStatus = newStatus
+  await req.user.save()
+  res.json({
+    status: req.user.sessionStatus
+  })
+})
+
+router.post("/terminate", signedInUserMiddleware, body("debriefing").optional().isString().trim(), async (req: RequestWithUser, res) => {
+  const debriefing = req.body.debriefing;
+  if(req.body.debriefing !== undefined){
+    req.user.debriefing = debriefing
+  }
+
+  req.user.sessionStatus = SessionStatus.Terminated
+  
+  await req.user.save()
+  res.json({
+    debriefing: req.user.debriefing,
+    sessionStatus: req.user.sessionStatus
+  })
+})
 
 router.delete("/reset", signedInUserMiddleware, async (req: RequestWithUser, res) => {
   
@@ -60,6 +84,8 @@ router.delete("/reset", signedInUserMiddleware, async (req: RequestWithUser, res
   req.user.threads = []
   req.user.pinnedThemes = []
   req.user.synthesis = []
+  req.user.debriefing = undefined
+  req.user.sessionStatus = SessionStatus.Exploring
   await req.user.save()
 
   const updatedUser = await req.user.populate({

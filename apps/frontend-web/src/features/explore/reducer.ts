@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { InteractionBase, InteractionType, IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds, ThemeWithExpressions } from '@core';
+import { InteractionBase, InteractionType, IQASetWithIds, IThreadWithQuestionIds, IUserAllPopulated, IUserWithThreadIds, SessionStatus, ThemeWithExpressions } from '@core';
 import { Http } from '../../net/http';
 import { AppState, AppThunk } from '../../redux/store';
 import createThreadItem from '../../api_call/createThreadItem';
@@ -27,7 +27,7 @@ export type IExploreState = {
   isLoadingUserInfo: boolean;
   isCreatingNewThread: boolean;
   isCreatingSynthesis: boolean;
-  isLoadingThemes:  boolean;
+  isLoadingThemes: boolean;
   newThemes: ThemeWithExpressions[];
 
   userId?: string;
@@ -35,15 +35,15 @@ export type IExploreState = {
   threadEntityState: typeof initialThreadEntityState,
   questionEntityState: typeof initialQuestionEneityState,
 
-  threadInInitializationFlags: {[key: string] : boolean | undefined}
-  threadQuestionCreationLoadingFlags: {[key: string] : boolean | undefined}
-  questionCommentCreationLoadingFlags: {[key: string] :  boolean | undefined}
-  questionKeywordCreationLoadingFlags: {[key: string] :  boolean | undefined}
-  questionShowKeywordsFlags: {[key: string] :  boolean | undefined}
+  threadInInitializationFlags: { [key: string]: boolean | undefined }
+  threadQuestionCreationLoadingFlags: { [key: string]: boolean | undefined }
+  questionCommentCreationLoadingFlags: { [key: string]: boolean | undefined }
+  questionKeywordCreationLoadingFlags: { [key: string]: boolean | undefined }
+  questionShowKeywordsFlags: { [key: string]: boolean | undefined }
 
   isThemeSelectorOpen: boolean;
   isSynthesisBoxOpen: boolean;
-  reservedFloatingHeaders: {[key: string]: boolean}
+  reservedFloatingHeaders: { [key: string]: boolean }
 
   hoveringOutlineThreadId?: string | undefined
 
@@ -68,11 +68,12 @@ const initialState: IExploreState = {
   debriefing: undefined,
   pinnedThemes: [],
   recentRemovedTheme: undefined,
+  sessionStatus: SessionStatus.Exploring,
 
   synthesis: [],
 
   threadInInitializationFlags: {},
-  threadQuestionCreationLoadingFlags : {},
+  threadQuestionCreationLoadingFlags: {},
   questionCommentCreationLoadingFlags: {},
   questionKeywordCreationLoadingFlags: {},
   questionShowKeywordsFlags: {},
@@ -96,7 +97,7 @@ const exploreSlice = createSlice({
       action: PayloadAction<Partial<IUserAllPopulated>>
     ) => {
       for (const key of Object.keys(action.payload)) {
-        if(key == 'threads'){
+        if (key == 'threads') {
           const questions = action.payload.threads?.reduce((prev: Array<IQASetWithIds>, curr) => prev.concat(curr.questions), []) || []
           // Handle threads
           const threadMapped: Array<IThreadWithQuestionIds> = action.payload.threads?.map(thread => ({
@@ -109,7 +110,7 @@ const exploreSlice = createSlice({
         } else {
           (state as any)[key] = (action.payload as any)[key];
         }
-        
+
       }
       if (action.payload._id != null) {
         state.userId = action.payload._id;
@@ -126,7 +127,7 @@ const exploreSlice = createSlice({
       state.hoveringOutlineThreadId = action.payload
     },
 
-    setFloatingHeaderFlag: (state, action: PayloadAction<{tid: string, intersecting: boolean}>) => {
+    setFloatingHeaderFlag: (state, action: PayloadAction<{ tid: string, intersecting: boolean }>) => {
       state.reservedFloatingHeaders[action.payload.tid] = action.payload.intersecting
     },
 
@@ -144,11 +145,11 @@ const exploreSlice = createSlice({
       state.isLoadingThemes = action.payload
     },
 
-    setInitializingThreadFlag: (state, action: PayloadAction<{tid: string, flag: boolean}>) => {
+    setInitializingThreadFlag: (state, action: PayloadAction<{ tid: string, flag: boolean }>) => {
       state.threadInInitializationFlags[action.payload.tid] = action.payload.flag;
     },
 
-    setCreatingThreadQuestionsFlag: (state, action: PayloadAction<{tid: string, flag: boolean}>) => {
+    setCreatingThreadQuestionsFlag: (state, action: PayloadAction<{ tid: string, flag: boolean }>) => {
       state.threadQuestionCreationLoadingFlags[action.payload.tid] = action.payload.flag;
     },
 
@@ -159,7 +160,7 @@ const exploreSlice = createSlice({
     updateThread: (state, action: PayloadAction<IThreadWithQuestionIds>) => {
       threadEntityAdapter.upsertOne(state.threadEntityState, action.payload)
     },
-    
+
     appendThread: (state, action: PayloadAction<IThreadWithQuestionIds>) => {
       threadEntityAdapter.addOne(state.threadEntityState, action.payload)
     },
@@ -186,7 +187,7 @@ const exploreSlice = createSlice({
       }
     },
 
-    updateQuestionWithNewComment: (state, action: PayloadAction<{qid: string, comment: string}>) => {
+    updateQuestionWithNewComment: (state, action: PayloadAction<{ qid: string, comment: string }>) => {
       const { qid, comment } = action.payload;
       const questionObj = state.questionEntityState.entities[qid];
 
@@ -198,18 +199,18 @@ const exploreSlice = createSlice({
         console.log("Not found");
       }
     },
-    
-    updateQuestionWithNewKeywords: (state, action: PayloadAction<{qid: string, keywords: Array<string>}>) => {
+
+    updateQuestionWithNewKeywords: (state, action: PayloadAction<{ qid: string, keywords: Array<string> }>) => {
       const questionObj = state.questionEntityState.entities[action.payload.qid]
-      if(questionObj) {
-        if(!questionObj.keywords) {
+      if (questionObj) {
+        if (!questionObj.keywords) {
           questionObj.aiGuides = []
         }
         questionObj.keywords.push(...action.payload.keywords)
-      } 
+      }
     },
 
-    updateQuestionResponse: (state, action: PayloadAction<{qid: string, response: string}>) => {
+    updateQuestionResponse: (state, action: PayloadAction<{ qid: string, response: string }>) => {
       const { qid, response } = action.payload;
       const questionObj = state.questionEntityState.entities[qid];
       if (questionObj) {
@@ -219,15 +220,15 @@ const exploreSlice = createSlice({
       }
     },
 
-    setCreatingQuestionCommentFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
+    setCreatingQuestionCommentFlag: (state, action: PayloadAction<{ qid: string, flag: boolean }>) => {
       state.questionCommentCreationLoadingFlags[action.payload.qid] = action.payload.flag;
     },
 
-    setCreatingQuestionKeywordsFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
+    setCreatingQuestionKeywordsFlag: (state, action: PayloadAction<{ qid: string, flag: boolean }>) => {
       state.questionKeywordCreationLoadingFlags[action.payload.qid] = action.payload.flag;
     },
-    
-    setQuestionShowKeywordsFlag: (state, action: PayloadAction<{qid: string, flag: boolean}>) => {
+
+    setQuestionShowKeywordsFlag: (state, action: PayloadAction<{ qid: string, flag: boolean }>) => {
       state.questionShowKeywordsFlags[action.payload.qid] = action.payload.flag
     },
 
@@ -236,24 +237,24 @@ const exploreSlice = createSlice({
     },
 
     appendPinnedTheme: (state, action: PayloadAction<string>) => {
-      if(state.pinnedThemes.indexOf(action.payload) == -1){
+      if (state.pinnedThemes.indexOf(action.payload) == -1) {
         state.pinnedThemes.push(action.payload)
 
         state.recentRemovedTheme = undefined
       }
     },
 
-    removePinnedTheme: (state, action: PayloadAction<{theme: string, undoable: boolean}>) => {
+    removePinnedTheme: (state, action: PayloadAction<{ theme: string, undoable: boolean }>) => {
       const index = state.pinnedThemes.indexOf(action.payload.theme)
-      if(index >= 0){
+      if (index >= 0) {
         state.pinnedThemes.splice(index, 1)
       }
-      if(action.payload.undoable){
+      if (action.payload.undoable) {
         state.recentRemovedTheme = action.payload.theme
-      }else{
+      } else {
         state.recentRemovedTheme = undefined
       }
-      
+
     },
     addNewThemes: (state, action: PayloadAction<Array<ThemeWithExpressions>>) => {
       state.newThemes.push(...action.payload)
@@ -271,29 +272,29 @@ export const questionSelectors = questionEntityAdapter.getSelectors((state: AppS
 
 export const selectedQuestionsSelector = createSelector([questionSelectors.selectAll, (state: AppState, tid: string) => tid], (questions, tid) => {
   return questions.filter(q => q.tid == tid && q.selected == true)
-} )
+})
 
 
 export const selectedQuestionIdsSelector = createSelector([selectedQuestionsSelector], (questions) => {
   return questions.map(q => q._id)
-} )
+})
 
 export const unSelectedQuestionsSelector = createSelector([questionSelectors.selectAll, (state: AppState, tid: string) => tid], (questions, tid) => {
   return questions.filter(q => q.tid == tid && q.selected == false)
-} )
+})
 
 export const unSelectedQuestionIdsSelector = createSelector([unSelectedQuestionsSelector], (questions) => {
   return questions.map(q => q._id)
-} )
+})
 
 
-export const selectFloatingHeader = createSelector([(state: AppState) => state.explore.reservedFloatingHeaders, threadSelectors.selectAll], 
+export const selectFloatingHeader = createSelector([(state: AppState) => state.explore.reservedFloatingHeaders, threadSelectors.selectAll],
   (headerFlags, threads) => {
-    const tid = Object.keys(headerFlags).find(tid =>headerFlags[tid] === true)
-    if(tid != null){
+    const tid = Object.keys(headerFlags).find(tid => headerFlags[tid] === true)
+    if (tid != null) {
       const thread = threads.find(t => t._id == tid)
       return thread?.theme
-    }else{
+    } else {
       return undefined
     }
   })
@@ -382,8 +383,8 @@ export function submitUserProfile(
   };
 }
 
-export function submitDebriefing(
-  debriefing: string,
+export function terminateSession(
+  debriefing?: string | null,
   onSuccess?: () => void
 ): AppThunk {
   return async (dispatch, getState) => {
@@ -391,9 +392,9 @@ export function submitDebriefing(
     if (state.auth.token) {
       try {
         const response = await Http.axios.post(
-          `/user/debriefing`,
+          `/user/terminate`,
           {
-            debriefing: debriefing,
+            debriefing: debriefing != null && debriefing == "" ? null : debriefing,
           },
           {
             headers: Http.makeSignedInHeader(state.auth.token),
@@ -401,18 +402,49 @@ export function submitDebriefing(
         );
 
         dispatch(
-          exploreSlice.actions.updateUserInfo({
-            debriefing: response.data.debriefing,
-          })
+          exploreSlice.actions.updateUserInfo(response.data)
         );
 
         onSuccess?.();
       } catch (err) {
-        console.log('Err in setting debriefing: ', err);
       } finally {
       }
     }
   };
+}
+
+export function enterReviewStage(): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState();
+    if (state.auth.token) {
+      try{
+        const response = await Http.axios.put("/user/status", {status: SessionStatus.Reviewing}, {headers: Http.makeSignedInHeader(state.auth.token)})
+
+        dispatch(exploreSlice.actions.updateUserInfo({sessionStatus: response.data}))
+      }catch(ex){
+        console.log(ex)
+      }finally{
+
+      }
+    }
+  }
+}
+
+export function abortReviewStage(): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState();
+    if (state.auth.token) {
+      try{
+        const response = await Http.axios.put("/user/status", {status: SessionStatus.Exploring}, {headers: Http.makeSignedInHeader(state.auth.token)})
+
+        dispatch(exploreSlice.actions.updateUserInfo({sessionStatus: response.data}))
+      }catch(ex){
+        console.log(ex)
+      }finally{
+        
+      }
+    }
+  }
 }
 
 export function populateNewThread(theme: string, handlers?: {
@@ -427,28 +459,28 @@ export function populateNewThread(theme: string, handlers?: {
 
       try {
         const newThread = await createThreadItem(state.auth.token, theme)
-        if(newThread){
+        if (newThread) {
           dispatch(exploreSlice.actions.appendThread(newThread))
-          dispatch(exploreSlice.actions.setInitializingThreadFlag({tid: newThread._id, flag: true}))
-          dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: true}))
+          dispatch(exploreSlice.actions.setInitializingThreadFlag({ tid: newThread._id, flag: true }))
+          dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({ tid: newThread._id, flag: true }))
           handlers?.onThreadCreated?.(newThread._id)
 
           try {
             const questions = await generateQuestions(state.auth.token, newThread._id, 3)
-            if(questions){
+            if (questions) {
               dispatch(exploreSlice.actions.setQuestions(questions))
               handlers?.onQuestionsGenerated?.(newThread._id)
             }
           } catch (err) {
             console.log('Err in fetching questions: ', err);
           } finally {
-            dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: newThread._id, flag: false}))
-            dispatch(exploreSlice.actions.setInitializingThreadFlag({tid: newThread._id, flag: false}))
+            dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({ tid: newThread._id, flag: false }))
+            dispatch(exploreSlice.actions.setInitializingThreadFlag({ tid: newThread._id, flag: false }))
           }
         }
-      }catch( ex) {
+      } catch (ex) {
         console.log(ex)
-      }finally{
+      } finally {
         dispatch(exploreSlice.actions.setCreatingNewThreadFlag(false))
       }
     }
@@ -461,13 +493,13 @@ export function selectQuestion(qid: string): AppThunk {
     if (state.auth.token) {
       try {
         const updatedQuestion = await selectQuestionById(state.auth.token, qid)
-        if(updatedQuestion){
+        if (updatedQuestion) {
           dispatch(exploreSlice.actions.updateQuestion(updatedQuestion))
-          await postInteractionData(state.auth.token, InteractionType.UserSelectsQuestion, {selected_question: updatedQuestion}, {})
+          await postInteractionData(state.auth.token, InteractionType.UserSelectsQuestion, { selected_question: updatedQuestion }, {})
         }
-      }catch(ex){
+      } catch (ex) {
         console.log(ex)
-      }finally{
+      } finally {
 
       }
     }
@@ -479,56 +511,56 @@ export function getMoreQuestion(tid: string): AppThunk {
     const state = getState()
     if (state.auth.token) {
       try {
-        dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: tid, flag: true}))
+        dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({ tid: tid, flag: true }))
         const fetchedQuestion = await generateQuestions(state.auth.token, tid, 1)
         if (fetchedQuestion) {
           dispatch(exploreSlice.actions.appendQuestions(fetchedQuestion))
-          await postInteractionData(state.auth.token, InteractionType.UserRequestsQuestion, {generated_questions: fetchedQuestion}, {tid: tid})
+          await postInteractionData(state.auth.token, InteractionType.UserRequestsQuestion, { generated_questions: fetchedQuestion }, { tid: tid })
         }
       } catch (ex) {
         console.log(ex)
       } finally {
-        dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({tid: tid, flag: false}))
+        dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({ tid: tid, flag: false }))
       }
-    } 
+    }
   }
 }
 
 export function getNewComment(qid: string, userResponse: string): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.token) {
+    if (state.auth.token) {
       try {
-        dispatch(exploreSlice.actions.setCreatingQuestionCommentFlag({qid: qid, flag: true}))
+        dispatch(exploreSlice.actions.setCreatingQuestionCommentFlag({ qid: qid, flag: true }))
         const newComment = await generateComment(state.auth.token, qid, userResponse)
         console.log("NEW COM: ", newComment)
         if (newComment) {
-          dispatch(exploreSlice.actions.updateQuestionWithNewComment({qid: qid, comment: newComment.comment}))
+          dispatch(exploreSlice.actions.updateQuestionWithNewComment({ qid: qid, comment: newComment.comment }))
         }
       } catch (ex) {
         console.log(ex)
       } finally {
-        dispatch(exploreSlice.actions.setCreatingQuestionCommentFlag({qid: qid, flag: false}))
+        dispatch(exploreSlice.actions.setCreatingQuestionCommentFlag({ qid: qid, flag: false }))
       }
-    } 
+    }
   }
 }
 
 export function getNewKeywords(qid: string, opt: number = 1): AppThunk {
-  return async(dispatch, getState) => {
+  return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.token) {
+    if (state.auth.token) {
       try {
-        dispatch(exploreSlice.actions.setCreatingQuestionKeywordsFlag({qid: qid, flag: true}))
+        dispatch(exploreSlice.actions.setCreatingQuestionKeywordsFlag({ qid: qid, flag: true }))
         const newKeywords = await generateKeywords(state.auth.token, qid, opt)
-        if(newKeywords) {
-          dispatch(exploreSlice.actions.updateQuestionWithNewKeywords({qid: qid, keywords: newKeywords}))
-          await postInteractionData(state.auth.token, InteractionType.LLMGeneratedKeyword, {keywords: newKeywords}, {qid: qid})
+        if (newKeywords) {
+          dispatch(exploreSlice.actions.updateQuestionWithNewKeywords({ qid: qid, keywords: newKeywords }))
+          await postInteractionData(state.auth.token, InteractionType.LLMGeneratedKeyword, { keywords: newKeywords }, { qid: qid })
         }
       } catch (ex) {
         console.log(ex)
       } finally {
-        dispatch(exploreSlice.actions.setCreatingQuestionKeywordsFlag({qid: qid, flag: false}))
+        dispatch(exploreSlice.actions.setCreatingQuestionKeywordsFlag({ qid: qid, flag: false }))
       }
     }
   }
@@ -537,15 +569,15 @@ export function getNewKeywords(qid: string, opt: number = 1): AppThunk {
 export function getNewSynthesis(): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.token){
-      try{ 
+    if (state.auth.token) {
+      try {
         dispatch(exploreSlice.actions.setCreatingSynthesisFlag(true))
         const synthesisMappings = await generateSynthesisMappings(state.auth.token)
         const synthesis = synthesisMappings.map((item: any) => item.sentence)
         dispatch(exploreSlice.actions.addNewSynthesis(synthesis))
-      }catch(ex){
+      } catch (ex) {
         console.log(ex)
-      }finally{
+      } finally {
         dispatch(exploreSlice.actions.setCreatingSynthesisFlag(false))
       }
     }
@@ -553,25 +585,25 @@ export function getNewSynthesis(): AppThunk {
 }
 
 export function updateQuestionResponse(qid: string, response: string, interaction_data: InteractionBase): AppThunk {
-  return async(dispatch, getState) => {
+  return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.token) {
+    if (state.auth.token) {
       try {
-        dispatch(exploreSlice.actions.updateQuestionResponse({qid: qid, response: response}))
+        dispatch(exploreSlice.actions.updateQuestionResponse({ qid: qid, response: response }))
         const updatedQuestion = await updateResponse(state.auth.token, qid, response, interaction_data)
       } catch (ex) {
         console.log(ex)
-      } finally {    
+      } finally {
 
       }
     }
   }
-}      
+}
 export function pinTheme(theme: string): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.token){
-      try{ 
+    if (state.auth.token) {
+      try {
         dispatch(exploreSlice.actions.appendPinnedTheme(theme))
         const resp = await Http.axios.post("/themes/pin", {
           theme
@@ -582,10 +614,10 @@ export function pinTheme(theme: string): AppThunk {
         dispatch(exploreSlice.actions.updateUserInfo(resp.data))
         resp.data
 
-      }catch(ex){
+      } catch (ex) {
         console.log(ex)
-        dispatch(exploreSlice.actions.removePinnedTheme({theme, undoable: false}))
-      }finally{
+        dispatch(exploreSlice.actions.removePinnedTheme({ theme, undoable: false }))
+      } finally {
 
       }
     }
@@ -595,9 +627,9 @@ export function pinTheme(theme: string): AppThunk {
 export function unpinTheme(theme: string, intentional: boolean): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.token){
-      try{ 
-        dispatch(exploreSlice.actions.removePinnedTheme({theme, undoable: intentional}))
+    if (state.auth.token) {
+      try {
+        dispatch(exploreSlice.actions.removePinnedTheme({ theme, undoable: intentional }))
         const resp = await Http.axios.post("/themes/unpin", {
           theme
         }, {
@@ -607,17 +639,17 @@ export function unpinTheme(theme: string, intentional: boolean): AppThunk {
         dispatch(exploreSlice.actions.updateUserInfo(resp.data))
         resp.data
 
-      }catch(ex){
+      } catch (ex) {
         console.log(ex)
         dispatch(exploreSlice.actions.appendPinnedTheme(theme))
-      }finally{
+      } finally {
 
       }
     }
   }
 }
 
-export function getNewThemes (opt: number): AppThunk {
+export function getNewThemes(opt: number): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if (state.auth.token) {
@@ -626,7 +658,7 @@ export function getNewThemes (opt: number): AppThunk {
         const prevThemes = state.explore.newThemes.map(theme => theme.main_theme)
         const themes = await generateThemes(state.auth.token, prevThemes, opt)
         dispatch(exploreSlice.actions.addNewThemes(themes))
-        await postInteractionData(state.auth.token, opt == 1? InteractionType.UserRequestsTheme: InteractionType.LLMElicitedTheme, {themes: themes.map((theme: any) => theme.main_theme)}, {})
+        await postInteractionData(state.auth.token, opt == 1 ? InteractionType.UserRequestsTheme : InteractionType.LLMElicitedTheme, { themes: themes.map((theme: any) => theme.main_theme) }, {})
       } catch (ex) {
         console.log(ex)
       } finally {
@@ -639,20 +671,20 @@ export function getNewThemes (opt: number): AppThunk {
 export function dangerousReset(): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
-    if(state.auth.token != null) {
+    if (state.auth.token != null) {
       dispatch(exploreSlice.actions.setLoadingUserInfoFlag(true))
       try {
         const resp = await Http.axios.delete("/user/reset", {
           headers: Http.makeSignedInHeader(state.auth.token)
         })
 
-        const {updatedUser} = resp.data
+        const { updatedUser } = resp.data
         dispatch(exploreSlice.actions.updateUserInfo(updatedUser))
-      }catch(ex){
+      } catch (ex) {
         console.log(ex)
-      }finally{
+      } finally {
 
-      dispatch(exploreSlice.actions.setLoadingUserInfoFlag(false))
+        dispatch(exploreSlice.actions.setLoadingUserInfoFlag(false))
       }
     }
   }
