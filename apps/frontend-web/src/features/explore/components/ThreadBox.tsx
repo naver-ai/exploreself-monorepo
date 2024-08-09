@@ -30,7 +30,13 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
     } catch (err) {}
   }, []);
 
-  const onSelect = useCallback(() => dispatch(selectQuestion(props.qid)), [props.qid])
+  const onSelect = useCallback(() =>{
+    dispatch(selectQuestion(props.qid, (q)=>{
+      requestAnimationFrame(()=>{
+        ShortcutManager.instance.requestFocus({type:"question", id: q._id})
+      })
+    }))}, [props.qid])
+  const [t] = useTranslation()
 
   return (
     <Flex
@@ -46,7 +52,7 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
           onClick={onSelect}
           icon={<PencilIcon className='w-4 h-4'/>}
           type="primary"
-        >답변 쓰기</Button>
+        >{t("Thread.Questions.Answer")}</Button>
         {false && <Button type="text" icon={<DeleteOutlined />} shape="circle" className="ml-3" />}
       </Flex>}
     </Flex>
@@ -109,9 +115,7 @@ const UnselectedQuestionList = (props: { tid: string }) => {
         children: (
             <div>
             {
-              [...questionIds].reverse().map((qid) => (
-                <UnselectedQuestionItem key={qid} qid={qid} />
-              ))
+              questionIds.map((qid) => <UnselectedQuestionItem key={qid} qid={qid} />)
             }</div>
         ),
       },
@@ -169,7 +173,7 @@ export const ThreadBox = (props: { tid: string }) => {
     const focusRequestSubscription =
       ShortcutManager.instance.onFocusRequestedEvent.subscribe((event) => {
         if (event.type == 'thread' && event.id == props.tid) {
-          scrollAnchorRef.current?.scrollIntoView({ behavior: 'smooth' });
+          scrollAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       });
 

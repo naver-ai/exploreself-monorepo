@@ -21,6 +21,8 @@ import { SkeletonParagraphProps } from 'antd/es/skeleton/Paragraph';
 import { useTranslation } from 'react-i18next';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { TextAreaRef } from 'antd/es/input/TextArea';
+import { ShortcutManager } from '../../../services/shortcut';
+import { filter } from 'rxjs';
 
 const SKELETON_PARAG_PARAMS :SkeletonParagraphProps = {rows: 3,}
 
@@ -39,6 +41,7 @@ export const QuestionBox = (props: { qid: string }) => {
   const isCreatingComment = useSelector(state => state.explore.questionCommentCreationLoadingFlags[props.qid] || false)
   const isCreatingKeywords = useSelector(state => state.explore.questionKeywordCreationLoadingFlags[props.qid] || false)
 
+  const viewRef = useRef<HTMLDivElement>(null)
   const textFieldRef = useRef<TextAreaRef>(null)
 
   const [t] = useTranslation()
@@ -149,10 +152,25 @@ export const QuestionBox = (props: { qid: string }) => {
     } 
   },[question])
 
+  useEffect(()=>{
+    const focusRequestSubscription = ShortcutManager.instance.onFocusRequestedEvent.pipe(filter(val => val.type == 'question' && val.id == props.qid)).subscribe({
+      next: (args) => {
+        requestAnimationFrame(()=>{
+          viewRef.current?.scrollIntoView({behavior: 'smooth', block: 'center'})
+        })
+        
+      }
+    })
+
+    return () => {
+      focusRequestSubscription.unsubscribe()
+    }
+  }, [props.qid])
+
   const switch_id = `switch-qk-${props.qid}`
 
   return (
-    <div className={`p-3 rounded-lg my-6 first:mt-0 border border-transparent transition-all ${isQuestionBoxActive === true ? "!border-gray-300 shadow-2xl bg-white" : "bg-slate-50/25"}`} onClickCapture={onQuestionBoxClickCapture}>
+    <div ref={viewRef} className={`p-3 rounded-lg my-6 first:mt-0 border border-transparent transition-all ${isQuestionBoxActive === true ? "!border-gray-300 shadow-2xl bg-white" : "bg-slate-50/25"}`} onClickCapture={onQuestionBoxClickCapture}>
       <Flex vertical={false}>
         <div className="pb-2 pl-1"><span className='text-teal-500 text-3xl font-light italic'>Q.</span> {question.question.content} </div>
       </Flex>

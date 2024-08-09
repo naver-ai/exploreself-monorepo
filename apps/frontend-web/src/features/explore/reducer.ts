@@ -499,7 +499,7 @@ export function populateNewThread(theme: string, handlers?: {
   }
 }
 
-export function selectQuestion(qid: string): AppThunk {
+export function selectQuestion(qid: string, onComplete?: (updatedQuestion: IQASetWithIds)=>void): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if (state.auth.token) {
@@ -508,6 +508,7 @@ export function selectQuestion(qid: string): AppThunk {
         if (updatedQuestion) {
           dispatch(exploreSlice.actions.updateQuestion(updatedQuestion))
           await postInteractionData(state.auth.token, InteractionType.UserSelectsQuestion, { selected_question: updatedQuestion }, {})
+          onComplete?.(updatedQuestion)
         }
       } catch (ex) {
         console.log(ex)
