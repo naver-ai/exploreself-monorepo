@@ -196,7 +196,7 @@ export const QuestionBox = (props: { qid: string }) => {
             onBlur={handleBlur}
             onFocus={handleFocus}
             placeholder={t("Thread.Questions.AnswerPlaceholder")}
-            className='minimal !min-h-full'
+            className='minimal dimmed !min-h-full'
             autoSize={{ minRows: 2 }}
           />
         </Col>

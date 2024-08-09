@@ -30,6 +30,10 @@ body {
   @apply text-gray-600;
 }
 
+p strong {
+  @apply font-bold;
+}
+
 .container-narrow {
   @apply container max-w-[640px];
 }
@@ -70,5 +74,9 @@ label.ant-form-item-required {
 }
 
 textarea.minimal{
-  @apply !border-l-0 !border-r-0 !border-b-0 !outline-none !shadow-none p-2 !bg-gray-100/80 hover:!bg-gray-200/60 !border-t-2 border-transparent focus:border-teal-500 rounded-none;
+  @apply !border-l-0 !border-r-0 !border-b-0 !outline-none !shadow-none p-2 !border-t-2 border-transparent focus:border-teal-500 rounded-none;
+}
+
+textarea.minimal.dimmed{
+  @apply !bg-gray-100/80 hover:!bg-gray-200/60;
 }
