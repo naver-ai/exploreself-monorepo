@@ -94,15 +94,8 @@ const ThemeBox = () => {
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      setCurrentExpressionIndex([])
-      dispatch(resetNewThemes())
-      fetchThemes(3);
-    } else {
-      setCurrentExpressionIndex([])
-      dispatch(resetNewThemes())
-    }
-  }, [fetchThemes, isOpen]);
+    setCurrentExpressionIndex([])
+  }, [isOpen]);
 
   return (
     <Modal
