@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { MouseEventHandler, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import {
   Button,
   Input,
@@ -13,13 +13,14 @@ import {
 } from '@ant-design/icons';
 const { TextArea } = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
-import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, updateQuestion, updateQuestionResponse } from '../reducer';
+import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, setRecentlyActiveQuestionId, updateQuestion, updateQuestionResponse } from '../reducer';
 import { diffChars, Change } from 'diff';
 import { InteractionBase, InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { SkeletonParagraphProps } from 'antd/es/skeleton/Paragraph';
 import { useTranslation } from 'react-i18next';
 import { postInteractionData } from '../../../api_call/postInteractionData';
+import { TextAreaRef } from 'antd/es/input/TextArea';
 
 const SKELETON_PARAG_PARAMS :SkeletonParagraphProps = {rows: 3,}
 
@@ -33,9 +34,12 @@ export const QuestionBox = (props: { qid: string }) => {
   const keywords = question.keywords
   const comment = question.aiGuides.length > 0 ? question.aiGuides[question.aiGuides.length-1].content : null;
   const [lastSavedResponse, setLastSavedResponse] = useState('');
-  const [isActive, setIsActive] = useState(false);
+  const [isInputFieldActive, setIsInputFieldActive] = useState(false);
+  const isQuestionBoxActive = useSelector(state => state.explore.recentlyActiveQuestionId == props.qid)
   const isCreatingComment = useSelector(state => state.explore.questionCommentCreationLoadingFlags[props.qid] || false)
   const isCreatingKeywords = useSelector(state => state.explore.questionKeywordCreationLoadingFlags[props.qid] || false)
+
+  const textFieldRef = useRef<TextAreaRef>(null)
 
   const [t] = useTranslation()
 
@@ -94,18 +98,19 @@ export const QuestionBox = (props: { qid: string }) => {
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(updateQuestion({_id: props.qid, response: event.target.value}))
-    setIsActive(true);
+    setIsInputFieldActive(true);
   };
 
   const handleFocus = async () => {
-    setIsActive(true);
+    setIsInputFieldActive(true);
+    dispatch(setRecentlyActiveQuestionId(props.qid))
     if(token){
       await postInteractionData(token, InteractionType.UserFocusQuestion, {currentResponse: response}, {qid: props.qid})
     }
   };
 
   const handleBlur = async () => {
-    setIsActive(false);
+    setIsInputFieldActive(false);
     if(token){
       await postInteractionData(token, InteractionType.UserBlurQuestion, {currentResponse: response}, {qid: props.qid})
     }
@@ -119,12 +124,24 @@ export const QuestionBox = (props: { qid: string }) => {
     }
   }
 
+  const onQuestionBoxClickCapture = useCallback<MouseEventHandler<HTMLDivElement>>((ev)=>{
+    dispatch(setRecentlyActiveQuestionId(props.qid))
+    if(ev.nativeEvent.target != textFieldRef.current?.resizableTextArea?.textArea){
+      textFieldRef.current?.resizableTextArea?.textArea?.focus({})
+    }
+    requestAnimationFrame(()=>{
+      textFieldRef.current?.resizableTextArea?.textArea?.scrollIntoView({behavior: 'smooth', block: 'center'})
+    })
+    
+  }, [props.qid])
+
+
   useEffect(() => {
-    if (isActive) {
+    if (isInputFieldActive) {
       const handle = setTimeout(saveResponse, 1000);
       return () => clearTimeout(handle);
     }
-  }, [response, isActive, saveResponse]);
+  }, [response, isInputFieldActive, saveResponse]);
 
   useEffect(() => {
     if(question.aiGuides.length == 0) {
@@ -135,14 +152,14 @@ export const QuestionBox = (props: { qid: string }) => {
   const switch_id = `switch-qk-${props.qid}`
 
   return (
-    <div className="border-2 border-[#B9DBDC]-600 p-3 rounded-lg my-3">
+    <div className={`p-3 rounded-lg my-6 first:mt-0 border border-transparent transition-all ${isQuestionBoxActive === true ? "!border-gray-300 shadow-2xl bg-white" : "bg-slate-50/25"}`} onClickCapture={onQuestionBoxClickCapture}>
       <Flex vertical={false}>
         <div className="pb-2 pl-1"><span className='text-teal-500 text-3xl font-light italic'>Q.</span> {question.question.content} </div>
       </Flex>
        {<Row>
-        <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-gray-100" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
+        <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-transparent" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
           <div className='flex items-center gap-x-2 mb-2 last:mb-0'>
-            <Switch id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={handleToggleChange}/><label className='select-none text-sm' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
+            <Switch id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={handleToggleChange}/><label className='select-none text-sm cursor-pointer' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
           </div>
           {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
             {keywords &&
@@ -172,14 +189,15 @@ export const QuestionBox = (props: { qid: string }) => {
       <Row justify="space-between">
         <Col span={15}>
           <TextArea
+            ref={textFieldRef}
             autoFocus
             value={response}
             onChange={handleChange}
             onBlur={handleBlur}
             onFocus={handleFocus}
             placeholder={t("Thread.Questions.AnswerPlaceholder")}
-            className='p-2'
-            autoSize={{ minRows: 2, maxRows: 10 }}
+            className='minimal !min-h-full'
+            autoSize={{ minRows: 2 }}
           />
         </Col>
         <Col span={8} className="">

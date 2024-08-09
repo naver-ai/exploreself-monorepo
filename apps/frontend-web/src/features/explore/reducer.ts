@@ -35,6 +35,7 @@ export type IExploreState = {
   threadEntityState: typeof initialThreadEntityState,
   questionEntityState: typeof initialQuestionEneityState,
 
+
   threadInInitializationFlags: { [key: string]: boolean | undefined }
   threadQuestionCreationLoadingFlags: { [key: string]: boolean | undefined }
   questionCommentCreationLoadingFlags: { [key: string]: boolean | undefined }
@@ -43,6 +44,9 @@ export type IExploreState = {
 
   isThemeSelectorOpen: boolean;
   isSynthesisBoxOpen: boolean;
+
+  recentlyActiveQuestionId: string | undefined;
+
   reservedFloatingHeaders: { [key: string]: boolean }
 
   hoveringOutlineThreadId?: string | undefined
@@ -85,6 +89,9 @@ const initialState: IExploreState = {
 
   isThemeSelectorOpen: false,
   isSynthesisBoxOpen: false,
+
+  recentlyActiveQuestionId: undefined,
+
   reservedFloatingHeaders: {}
 };
 
@@ -143,6 +150,10 @@ const exploreSlice = createSlice({
     },
     setLoadingThemesFlag: (state, action: PayloadAction<boolean>) => {
       state.isLoadingThemes = action.payload
+    },
+
+    setRecentlyActiveQuestionId: (state, action: PayloadAction<string | undefined>) => {
+      state.recentlyActiveQuestionId = action.payload
     },
 
     setInitializingThreadFlag: (state, action: PayloadAction<{ tid: string, flag: boolean }>) => {
@@ -697,6 +708,7 @@ export const {
   setThemeSelectorOpen,
   setSynthesisBoxOpen,
   setFloatingHeaderFlag,
+  setRecentlyActiveQuestionId,
   updateQuestion,
   setQuestionShowKeywordsFlag,
   setLoadingThemesFlag,
