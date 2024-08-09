@@ -48,7 +48,7 @@ const SidePanel = () => {
         }
       )}>
         <OutlinePanel />
-        <PinnedThemesPanel />
+        {false && <PinnedThemesPanel />}
       </div>
       <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
         <Button disabled={isThemeSelectorOpen} className='w-full' onClick={handleEndSession}>{t("Labels.WrapUp")}</Button>
