@@ -1,7 +1,7 @@
 import { Http } from '../net/http';
 import { InteractionType, InteractionBase } from '@core';
 
-export const postInteractionData = async(token: string, interaction_type: InteractionType, interaction_data: Record<string, any>, metadata: Record<string, any>) => {
+export const postInteractionData = async(token: string, interaction_type: InteractionType, interaction_data?: Record<string, any>, metadata?: Record<string, any>) => {
   try {
     const isLogged = await Http.axios.post('/interaction', {
       interaction_type: interaction_type,

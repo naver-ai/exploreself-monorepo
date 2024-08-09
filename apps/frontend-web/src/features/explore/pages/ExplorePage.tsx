@@ -114,8 +114,6 @@ export const ExplorerPage = () => {
 
   const focusOnThemeButton = threadIds.length === 0 && isThemeSelectorOpen === false
 
-  console.log(sessionStatus)
-
   if (userName == null || userName.length == 0) {
     return <Navigate to="/app/profile" />;
   } else if (initialNarrative == null || initialNarrative.length == 0) {

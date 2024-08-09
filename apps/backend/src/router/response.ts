@@ -3,7 +3,8 @@ import { IThreadORM, Interaction, QASet, ThreadItem, User } from "../config/sche
 import type { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
 import { synthesizeThread } from '../utils/synthesizeThread';
-import { IAIGuide, InteractionType } from '@core';
+import { IAIGuide, InteractionBase, InteractionType } from '@core';
+import { logInteraction } from '../utils/logInteraction';
 
 const router = express.Router()
 
@@ -23,19 +24,13 @@ const saveComment = async(req: RequestWithUser, res) => {
   }
 }
 
-const updateResponse = async (req, res) => {
+const updateResponse = async (req: RequestWithUser, res) => {
   const qid = req.params.qid
   const response = req.body.response
-  const interaction = req.body.interaction
+  const interaction: InteractionBase = req.body.interaction
   try {
     const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {response: response}})
-    const {interaction_type, interaction_data, metadata} = interaction
-    const newInteraction = new Interaction({
-      interaction_type: interaction_type,
-      interaction_data: interaction_data,
-      metadata: {...metadata, uid: req.user._id}
-    })
-    await newInteraction.save()
+    await logInteraction(req.user, interaction.type, interaction.data, interaction.metadata, interaction.timestamp)
     res.json({
       success: true,
       qaSet: updatedQASet._id

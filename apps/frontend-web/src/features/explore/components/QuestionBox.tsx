@@ -19,11 +19,14 @@ import { InteractionBase, InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { SkeletonParagraphProps } from 'antd/es/skeleton/Paragraph';
 import { useTranslation } from 'react-i18next';
+import { postInteractionData } from '../../../api_call/postInteractionData';
 
 const SKELETON_PARAG_PARAMS :SkeletonParagraphProps = {rows: 3,}
 
 export const QuestionBox = (props: { qid: string }) => {
   const dispatch = useDispatch()
+
+  const token = useSelector(state => state.auth.token)
 
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
   const response = question.response
@@ -55,22 +58,22 @@ export const QuestionBox = (props: { qid: string }) => {
     diffs.forEach( (part) => {
       if (part.added) {
         return {
-          interaction_type: InteractionType.UpdateInResponse,
-          interaction_data: {type: 'insert', delta: part.value, prevText: prevText, newText: newText},
+          type: InteractionType.UpdateInResponse,
+          data: {type: 'insert', delta: part.value, prevText: prevText, newText: newText},
           metadata: {qid: props.qid}
         }
       } else if (part.removed) {
         return {
-          interaction_type: InteractionType.UpdateInResponse,
-          interaction_data: {type: 'delete', delta: part.value, prevText: prevText, newText: newText},
+          type: InteractionType.UpdateInResponse,
+          data: {type: 'delete', delta: part.value, prevText: prevText, newText: newText},
           metadata: {qid: props.qid}
         }
       }
     });
     if (prevText !== newText) {
       return {
-        interaction_type: InteractionType.UpdateInResponse,
-        interaction_data: {type: 'edit', delta: "", prevText: prevText, newText: newText},
+        type: InteractionType.UpdateInResponse,
+        data: {type: 'edit', delta: "", prevText: prevText, newText: newText},
         metadata: {qid: props.qid}
       }
     }
@@ -94,18 +97,27 @@ export const QuestionBox = (props: { qid: string }) => {
     setIsActive(true);
   };
 
-  const handleFocus = () => {
+  const handleFocus = async () => {
     setIsActive(true);
+    if(token){
+      await postInteractionData(token, InteractionType.UserFocusQuestion, {currentResponse: response}, {qid: props.qid})
+    }
   };
 
-  const handleBlur = () => {
+  const handleBlur = async () => {
     setIsActive(false);
+    if(token){
+      await postInteractionData(token, InteractionType.UserBlurQuestion, {currentResponse: response}, {qid: props.qid})
+    }
   };
   const isQuestionKeywordsShown = useSelector(state => state.explore.questionShowKeywordsFlags[props.qid] || false)
 
-  const handleToggleChange = useCallback((checked: boolean) => {
-    dispatch(setQuestionShowKeywordsFlag({ qid: props.qid, flag: !checked }));
-  }, [dispatch, props.qid]);
+  const handleToggleChange = async (checked: boolean) => {
+    dispatch(setQuestionShowKeywordsFlag({ qid: props.qid, flag: checked }));
+    if(token){
+      await postInteractionData(token, InteractionType.UserToggleKeywords, {flag: checked, currentResponse: response, keywords }, {qid: props.qid})
+    }
+  }
 
   useEffect(() => {
     if (isActive) {
@@ -116,7 +128,6 @@ export const QuestionBox = (props: { qid: string }) => {
 
   useEffect(() => {
     if(question.aiGuides.length == 0) {
-      console.log("LEN: ", question.aiGuides)
       getNewCommentHandler()
     } 
   },[question])
@@ -131,7 +142,7 @@ export const QuestionBox = (props: { qid: string }) => {
        {<Row>
         <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-gray-100" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
           <div className='flex items-center gap-x-2 mb-2 last:mb-0'>
-            <Switch id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={() => handleToggleChange(isQuestionKeywordsShown as boolean)}/><label className='select-none text-sm' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
+            <Switch id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={handleToggleChange}/><label className='select-none text-sm' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
           </div>
           {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
             {keywords &&
