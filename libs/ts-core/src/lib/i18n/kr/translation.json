@@ -51,11 +51,12 @@
     }
   },
   "Theme": {
-    "Title": "주제 바구니",
+    "Title": "새로운 주제 탐색하기",
+    "CustomTitle": "🤔 마음에 드는 주제가 없나요?",
     "MoreThemes": "주제 더 보기",
     "AltExpressions": "다른 표현도 보기",
-    "Add": "담기",
-    "AddMyself": "직접 추가하기",
+    "Add": "이 주제로 탐색하기",
+    "AddMyself": "주제를 직접 작성해 보세요.",
     "Generating": "탐색해볼 주제 생성 중",
     "NoTheme": "아직 담은 주제가 없습니다.",
     "Tooltip":{
