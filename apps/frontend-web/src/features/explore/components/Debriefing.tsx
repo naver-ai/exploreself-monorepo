@@ -49,7 +49,7 @@ const Debriefing = () => {
       defaultValue={debriefing}
       autoFocus
       autoSize={{ minRows: 5, maxRows: 10 }}
-      placeholder="이번 탐색을 통해 자신과 상황에 대해 어떤 것을 배우거나 새로 깨닫게 되었나요? 무엇이든 생각 나는대로 자유롭게 적어보아요."
+      placeholder={t("Synthesis.FinalReflection")}
     />
   </FormItem>
   <div className="flex justify-end mt-10 gap-3">

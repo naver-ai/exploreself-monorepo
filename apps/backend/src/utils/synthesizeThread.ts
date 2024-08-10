@@ -21,11 +21,6 @@ const synthesizeThread = async (tid: string, option='default') => {
         {% endif %}
         A: {{ set.response }}\n
       {% endif %}
-      {% if not set.selected %}
-        {% if option == "question" %}
-          [Unselected question] set.question.content
-        {% endif %}
-      {% endif %}
     {% endfor %}
   {% else %}
     The session doesn't have log yet.\n

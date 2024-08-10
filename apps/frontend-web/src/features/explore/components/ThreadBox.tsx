@@ -29,6 +29,7 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
       // TODO: implement
     } catch (err) {}
   }, []);
+  const [t] = useTranslation();
 
   const onSelect = useCallback(() => dispatch(selectQuestion(props.qid)), [props.qid])
 
@@ -46,7 +47,7 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
           onClick={onSelect}
           icon={<PencilIcon className='w-4 h-4'/>}
           type="primary"
-        >답변 쓰기</Button>
+        >{t("Thread.Questions.JotDown")}</Button>
         {false && <Button type="text" icon={<DeleteOutlined />} shape="circle" className="ml-3" />}
       </Flex>}
     </Flex>
@@ -101,7 +102,7 @@ const UnselectedQuestionList = (props: { tid: string }) => {
       {
         key: '1',
         label: <div className='flex items-center justify-between'>
-              <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}개)</span>
+              <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}){t("Labels.Count")}</span>
               {
             isCreatingQuestions === false ? (isPanelExpanded === true ? moreButton : null) : <LoadingIndicator className='!justify-end' title={t("Thread.Questions.Generating")}/>
             }
