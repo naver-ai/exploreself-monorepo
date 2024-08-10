@@ -1,31 +1,44 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Button, Row, Space, Col, Drawer } from 'antd';
+import { Button, Col, ButtonProps, Modal, Form, Input, Divider } from 'antd';
 import {
   getNewThemes,
-  pinTheme,
   populateNewThread,
   resetNewThemes,
   setThemeSelectorOpen,
 } from '../reducer';
-import { MdBookmarkBorder } from 'react-icons/md';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { CloseOutlined } from '@ant-design/icons';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
-import { PlusIcon } from '@heroicons/react/20/solid';
-import { ShortcutManager } from '../../../services/shortcut';
+import { PlusCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import { POPULATE_NEW_THREAD_OPTS } from './common';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { FormItem } from 'react-hook-form-antd';
 
-const THEME_CLASSNAME = "flex items-center space-x-2 transition-colors bg-slate-100 hover:bg-slate-200 p-1 rounded-md cursor-pointer"
+const ThemeButton = (props: { theme: string } & ButtonProps) => {
+  return <Button
+    {...props}
+    type="default"
+    className={`w-full h-auto flex justify-between text-left pr-2`}
+    iconPosition='end'
+    icon={<PlusCircleIcon className='w-5 h-5 text-orange-300' />}
+  ><span className='whitespace-normal text-left mr-2 flex-1'>{props.theme}</span></Button>
+}
+
+
+const schema = yup.object({
+  theme: yup.string().trim().min(1).required(),
+})
 
 const ThemeBox = () => {
 
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
 
   const themes = useSelector(state => state.explore.newThemes)
-  const [selected, setSelected] = useState<string>('');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
   const isLoadingThemes = useSelector(state => state.explore.isLoadingThemes)
@@ -33,16 +46,26 @@ const ThemeBox = () => {
 
   const [currentExpressionIndex, setCurrentExpressionIndex] = useState<number[]>([]);
 
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+    reset
+  } = useForm({
+    resolver: yupResolver(schema),
+    reValidateMode: 'onChange',
+  });
+
   const [t] = useTranslation()
 
   const handleShowNextExpression = async (index: number) => {
     const newIndexes = [...currentExpressionIndex];
     newIndexes[index] = Math.min(
       newIndexes[index] + 1,
-      (themes[index] as {main_theme: string, expressions: string[]}).expressions.length
+      (themes[index] as { main_theme: string, expressions: string[] }).expressions.length
     );
     setCurrentExpressionIndex(newIndexes);
-    await postInteractionData(token, InteractionType.UserRequestExpression, {main_theme: themes[index].main_theme, expression: themes[index].expressions[newIndexes[index]]}, {})
+    await postInteractionData(token, InteractionType.UserRequestExpression, { main_theme: themes[index].main_theme, expression: themes[index].expressions[newIndexes[index]] }, {})
   };
 
   useEffect(() => {
@@ -58,7 +81,7 @@ const ThemeBox = () => {
     async (selected: string) => {
       dispatch(setThemeSelectorOpen(false))
       dispatch(populateNewThread(selected, POPULATE_NEW_THREAD_OPTS))
-      await postInteractionData(token, InteractionType.UserSelectsTheme, {theme: selected}, {})
+      await postInteractionData(token, InteractionType.UserSelectsTheme, { theme: selected }, {})
     },
     [token]);
 
@@ -66,121 +89,86 @@ const ThemeBox = () => {
     dispatch(getNewThemes(opt))
   }, []);
 
-  const handleAddPinnedTheme = async (theme: string) => {
-    dispatch(pinTheme(theme));
-    await postInteractionData(token, InteractionType.UserPinsTheme, {theme: theme}, {})
-  };
-
-  const onChangeSelect = (theme: string) => {
-    // dispatch(resetPinnedThemes())
-    setSelected(theme);
-  };
-
   const onCloseThemeSelector = useCallback(() => {
     dispatch(setThemeSelectorOpen(false));
   }, []);
 
   useEffect(() => {
-    if(isOpen) {
-      setCurrentExpressionIndex([])
-      dispatch(resetNewThemes())
-      fetchThemes(3);
-    } else {
-      setCurrentExpressionIndex([])
-      dispatch(resetNewThemes())
-    }
-  }, [fetchThemes, isOpen]);
+    setCurrentExpressionIndex([])
+  }, [isOpen]);
 
   return (
-    <Drawer
-      placement="left"
+    <Modal
+      destroyOnClose
       closable={false}
+      footer={null}
+      title={<div className='flex items-center justify-between pl-2 pt-1'>
+        <span>{t("Theme.Title")}</span>
+        <Button
+          type="text"
+          icon={<CloseOutlined />}
+          onClick={onCloseThemeSelector}
+          disabled={isLoadingThemes}
+        />
+      </div>}
+      maskClosable={false}
       onClose={onCloseThemeSelector}
       open={isOpen}
       getContainer={false}
-      rootStyle={{ position: 'absolute', height: '100vh' }}
-    >
-      <div>
-          <div>
-            <div className="w-full flex justify-end">
-              <Button
-                type="text"
-                icon={<CloseOutlined />}
-                onClick={onCloseThemeSelector}
+      rootClassName='w-full'
+      className='w-full'
+      width={"100%"}
+      wrapClassName='container'
+      classNames={{ content: "!p-3", body: "!p-2" }}
+    ><div className={`flex flex-col gap-4 ${themes.length > 0 ? "sm:grid sm:grid-cols-2 md:grid-cols-3" : ""}`}>
+        {themes.map(
+          (themeItem: { main_theme: string; expressions: string[], quote: string }, index) => (
+            <Col key={index} className="bg-slate-100 rounded-lg p-3 gap-y-2 flex flex-col">
+              <ThemeButton
+                key={index * 10}
+                disabled={isCreatingNewThread || isLoadingThemes}
+                onClick={() => addToThread(themeItem.main_theme)}
+                theme={themeItem.main_theme}
               />
-            </div>
-            <Space direction="vertical" className="w-full pt-3">
-              {themes.map(
-                (themeItem: { main_theme: string; expressions: string[], quote: string }, index) => (
-                  <Col key={index} className="border-[1px] border-slate-300 w-full rounded-lg p-3">
-                    <Row
-                      key={index*10}
-                      className={`${THEME_CLASSNAME} justify-between`}
-                      onClick={() => onChangeSelect(themeItem.main_theme)}
-                      justify="space-between"
-                    >
-                      <Col 
-                      className="flex-1 pl-2 whitespace-normal"
-                      onClick={isCreatingNewThread? undefined: (() => addToThread(themeItem.main_theme))}
-                      >{themeItem.main_theme}</Col>
-                      <Col className='flex-shrink-0'>
-                        <Button
-                          icon={<MdBookmarkBorder />}
-                          onClick={() => handleAddPinnedTheme(themeItem.main_theme)}
-                          size="small"
-                          type="text"
-                          className="text-[10px]"
-                        >
-                          {' '}
-                          {t("Theme.Add")}
-                        </Button>
-                      </Col>
-                    </Row>
-                    {themeItem.expressions.slice(0, currentExpressionIndex[index]).map((exp, i) => {
-                      return (
-                        <Row
-                          key={index*10 + i}
-                          className="flex items-center space-x-2 transition-colors bg-slate-100 hover:bg-slate-300 p-1 rounded-md my-1"
-                          onClick={() => onChangeSelect(exp)}
-                          justify="space-between"
-                        >
-                          <Col className="flex-1 pl-2 whitespace-normal"
-                          onClick={isCreatingNewThread? undefined: (() => addToThread(exp))}>{exp}</Col>
-                          <Col className='flex-shrink-0'>
-                            <Button
-                              icon={<MdBookmarkBorder />}
-                              onClick={() => handleAddPinnedTheme(exp)}
-                              size="small"
-                              type="text"
-                              className="text-[10px]"
-                            >
-                              {' '}
-                              {t("Theme.Add")}
-                            </Button>
-                          </Col>
-                        </Row>
-                      )
-                    })}
-                    <Row className="w-full">
-                      <Button
-                        className="w-full mt-2 text-gray-500 text-xs"
-                        type="text"
-                        size="small"
-                        onClick={() => handleShowNextExpression(index)}
-                        disabled={currentExpressionIndex[index] >= themeItem.expressions.length}
-                        icon={<PlusIcon className='w-4 h-4'/>}>
-                        {t("Theme.AltExpressions")}
-                      </Button>
-                    </Row>
-                  </Col>
+              {themeItem.expressions.slice(0, currentExpressionIndex[index]).map((exp, i) => {
+                return (
+                  <ThemeButton
+                    key={index * 10 + i}
+                    disabled={isCreatingNewThread || isLoadingThemes}
+                    onClick={() => addToThread(exp)}
+                    theme={exp}
+                  />
                 )
-              )}
-              {isLoadingThemes? <LoadingIndicator title={t('Theme.Generating')}/>: <Button onClick={() => fetchThemes(1)}>{t("Theme.MoreThemes")}</Button>}
-            </Space>
-          </div>
-        
+              })}
+              <Button
+                  className="mt-2 text-gray-500 text-xs"
+                  type="text"
+                  size="small"
+                  onClick={() => handleShowNextExpression(index)}
+                  disabled={currentExpressionIndex[index] >= themeItem.expressions.length || isCreatingNewThread || isLoadingThemes}
+                  icon={<PlusIcon className='w-4 h-4' />}>
+                  {t("Theme.AltExpressions")}
+                </Button>
+            </Col>
+          )
+        )}
+        {isLoadingThemes ? <LoadingIndicator title={t('Theme.Generating')} /> : 
+          <Button onClick={() => fetchThemes(1)} disabled={isCreatingNewThread || isLoadingThemes} 
+            className='min-h-16 h-full rounded-md' type="dashed" size="small"><span className='text-sm'>{t("Theme.MoreThemes")}</span></Button>}
       </div>
-    </Drawer>
+      {isLoadingThemes == false ? <div className='mt-8'>
+        <Divider/>
+        <div className='font-semibold text-blue-500 mb-2'>{t("Theme.CustomTitle")}</div>
+        <Form disabled={isCreatingNewThread || isLoadingThemes} rootClassName='w-full sm:w-[70%] lg:w-[50%]' clearOnDestroy onFinish={handleSubmit(values => addToThread(values.theme))} className='flex items-center'>
+          <FormItem control={control} name="theme" className='m-0 flex-1'>
+            <Input
+              placeholder={t("Theme.AddMyself")}
+            />
+          </FormItem>
+          <Button disabled={!isValid} htmlType="submit" className='ml-2'>{t("Theme.Add")} </Button>
+        </Form>
+      </div> : null }
+    </Modal>
   );
 };
 

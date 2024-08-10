@@ -35,6 +35,7 @@ export type IExploreState = {
   threadEntityState: typeof initialThreadEntityState,
   questionEntityState: typeof initialQuestionEneityState,
 
+
   threadInInitializationFlags: { [key: string]: boolean | undefined }
   threadQuestionCreationLoadingFlags: { [key: string]: boolean | undefined }
   questionCommentCreationLoadingFlags: { [key: string]: boolean | undefined }
@@ -43,6 +44,9 @@ export type IExploreState = {
 
   isThemeSelectorOpen: boolean;
   isSynthesisBoxOpen: boolean;
+
+  recentlyActiveQuestionId: string | undefined;
+
   reservedFloatingHeaders: { [key: string]: boolean }
 
   hoveringOutlineThreadId?: string | undefined
@@ -85,6 +89,9 @@ const initialState: IExploreState = {
 
   isThemeSelectorOpen: false,
   isSynthesisBoxOpen: false,
+
+  recentlyActiveQuestionId: undefined,
+
   reservedFloatingHeaders: {}
 };
 
@@ -143,6 +150,10 @@ const exploreSlice = createSlice({
     },
     setLoadingThemesFlag: (state, action: PayloadAction<boolean>) => {
       state.isLoadingThemes = action.payload
+    },
+
+    setRecentlyActiveQuestionId: (state, action: PayloadAction<string | undefined>) => {
+      state.recentlyActiveQuestionId = action.payload
     },
 
     setInitializingThreadFlag: (state, action: PayloadAction<{ tid: string, flag: boolean }>) => {
@@ -438,6 +449,7 @@ export function abortReviewStage(): AppThunk {
         const response = await Http.axios.put("/user/status", {status: SessionStatus.Exploring}, {headers: Http.makeSignedInHeader(state.auth.token)})
 
         dispatch(exploreSlice.actions.updateUserInfo(response.data))
+
       }catch(ex){
         console.log(ex)
       }finally{
@@ -487,7 +499,7 @@ export function populateNewThread(theme: string, handlers?: {
   }
 }
 
-export function selectQuestion(qid: string): AppThunk {
+export function selectQuestion(qid: string, onComplete?: (updatedQuestion: IQASetWithIds)=>void): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if (state.auth.token) {
@@ -496,6 +508,7 @@ export function selectQuestion(qid: string): AppThunk {
         if (updatedQuestion) {
           dispatch(exploreSlice.actions.updateQuestion(updatedQuestion))
           await postInteractionData(state.auth.token, InteractionType.UserSelectsQuestion, { selected_question: updatedQuestion }, {})
+          onComplete?.(updatedQuestion)
         }
       } catch (ex) {
         console.log(ex)
@@ -696,6 +709,7 @@ export const {
   setThemeSelectorOpen,
   setSynthesisBoxOpen,
   setFloatingHeaderFlag,
+  setRecentlyActiveQuestionId,
   updateQuestion,
   setQuestionShowKeywordsFlag,
   setLoadingThemesFlag,

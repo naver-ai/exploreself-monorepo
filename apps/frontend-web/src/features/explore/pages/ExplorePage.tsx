@@ -7,7 +7,7 @@ const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
-import {enterReviewStage, selectFloatingHeader, setSynthesisBoxOpen, setThemeSelectorOpen, threadSelectors } from '../reducer';
+import {enterReviewStage, getNewThemes, resetNewThemes, selectFloatingHeader, setSynthesisBoxOpen, setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon, BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
@@ -36,7 +36,7 @@ const SidePanel = () => {
         className="flex justify-between p-3 items-center  border-b-[1px]"
       >
         <span className="text-sm font-black">MeSense</span>
-        <UserAvatar buttonClassName="" />
+        <UserAvatar  disabled={isThemeSelectorOpen} buttonClassName="" />
       </div>
       <div className={classNames(
         'flex-1 overflow-y-auto bg-gray-400/2',
@@ -48,7 +48,7 @@ const SidePanel = () => {
         }
       )}>
         <OutlinePanel />
-        <PinnedThemesPanel />
+        {false && <PinnedThemesPanel />}
       </div>
       <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
         <Button disabled={isThemeSelectorOpen} className='w-full' onClick={handleEndSession}>{t("Labels.WrapUp")}</Button>
@@ -82,6 +82,8 @@ export const ExplorerPage = () => {
   const dispatch = useDispatch();
 
   const onThemeSelectionButtonClick = useCallback(() => {
+    dispatch(resetNewThemes())
+    dispatch(getNewThemes(3))
     dispatch(setThemeSelectorOpen(true));
   }, []);
 
@@ -113,8 +115,6 @@ export const ExplorerPage = () => {
   }, [scrollBarWidth])
 
   const focusOnThemeButton = threadIds.length === 0 && isThemeSelectorOpen === false
-
-  console.log(sessionStatus)
 
   if (userName == null || userName.length == 0) {
     return <Navigate to="/app/profile" />;

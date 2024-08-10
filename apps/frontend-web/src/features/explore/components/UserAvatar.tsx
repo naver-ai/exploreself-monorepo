@@ -5,7 +5,7 @@ import { signOut } from '../../auth/reducer';
 import { useTranslation } from 'react-i18next';
 import { dangerousReset } from '../reducer';
 
-export const UserAvatar = (props: { buttonClassName?: string }) => {
+export const UserAvatar = (props: { buttonClassName?: string, disabled?: boolean}) => {
   const userName = useSelector((state) => state.explore.name);
 
   const [t] = useTranslation()
@@ -44,8 +44,8 @@ export const UserAvatar = (props: { buttonClassName?: string }) => {
   }, []);
 
   return (
-    <Dropdown menu={menuData}>
-      <Button className={`${props.buttonClassName}`} type="dashed">
+    <Dropdown menu={menuData} disabled={props.disabled}>
+      <Button disabled={props.disabled} className={`${props.buttonClassName}`} type="dashed">
         {userName}
       </Button>
     </Dropdown>

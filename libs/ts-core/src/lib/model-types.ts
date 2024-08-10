@@ -8,15 +8,23 @@ export enum InteractionType {
   UserRequestsTheme = 'UserRequestsTheme',
   UserRequestsQuestion='UserRequestsQuestion', // O
   UserSelectsQuestion = 'UserSelectsQuestion', // O
+  UserFocusQuestion = "UserFocusQuestion",
+  UserBlurQuestion = "UserBlurQuestion",
   UpdateInResponse = 'UpdateInResponse', // O
   LLMGeneratedKeyword = 'LLMGeneratedKeyword', // O
+
+  UserToggleKeywords = "UserToggleKeywords",
+
   UserRequestsSynthesize = 'UserRequestsSynthesize',
+  UserChangeSessionStatus = "UserChangeSessionStatus",
+  UserTerminateExploration = "UserTerminateExploration"
 }
 
 export interface InteractionBase {
-  interaction_type: InteractionType;
-  metadata: Record<string, any> | {};
-  interaction_data?: Record<string, any> | {};
+  type: InteractionType;
+  metadata?: Record<string, any> | {};
+  data?: Record<string, any> | {};
+  timestamp?: Date
 }
 
 export interface IAIGuide {

@@ -3,7 +3,8 @@ import { QASet, ThreadItem, User } from "../config/schema";
 import { signedInUserMiddleware } from './middlewares';
 import type {RequestWithUser} from './middlewares'
 import { body } from 'express-validator';
-import { SessionStatus } from '@core';
+import { InteractionType, SessionStatus } from '@core';
+import { logInteraction } from '../utils/logInteraction';
 
 const router = express.Router()
 
@@ -49,14 +50,22 @@ router.post('/debriefing', signedInUserMiddleware, body("debriefing").exists().t
 
 router.put("/status", signedInUserMiddleware, body("status").exists().isIn(Object.keys(SessionStatus)), async (req: RequestWithUser, res) => {
   const newStatus = req.body.status
-  req.user.sessionStatus = newStatus
-  await req.user.save()
+  const oldStatus = req.user.sessionStatus
+  if(oldStatus != newStatus){
+    req.user.sessionStatus = newStatus
+    await req.user.save()
+
+    await logInteraction(req.user, InteractionType.UserChangeSessionStatus, {from: oldStatus, to: newStatus}, undefined, Date.now())
+  }
+
   res.json({
     sessionStatus: req.user.sessionStatus
   })
 })
 
 router.post("/terminate", signedInUserMiddleware, body("debriefing").optional().isString().trim(), async (req: RequestWithUser, res) => {
+  const timestamp = Date.now()
+  
   const debriefing = req.body.debriefing;
   if(req.body.debriefing !== undefined){
     req.user.debriefing = debriefing
@@ -65,6 +74,9 @@ router.post("/terminate", signedInUserMiddleware, body("debriefing").optional().
   req.user.sessionStatus = SessionStatus.Terminated
   
   await req.user.save()
+
+  await logInteraction(req.user, InteractionType.UserTerminateExploration, {debriefing: req.user.debriefing}, undefined, timestamp)
+
   res.json({
     debriefing: req.user.debriefing,
     sessionStatus: req.user.sessionStatus
