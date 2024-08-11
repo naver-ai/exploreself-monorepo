@@ -68,6 +68,7 @@ export const OutlinePanel = () => {
       iconComponent={ListBulletIcon}
       title={t("Outline.Title")}
       titleContainerClassName="!mb-5"
+      info={t("Info.Outline")}
     >
       <Timeline className="px-1" items={themeListTimelineItems} />
     </PanelGroup>
