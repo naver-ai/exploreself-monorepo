@@ -31,7 +31,7 @@ const ThemeButton = React.forwardRef<HTMLButtonElement, ThemeButtonProps>((props
   return (
     <Button
       {...props}
-      ref={ref ? ref : undefined}
+      ref={ref ? ref : null}
       type="default"
       className="w-full h-auto flex justify-between text-left pr-2"
       iconPosition="end"
@@ -71,31 +71,30 @@ const ThemeBox = () => {
     {
       title: "AI 생성 주제들",
       description: "AI가 나의 고민 이야기로부터 생성한 주제들",
-      target: () => refNewThemes.current,
+      target: () => refNewThemes.current || null,
     },
     {
       title: "",
       description: "비슷한 주제의 다양한 표현을 살펴볼 수 있어요.",
-      target: () => refAltExp.current,
+      target: () => refAltExp.current || null,
     }, 
     {
       title: "",
       description: "주제를 누르게 되면, 바로 주제에 대한 타래가 생성되어요.",
-      target: () => refOneTheme.current
+      target: () => refOneTheme.current || null
     },
     {
       title: "주제 더 보기",
       description: "더 많은 주제를 보고 싶으면 AI가 생성해주어요. AI가 주제를 더 만들 수 없을 경우도 있어요.",
-      target: () => refMoreThemes.current,
+      target: () => refMoreThemes.current || null,
     },
     {
       title: "주제 직접 작성하기",
       description: "내가 직접 추가하고 싶은 주제가 있다면, 직접 작성해보아요.",
-      target: () => refCreateTheme.current
+      target: () => refCreateTheme.current || null
     }
-  ]
+  ];
 
-  const filteredSteps = steps.filter(step => step.target);
 
   const {
     control,
@@ -152,11 +151,15 @@ const ThemeBox = () => {
   const onCloseThemeSelector = useCallback(() => {
     dispatch(setThemeSelectorOpen(false));
   }, []);
+
   const handleTourClose = () => {
     setIsTourReady(false);
-    setTimeout(() => {
-      dispatch(setInitOpenThemeboxFlag(false));
-    }, 300);
+    dispatch(setInitOpenThemeboxFlag(false));
+    refNewThemes.current = null;
+    refAltExp.current = null;
+    refOneTheme.current = null;
+    refMoreThemes.current = null;
+    refCreateTheme.current = null;
   };
 
   useEffect(() => {
@@ -239,7 +242,7 @@ const ThemeBox = () => {
       {!isLoadingThemes && isTourReady && (
         <Tour 
           open={initOpen} 
-          steps={filteredSteps} 
+          steps={steps} 
           onClose={handleTourClose}
         />
       )}
