@@ -27,12 +27,19 @@ export interface IThreadORM extends IThreadBase, Document {
 export interface IUserORM extends IUserBase, Document {
   _id: mongoose.Types.ObjectId
   threads: Array<mongoose.Types.ObjectId | IThreadORM>
+  browserSessions: Array<mongoose.Types.ObjectId | BrowserSessionORM>
 }
 export interface InteractionORM extends InteractionBase, Document {
   _id: mongoose.Types.ObjectId;
   metadata: Record<string, any>;
   createdAt: Date
   user: mongoose.Types.ObjectId
+}
+
+export interface BrowserSessionORM extends Document {
+  _id: mongoose.Types.ObjectId;
+  startedTimestamp: number
+  endedTimestamp: number | undefined
 }
 
 
@@ -78,6 +85,11 @@ export const ThreadItemSchema = new Schema({
  
 ThreadItemSchema.set('timestamps', true)
 
+export const BrowserSessionSchema = new Schema<BrowserSessionORM>({
+  startedTimestamp: {type: Number, index: true, default: Date.now},
+  endedTimestamp: {type: Number, nullable: true, default: null, index: true}
+})
+
 export const UserSchema = new Schema({
     alias: {type: String, required: true, unique: true},
     name: {type: String, required: false},
@@ -90,8 +102,9 @@ export const UserSchema = new Schema({
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date},
     debriefing: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
-    sessionStatus: {type: String, enum: Object.keys(SessionStatus), default: SessionStatus.Exploring}
- });
+    sessionStatus: {type: String, enum: Object.keys(SessionStatus), default: SessionStatus.Exploring},
+    browserSessions: {type: [Schema.Types.ObjectId], ref: 'BrowserSession', required: true, default: []},
+  });
  
 UserSchema.set('timestamps', true);
 UserSchema.set('toJSON', {
@@ -119,3 +132,4 @@ export const QASet = mongoose.model<IQASetORM>('QASet', QASetSchema)
 export const ThreadItem = mongoose.model<IThreadORM>('ThreadItem', ThreadItemSchema)
 export const User = mongoose.model<IUserORM>('User', UserSchema)
 export const Interaction = mongoose.model<InteractionORM>('Interaction', InteractionSchema);
+export const BrowserSession = mongoose.model<BrowserSessionORM>('BrowserSession', BrowserSessionSchema)
