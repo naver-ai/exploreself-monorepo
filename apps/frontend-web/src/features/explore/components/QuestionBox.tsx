@@ -89,6 +89,15 @@ export const QuestionBox = (props: { qid: string }) => {
     }
   };
 
+  const importKeyword = useCallback(async (keyword: string) => {
+    try {
+      const interaction: InteractionBase = {type: InteractionType.ImportKeyword, data: {keyword: keyword}, metadata: {qid: props.qid}}
+      await dispatch(updateQuestionResponse(props.qid, response.concat(keyword), interaction))
+    } catch (err) {
+      console.error("Failed to import keyword")
+    }
+  },[props.qid, response])
+
   const saveResponse = useCallback(async () => {
     if (response !== lastSavedResponse) {
       try {
@@ -186,12 +195,13 @@ export const QuestionBox = (props: { qid: string }) => {
           {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
             {keywords &&
               (keywords as string[]).map((keyword, i) => (
-                <div
+                <Button
                   key={i}
                   className="border border-[#B9DBDC]-600 px-2 py-1 rounded-lg"
+                  onClick={() => importKeyword(keyword)}
                 >
                   {keyword}
-                </div>
+                </Button>
               ))}
             {
               isCreatingKeywords == true? <LoadingIndicator title={t("Thread.Keywords.Generating")} className='ml-2'/> : <Button
