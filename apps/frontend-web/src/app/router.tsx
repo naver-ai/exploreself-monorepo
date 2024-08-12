@@ -17,6 +17,7 @@ import { useVerifyAdminToken } from '../admin/features/auth/hooks';
 import { AdminLoginPage } from '../admin/features/auth/pages/AdminLoginPage';
 import { UserListPage } from '../admin/features/users/pages/UserListPage';
 import UserDetailPage from '../admin/features/user/pages/UserDetailPage';
+import { AdminSignedInRouteFrame } from '../admin/features/auth/components/AdminSignedInRouteFrame';
 
 const AdminLoggedInRoute = () => {
   const { verify, isSignedIn } = useVerifyAdminToken();
@@ -79,10 +80,12 @@ export const MainRouter = () => {
         <Route path="admin">
           <Route path="login" element={<AdminLoginPage/>}/>
           <Route element={<AdminLoggedInRoute/>}>
-          <Route index element={<Navigate to={'users'} />} />
-            <Route path="users">
-              <Route index element={<UserListPage/>} />
-              <Route path=":id" element={<UserDetailPage/>}>
+            <Route element={<AdminSignedInRouteFrame/>}>
+              <Route index element={<Navigate to={'users'} />} />
+                <Route path="users">
+                  <Route index element={<UserListPage/>} />
+                  <Route path=":id" element={<UserDetailPage/>}>
+                </Route>
               </Route>
             </Route>
           </Route>
