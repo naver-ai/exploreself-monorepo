@@ -84,7 +84,6 @@ const UnselectedQuestionList = (props: { tid: string }) => {
   const dispatch = useDispatch();
   const questionIds = useSelector(state => unSelectedQuestionIdsSelector(state, props.tid))
   const isCreatingQuestions = useSelector(state => state.explore.threadQuestionCreationLoadingFlags[props.tid] || false)
-  const prevCreatingQuestions = usePrevious(isCreatingQuestions)
 
   const [isPanelExpanded, setIsPanelExpanded] = useState(true)
 
@@ -93,21 +92,14 @@ const UnselectedQuestionList = (props: { tid: string }) => {
     dispatch(getMoreQuestion(props.tid))
   }, [props.tid])
 
-  useEffect(()=>{
-    if(prevCreatingQuestions != isCreatingQuestions && isCreatingQuestions == false){
-
-    }
-  }, [prevCreatingQuestions, isCreatingQuestions])
-
   const moreButton = <Button className='' disabled={isCreatingQuestions} onClick={onMoreQuestionsClick}>{t("Thread.Questions.More")}</Button>
-
 
   const items = useMemo(()=>{
     return [
       {
         key: '1',
         label: <div className='flex items-center justify-between'>
-              <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}개)</span>
+              <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}){t("Labels.Count")}</span>
               {
             isCreatingQuestions === false ? (isPanelExpanded === true ? moreButton : null) : <LoadingIndicator className='!justify-end' title={t("Thread.Questions.Generating")}/>
             }

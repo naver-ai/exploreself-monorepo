@@ -1,10 +1,93 @@
 {
+  "SignIn": {
+    "Title": "MeSense",
+    "Passcode": {
+      "Prompt": "password"
+    },
+    "Enter": "Login"
+  },
+  "Reset": {
+    "Title": "Initialize contents",
+    "Confirm": "Are you sure you want to reset all contents and go back to the beginning? This action cannot be undone."
+  },
+  "SignOut": {
+    "Title": "Sign Out",
+    "Confirm": "Are you sure you want to sign out? Your progress will be saved."
+  },
   "Profile": {
+    "Title": "Enter User Information",
     "Name": {
-      "Prompt": "Each and everyone has their own challenges. Could be things such as conflict with an old friend, being obsessed in diet, etc. Do you have any story of yours that you would like to understand better? Please write down below!"
+      "Prompt": "Please let the AI know the name or nickname you would like to be referred to as.",
+      "Placeholder": "Name or Nickname"
     }
   },
+
+  "Narrative": {
+    "Title": "Jot down Your Story of Difficulty",
+    "Prompt": "Everyone has their own difficulties. Conflicts with an old friend, an obsession with dieting, etc... Do you have a story you want to understand better? Please write it down below!",
+    "Placeholder": "Write your difficulty here.",
+    "Complete": "Start Exploring Difficulties",
+    "InitialNarrative": "My Difficulty"
+  },
+
+  "Exploration": {
+    "ShowMoreThemes": "Explore Other Themes",
+    "ShowMoreThemesInitial": "Explore Related Themes"
+  },
+
+  "Thread": {
+    "Questions": {
+      "Title": "Questions to Think About",
+      "Generating": "Generating questions...",
+      "More": "Get More Question Suggestions",
+      "RequestHelp": "See New Tips",
+      "AnswerPlaceholder": "Write down freely",
+      "NoQuestionPlaceholder": "Choose one of the questions from the list below to think about.",
+      "JotDown": "Write Response"
+    },
+    "Keywords": {
+      "More": "See More Keywords",
+      "Generating": "Generating keywords",
+      "HelperKeywords": "Keywords to Help Your Thinking"
+    }
+  },
+  "Theme": {
+    "Title": "Theme Basket",
+    "MoreThemes": "See More Themes",
+    "AltExpressions": "See Other Expressions",
+    "Add": "Add",
+    "AddMyself": "Add Myself",
+    "Generating": "Generating themes to explore",
+    "NoTheme": "No themes added yet.",
+    "Tooltip": {
+      "NewThread": "Click to open a new thread with this theme."
+    },
+    "UndoDelete": "Undo Theme Deletion"
+  },
+  "Synthesis": {
+    "Title": "AI Summary",
+    "Open": "View AI Summary",
+    "Generating": "Generating summary",
+    "More": "View New Summary",
+    "Aggregate": "'s log of exploration'",
+    "Complete": "End session",
+    "CompleteMessage": "The session has ended. Thank you :).",
+    "BackToExplore": "Go back to the Exploration Page",
+    "FinalReflection": "Through this exploration, what have you learned or newly realized about yourself and your situation? Feel free to write down whatever comes to mind."
+  },
   "Labels": {
-    "Apply": "Apply"
+    "Apply": "Apply",
+    "Submit": "Submit",
+    "WrapUp": "Wrap Up Exploration",
+    "Press": "Press to Confirm",
+    "Finish": "Finish",
+    "Count": ""
+  },
+
+  "Outline": {
+    "Title": "Outline"
+  },
+  "Auth": {
+
   }
 }

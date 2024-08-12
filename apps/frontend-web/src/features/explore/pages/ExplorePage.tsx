@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { OutlinePanel, PinnedThemesPanel } from '../components/sidebar-views';
 import ThemeBox from '../components/ThemeBox';
 import { ThreadBox } from '../components/ThreadBox';
-import { Card,  Button, Input } from 'antd';
+import { Card,  Button, Input, Popover } from 'antd';
 const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -12,10 +12,12 @@ import { LightBulbIcon, BookmarkIcon as SolidBookmarkIcon } from '@heroicons/rea
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
 import useScrollbarSize from 'react-scrollbar-size';
-import {AlignLeftOutlined} from '@ant-design/icons'
+import {AlignLeftOutlined, InfoCircleOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames'
 import { SessionStatus } from '@core';
+import { InfoPopover } from '../../../components/InfoPopover';
+
 
 const SidePanel = () => {
 
@@ -51,7 +53,7 @@ const SidePanel = () => {
         {false && <PinnedThemesPanel />}
       </div>
       <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
-        <Button disabled={isThemeSelectorOpen} className='w-full' onClick={handleEndSession}>{t("Labels.WrapUp")}</Button>
+        <Button disabled={isThemeSelectorOpen} className='w-full' onClick={handleEndSession}>{t("Synthesis.Open")}<InfoPopover title="AI 요약 보기" content='지금까지 적어본 것들에 대한 AI 요약을 확인해볼 수 있어요.'/></Button>
       </div>
     </>
   );
@@ -162,7 +164,9 @@ export const ExplorerPage = () => {
                 className={`w-full border-none shadow-lg h-12 mt-4 ${focusOnThemeButton ? 'outline animate-focus-indicate':''}`}
                 icon={themeButtonIcon}
                 onClick={onThemeSelectionButtonClick}
-              >{themeButtonLabel}</Button>
+              >{themeButtonLabel}
+                <InfoPopover content="고민과 관련하여 탐색해볼 수 있는 주제들을 볼 수 있어요." iconColor='white'/>
+              </Button>
             </div>
 
             {inView === false ? (
@@ -173,7 +177,7 @@ export const ExplorerPage = () => {
                     className="w-full border-none h-12 mt-4 shadow-lg shadow-teal-900/50 animate-slidein-up"
                     icon={themeButtonIcon}
                     onClick={onThemeSelectionButtonClick}
-                  >{themeButtonLabel}</Button>
+                  >{themeButtonLabel}<InfoPopover content="고민과 관련하여 탐색해볼 수 있는 주제들을 볼 수 있어요." iconColor='white'/></Button>
                 </div>
               </div>
             ) : null}

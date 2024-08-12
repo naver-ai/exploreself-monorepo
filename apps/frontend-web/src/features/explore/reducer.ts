@@ -29,6 +29,7 @@ export type IExploreState = {
   isCreatingSynthesis: boolean;
   isLoadingThemes: boolean;
   newThemes: ThemeWithExpressions[];
+  isInitOpenThemeBox: boolean;
 
   userId?: string;
 
@@ -63,6 +64,7 @@ const initialState: IExploreState = {
   isCreatingSynthesis: false,
   isLoadingThemes: false,
   newThemes: [],
+  isInitOpenThemeBox: true,
 
   userId: undefined,
 
@@ -150,6 +152,9 @@ const exploreSlice = createSlice({
     },
     setLoadingThemesFlag: (state, action: PayloadAction<boolean>) => {
       state.isLoadingThemes = action.payload
+    },
+    setInitOpenThemeboxFlag: (state, action: PayloadAction<boolean>) => {
+      state.isInitOpenThemeBox = action.payload
     },
 
     setRecentlyActiveQuestionId: (state, action: PayloadAction<string | undefined>) => {
@@ -710,6 +715,7 @@ export const {
   setSynthesisBoxOpen,
   setFloatingHeaderFlag,
   setRecentlyActiveQuestionId,
+  setInitOpenThemeboxFlag,
   updateQuestion,
   setQuestionShowKeywordsFlag,
   setLoadingThemesFlag,

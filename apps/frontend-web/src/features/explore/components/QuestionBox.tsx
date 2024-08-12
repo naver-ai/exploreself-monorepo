@@ -23,6 +23,9 @@ import { postInteractionData } from '../../../api_call/postInteractionData';
 import { TextAreaRef } from 'antd/es/input/TextArea';
 import { ShortcutManager } from '../../../services/shortcut';
 import { filter } from 'rxjs';
+import { InfoPopover } from '../../../components/InfoPopover';
+import { ReactTyped } from "react-typed";
+
 
 const SKELETON_PARAG_PARAMS :SkeletonParagraphProps = {rows: 3,}
 
@@ -178,6 +181,7 @@ export const QuestionBox = (props: { qid: string }) => {
         <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-transparent" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
           <div className='flex items-center gap-x-2 mb-2 last:mb-0'>
             <Switch id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={handleToggleChange}/><label className='select-none text-sm cursor-pointer' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
+            <InfoPopover title="생각을 돕는 단어들" content='생각이 쉽게 나지 않을 때 눌러보세요. 머릿속으로부터 표현이나 생각을 끄집어내주는 단어들을 보여줄거에요.'/>
           </div>
           {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
             {keywords &&
@@ -220,11 +224,20 @@ export const QuestionBox = (props: { qid: string }) => {
         </Col>
         <Col span={8} className="">
           <div className="bg-[#F1F8F8] p-3 rounded-lg text-xs flex flex-col">
+            <div>
+              <InfoPopover title="도움말" content={`어떻게 이어서 적어나가야할지 막막할 때 눌러보세요.\n 생각의 방향에 도움을 줄 수 있어요.`}/>
+            </div>
+            
             {
               isCreatingComment === true ? 
                 <Skeleton className='skeleton-sm' active title={false} paragraph={SKELETON_PARAG_PARAMS} /> : 
                 <>
-                <div className="pb-3">{comment}</div>
+                {comment && <ReactTyped
+                  strings={[comment]}
+                  typeSpeed={30}
+                  backSpeed={50}
+                  loop={false}
+                />}    
                 <Button
                 type="text"
                 icon={<ReloadOutlined />}
@@ -234,6 +247,7 @@ export const QuestionBox = (props: { qid: string }) => {
               >{t("Thread.Questions.RequestHelp")}</Button>
               </>
             }
+            
           </div>
         </Col>
       </Row>
