@@ -68,7 +68,7 @@
   },
   "Synthesis": {
     "Title": "AI 요약",
-    "Open": "AI 요약 보기",
+    "Open": "의 정리",
     "Generating": "요약 생성 중",
     "More": "새로운 요약 보기",
     "Complete": "고민 탐색 마치기",
@@ -78,6 +78,7 @@
     "FinalReflection": "이번 탐색을 통해 자신과 상황에 대해 어떤 것을 배우거나 새로 깨닫게 되었나요? 무엇이든 생각 나는대로 자유롭게 적어보아요."
   },
   "Labels": {
+    "SysName": "",
     "Apply": "적용",
     "Submit": "제출",
     "WrapUp": "탐색 마무리",

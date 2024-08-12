@@ -106,9 +106,7 @@ const UnselectedQuestionList = (props: { tid: string }) => {
           </div>,
         children: (
             <div>
-            {
-              questionIds.map((qid) => <UnselectedQuestionItem key={qid} qid={qid} />)
-            }</div>
+            {[...questionIds].reverse().map((qid) => (<UnselectedQuestionItem key={qid} qid={qid} />))}</div>
         ),
       },
     ]

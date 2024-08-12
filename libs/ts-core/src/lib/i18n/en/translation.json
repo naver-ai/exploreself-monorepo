@@ -39,6 +39,7 @@
     "Questions": {
       "Title": "Questions to Think About",
       "Generating": "Generating questions...",
+      "Answer": "Write Response",
       "More": "Get More Question Suggestions",
       "RequestHelp": "See New Tips",
       "AnswerPlaceholder": "Write down freely",
@@ -48,7 +49,7 @@
     "Keywords": {
       "More": "See More Keywords",
       "Generating": "Generating keywords",
-      "HelperKeywords": "Keywords to Help Your Thinking"
+      "HelperKeywords": "Keywords to Help Your Expression"
     }
   },
   "Theme": {

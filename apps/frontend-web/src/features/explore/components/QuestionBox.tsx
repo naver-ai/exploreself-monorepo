@@ -190,7 +190,7 @@ export const QuestionBox = (props: { qid: string }) => {
         <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-transparent" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
           <div className='flex items-center gap-x-2 mb-2 last:mb-0'>
             <Switch id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={handleToggleChange}/><label className='select-none text-sm cursor-pointer' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
-            <InfoPopover title="생각을 돕는 단어들" content='생각이 쉽게 나지 않을 때 눌러보세요. 머릿속으로부터 표현이나 생각을 끄집어내주는 단어들을 보여줄거에요.'/>
+            <InfoPopover title="표현을 돕는 단어들" content='생각이 쉽게 나지 않을 때 눌러보세요. 머릿속으로부터 표현이나 생각을 끄집어내주는 단어들을 보여줄거에요.'/>
           </div>
           {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
             {keywords &&
@@ -233,7 +233,7 @@ export const QuestionBox = (props: { qid: string }) => {
           />
         </Col>
         <Col span={8} className="">
-          <div className="bg-[#F1F8F8] p-3 rounded-lg text-xs flex flex-col">
+          <div className="bg-[#F1F8F8] p-3 rounded-lg text-xs flex flex-col leading-7">
             <div>
               <InfoPopover title="도움말" content={`어떻게 이어서 적어나가야할지 막막할 때 눌러보세요.\n 생각의 방향에 도움을 줄 수 있어요.`}/>
             </div>
