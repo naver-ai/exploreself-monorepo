@@ -15,6 +15,7 @@ export enum InteractionType {
   UserFocusQuestion = "UserFocusQuestion",
   UserBlurQuestion = "UserBlurQuestion",
   UpdateInResponse = 'UpdateInResponse', // O
+  ImportKeyword='ImportKeyword',
   LLMGeneratedKeyword = 'LLMGeneratedKeyword', // O
 
   UserToggleKeywords = "UserToggleKeywords",
