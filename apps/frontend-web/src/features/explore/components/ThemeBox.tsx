@@ -57,7 +57,7 @@ const ThemeBox = () => {
   const token = useSelector((state) => state.auth.token) as string;
   const isLoadingThemes = useSelector(state => state.explore.isLoadingThemes)
   const isCreatingNewThread = useSelector(state => state.explore.isCreatingNewThread)
-  const [isTourReady, setIsTourReady] = useState(initOpen);
+  const [isTourClosing, setIsTourClosing] = useState(false);
 
   const [currentExpressionIndex, setCurrentExpressionIndex] = useState<number[]>([]);
 
@@ -109,6 +109,7 @@ const ThemeBox = () => {
   const [t] = useTranslation()
 
   const handleShowNextExpression = async (index: number) => {
+    if (isTourClosing) return;
     const newIndexes = [...currentExpressionIndex];
     newIndexes[index] = Math.min(
       newIndexes[index] + 1,
@@ -119,6 +120,7 @@ const ThemeBox = () => {
   };
 
   useEffect(() => {
+    if (isTourClosing) return;
     if (themes.length > currentExpressionIndex.length) {
       setCurrentExpressionIndex(prevIndexes => [
         ...prevIndexes,
@@ -127,39 +129,30 @@ const ThemeBox = () => {
     }
   }, [themes]);
 
-  useEffect(() => {
-    if (initOpen && !isLoadingThemes) {
-      const areAllRefsReady = refNewThemes.current && refOneTheme.current && refAltExp.current && refMoreThemes.current && refCreateTheme.current;
-      if (areAllRefsReady) {
-        setIsTourReady(true);
-      }
-    }
-  }, [initOpen, isLoadingThemes]);
-
   const addToThread = useCallback(
     async (selected: string) => {
+      if (isTourClosing) return;
       dispatch(setThemeSelectorOpen(false))
       dispatch(populateNewThread(selected, POPULATE_NEW_THREAD_OPTS))
       await postInteractionData(token, InteractionType.UserSelectsTheme, { theme: selected }, {})
     },
-    [token]);
+    [token, dispatch, isTourClosing]);
 
   const fetchThemes = useCallback(async (opt: number) => {
+    if (isTourClosing) return;
     dispatch(getNewThemes(opt))
-  }, []);
+  }, [dispatch, isTourClosing]);
 
   const onCloseThemeSelector = useCallback(() => {
     dispatch(setThemeSelectorOpen(false));
   }, []);
 
   const handleTourClose = () => {
-    setIsTourReady(false);
-    dispatch(setInitOpenThemeboxFlag(false));
-    refNewThemes.current = null;
-    refAltExp.current = null;
-    refOneTheme.current = null;
-    refMoreThemes.current = null;
-    refCreateTheme.current = null;
+    setIsTourClosing(true);
+    setTimeout(() => {
+      dispatch(setInitOpenThemeboxFlag(false));
+      setIsTourClosing(false); 
+    }, 500);
   };
 
   useEffect(() => {
@@ -177,7 +170,7 @@ const ThemeBox = () => {
           type="text"
           icon={<CloseOutlined />}
           onClick={onCloseThemeSelector}
-          disabled={isLoadingThemes}
+          disabled={isLoadingThemes || isTourClosing}
         />
       </div>}
       maskClosable={false}
@@ -195,7 +188,7 @@ const ThemeBox = () => {
             <Col key={index} className="bg-slate-100 rounded-lg p-3 gap-y-2 flex flex-col">
               <ThemeButton
                 key={index * 10}
-                disabled={isCreatingNewThread || isLoadingThemes}
+                disabled={isCreatingNewThread || isLoadingThemes || isTourClosing}
                 onClick={() => addToThread(themeItem.main_theme)}
                 theme={themeItem.main_theme}
                 ref={index == 0? refOneTheme: null}
@@ -204,7 +197,7 @@ const ThemeBox = () => {
                 return (
                   <ThemeButton
                     key={index * 10 + i}
-                    disabled={isCreatingNewThread || isLoadingThemes}
+                    disabled={isCreatingNewThread || isLoadingThemes || isTourClosing}
                     onClick={() => addToThread(exp)}
                     theme={exp}
                   />
@@ -215,7 +208,7 @@ const ThemeBox = () => {
                   type="text"
                   size="small"
                   onClick={() => handleShowNextExpression(index)}
-                  disabled={currentExpressionIndex[index] >= themeItem.expressions.length || isCreatingNewThread || isLoadingThemes}
+                  disabled={currentExpressionIndex[index] >= themeItem.expressions.length || isCreatingNewThread || isLoadingThemes || isTourClosing}
                   icon={<PlusIcon className='w-4 h-4' />} ref={ index == 0? refAltExp: null}>
                   {t("Theme.AltExpressions")}
                   <InfoPopover content='비슷한 주제의 다양한 표현들을 살펴볼 수 있어요.'/>
@@ -224,26 +217,26 @@ const ThemeBox = () => {
           )
         )}
         {isLoadingThemes ? <LoadingIndicator title={t('Theme.Generating')} /> : 
-          <Button onClick={() => fetchThemes(1)} disabled={isCreatingNewThread || isLoadingThemes} 
+          <Button onClick={() => fetchThemes(1)} disabled={isCreatingNewThread || isLoadingThemes || isTourClosing} 
             className='min-h-16 h-full rounded-md' type="dashed" size="small" ref={refMoreThemes}><span className='text-sm'>{t("Theme.MoreThemes")}</span></Button>}
       </div>
-      {isLoadingThemes == false ? <div className='mt-8'>
+      {isLoadingThemes == false ? <div className='mt-8' ref={refCreateTheme}>
         <Divider/>
         <div className='font-semibold text-blue-500 mb-2'>{t("Theme.CustomTitle")}</div>
-        <Form ref={refCreateTheme} disabled={isCreatingNewThread || isLoadingThemes} rootClassName='w-full sm:w-[70%] lg:w-[50%]' clearOnDestroy onFinish={handleSubmit(values => addToThread(values.theme))} className='flex items-center'>
+        <Form disabled={isCreatingNewThread || isLoadingThemes || isTourClosing} rootClassName='w-full sm:w-[70%] lg:w-[50%]' clearOnDestroy onFinish={handleSubmit(values => addToThread(values.theme))} className='flex items-center'>
           <FormItem control={control} name="theme" className='m-0 flex-1'>
             <Input
               placeholder={t("Theme.AddMyself")}
             />
           </FormItem>
-          <Button disabled={!isValid} htmlType="submit" className='ml-2'>{t("Theme.Add")} </Button>
+          <Button disabled={!isValid || isTourClosing} htmlType="submit" className='ml-2'>{t("Theme.Add")} </Button>
         </Form>
       </div> : null }
-      {!isLoadingThemes && isTourReady && (
+      {!isLoadingThemes && (
         <Tour 
           open={initOpen} 
           steps={steps} 
-          onClose={handleTourClose}
+          onFinish={handleTourClose}
         />
       )}
     </Modal>
