@@ -46,6 +46,7 @@ const Debriefing = () => {
   return (<div>{sessionStatus == SessionStatus.Reviewing ? <Form onFinish={handleSubmit(handleSubmitDebriefing)}>
   <FormItem control={control} name="debriefing">
     <TextArea
+      data-enable-grammarly={false}
       defaultValue={debriefing}
       autoFocus
       autoSize={{ minRows: 5, maxRows: 10 }}

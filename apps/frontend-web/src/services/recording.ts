@@ -35,6 +35,7 @@ export class SessionRecordingManager{
 
     async uploadLogs(): Promise<void>{
         if(this._eventQueue.length > 0){
+            console.log("Try uploading...")
             const eventsToUpload = this._eventQueue.slice()
             const body = {
                 sessionId: this._sessionId,
@@ -42,19 +43,23 @@ export class SessionRecordingManager{
             }
 
             this._eventQueue = []
-            await this.uploadTaskMutex.runExclusive(() => {
-                return Http.axios.post("/user/logs/upload", body, {headers: Http.makeSignedInHeader(this._token!)}).catch(ex => {
-                    console.log(ex)
-                    this._eventQueue = [...eventsToUpload, ...this._eventQueue]
-                    return
-                })
-            })
-            console.log("Upload complete")
+            const release = await this.uploadTaskMutex.acquire()
+            try{
+                await Http.axios.post("/user/logs/upload", body, {headers: Http.makeSignedInHeader(this._token!)})
+            }catch(ex){
+                console.log(ex)
+                this._eventQueue = [...eventsToUpload, ...this._eventQueue]
+                return
+            }finally{
+                release()
+            }
+        }else{
         }
     }
 
     startLogUploading(token: string, sessionId: string, interval: number = 1000){
         if(this._isLogUploadingOn == false){
+            console.log("Start session recording...")
             this._isLogUploadingOn = true
             this._token = token
             this._sessionId = sessionId
@@ -67,8 +72,11 @@ export class SessionRecordingManager{
 
     stopLogUploading(){
         if(this._isLogUploadingOn){
-            this.uploadLogs().finally(()=>{
+
+            console.log("Stopped session recording.")
+            this.uploadLogs().then().finally(()=>{
                 this._eventQueue = []
+                this.uploadTaskMutex.release()
             })
 
             this._isLogUploadingOn = false

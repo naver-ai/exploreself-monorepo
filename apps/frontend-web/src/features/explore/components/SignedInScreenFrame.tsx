@@ -7,6 +7,8 @@ import { Spin } from 'antd';
 import * as rrweb from 'rrweb'
 import { Http } from '../../../net/http';
 import { SessionRecordingManager } from '../../../services/recording';
+import { socket } from '../../../services/socket';
+import { SocketEvents } from '@core';
 
 export const SignedInScreenFrame = (props: { withHeader: boolean }) => {
   const dispatch = useDispatch();
@@ -26,23 +28,35 @@ export const SignedInScreenFrame = (props: { withHeader: boolean }) => {
         stopRecording = rrweb.record({
           emit(e, isCheckout) {
             SessionRecordingManager.instance.pushEvent(e)
+            if(socket.connected){
+              socket.emit(SocketEvents.OnScreenRecordingEvent, e)
+            }
           },
         })
 
         SessionRecordingManager.instance.startLogUploading(token, sessionId)
-      })      
+
+        socket.auth = {
+          token,
+          mode: 'user',
+          browserSessionId: sessionId
+        }
+
+        socket.on('connect', ()=>{
+          console.log("Connected to socket.")
+        })
+
+        socket.connect()
+      })
+      
+      return () => {
+        stopRecording?.()
+        SessionRecordingManager.instance.stopLogUploading()
+
+        socket.disconnect()
+      }
     }
       
-
-    return () => {
-      if(token != null){
-        console.log(sessionId)
-        Http.axios.post("/user/browser_sessions/end", {sessionId}, {headers: Http.makeSignedInHeader(token)}).then()      
-      }
-
-      stopRecording?.()
-      SessionRecordingManager.instance.stopLogUploading()
-    }
   }, [token])
 
   useEffect(() => {
