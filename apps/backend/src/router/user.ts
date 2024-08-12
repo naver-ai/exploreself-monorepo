@@ -15,6 +15,7 @@ import { logInteraction } from '../utils/logInteraction';
 import path from 'path';
 import { appendFile, appendFileSync, ensureDirSync } from 'fs-extra';
 import { Types } from 'mongoose';
+import { endBrowserSession } from '../utils/browserSession';
 
 export function getBrowserSessionsDirPath(userId: Types.ObjectId | string): string {
   return path.join(process.cwd(), "storage", userId.toString(), "browser_sessions")
@@ -219,20 +220,7 @@ router.post(
   signedInUserMiddleware,
   body('sessionId').exists().isString(),
   async (req: RequestWithUser, res) => {
-    const updatedSession = await BrowserSession.findByIdAndUpdate(
-      req.body.sessionId,
-      {
-        endedTimestamp: Date.now(),
-      },
-      { new: true }
-    );
-    await logInteraction(req.user, req.browserSessionId, InteractionType.UserEndsBrowserSession, {
-      sessionId: updatedSession._id,
-      endedTimestamp: updatedSession.endedTimestamp,
-    });
-    console.log(
-      `User ${req.user.alias} Ended a session: ${updatedSession._id}. Timestamp: ${updatedSession.endedTimestamp}`
-    );
+    await endBrowserSession(req.browserSessionId, req.user)
     res.sendStatus(200);
   }
 );
@@ -249,6 +237,8 @@ router.post(
     const filePath = getBrowserSessionFilePath(req.user._id, sessionId)
 
     appendFileSync(filePath, "\n" + events.map(event => JSON.stringify(event)).join("\n"))
+    console.log("Uploaded session recording logs - ", events.length)
+    res.sendStatus(200)
   }
 );
 

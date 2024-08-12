@@ -17,7 +17,7 @@ import { useVerifyAdminToken } from '../admin/features/auth/hooks';
 import { AdminLoginPage } from '../admin/features/auth/pages/AdminLoginPage';
 import { UserListPage } from '../admin/features/users/pages/UserListPage';
 import UserDetailPage from '../admin/features/user/pages/UserDetailPage';
-import { AdminSignedInRouteFrame } from '../admin/features/auth/components/AdminSignedInRouteFrame';
+import { AdminSignedInRouteFrame } from '../admin/components/AdminSignedInRouteFrame';
 
 const AdminLoggedInRoute = () => {
   const { verify, isSignedIn } = useVerifyAdminToken();

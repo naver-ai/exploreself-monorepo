@@ -6,7 +6,6 @@ import { AppState, AppThunk } from '../../../redux/store';
 
 const userEntityAdapter = createEntityAdapter<IUserWithThreadIds, string>({
   selectId: (model: IUserWithThreadIds) => {
-    console.log(model)
     return model._id}
 })
 
