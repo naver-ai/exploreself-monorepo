@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { IUserORM, User } from '../config/schema'
 import jwt from 'jsonwebtoken'
 
-export type RequestWithUser = Request & { user: IUserORM }
+export type RequestWithUser = Request & { user: IUserORM, browserSessionId: string | undefined, localTimezone: string | undefined }
 
 export const signedInUserMiddleware =  async (req: Request, res: Response, next) => {
         if(req.headers.authorization){
@@ -10,7 +10,12 @@ export const signedInUserMiddleware =  async (req: Request, res: Response, next)
             const decoded = jwt.verify(token, process.env.AUTH_SECRET)
             let user = await User.findById(decoded.sub);
             if (user) {  
+
                 req["user"] = user
+
+                req["browserSessionId"] = req.headers["x-browser-session-id"]
+                req["localTimezone"] = req.headers["x-timezone"]
+
                 next()
             } else {
               res.status(400).send("WrongCredential")

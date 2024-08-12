@@ -11,11 +11,12 @@ import themeRouter from './router/theme'
 import generateRouter from './router/generate'
 import interactionRouter from './router/interaction'
 import adminAuthRouter from './router/admin/auth'
-import adminManageRouter from './router/admin/manage'
+import adminUserRouter from './router/admin/user'
 import * as morgan from 'morgan'
 import cors from 'cors'
 import mongoose, { mongo } from 'mongoose'; 
 import { User } from './config/schema';
+import { signedInAdminUserMiddleware } from './router/admin/middleware';
 
 process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production' ) ? 'production' : 'development';
 if (process.env.NODE_ENV == 'production') {
@@ -62,7 +63,7 @@ apiRouter.use("/themes", themeRouter)
 apiRouter.use("/generate", generateRouter)
 apiRouter.use("/interaction", interactionRouter)
 apiRouter.use("/admin/auth", adminAuthRouter)
-apiRouter.use("/admin/manage", adminManageRouter)
+apiRouter.use("/admin/users", signedInAdminUserMiddleware, adminUserRouter)
 
 
 apiRouter.get("/ping", (req, res) => {

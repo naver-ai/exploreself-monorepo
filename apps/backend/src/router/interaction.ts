@@ -8,7 +8,7 @@ const router = express.Router()
 
 const logInteractionData = async(req: RequestWithUser, res) => {
   try {
-    const orm = await logInteraction(req.user, req.body.interaction_type, req.body.interaction_data, req.body.metadata, req.body.timestamp)
+    const orm = await logInteraction(req.user, (req.headers as any)["BrowserSessionId"], req.body.interaction_type, req.body.interaction_data, req.body.metadata, req.body.timestamp)
     return res.json({success: true})
   } catch (err) {
     console.log("Err in logging interaction: ", err)

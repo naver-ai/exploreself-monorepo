@@ -31,6 +31,10 @@ export interface InteractionBase {
   timestamp?: Date
 }
 
+export interface InteractionObj extends InteractionBase{
+  _id: string
+}
+
 export interface IAIGuide {
   content: string;
   rateGood?: boolean;
@@ -110,11 +114,13 @@ export interface ThemeWithExpressions {
   quote: string;
 }
 
-export interface IAdminUser {
-  passcode: string;
+export interface IUserBrowserSessionBase {
+  localTimezone: string
+  startedTimestamp: number
+  endedTimestamp?: number
 }
 
-export interface IAdminUserWithId extends IAdminUser {
-  _id: string,
-  passcode: string
+export interface IUserBrowserSessionObj extends IUserBrowserSessionBase {
+  _id: string
+  interactionLogs: Array<InteractionBase>
 }

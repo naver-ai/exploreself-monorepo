@@ -1,4 +1,6 @@
 import axios, { Axios } from 'axios';
+import moment from 'moment-timezone';
+import { SessionRecordingManager } from '../services/recording';
 
 export class Http {
   private static _axiosInstance: Axios | undefined = undefined;
@@ -17,6 +19,8 @@ export class Http {
   static makeSignedInHeader(token: string): { [key: string]: string } {
     return {
       Authorization: `Bearer ${token}`,
+      "X-timezone": moment.tz.guess(true),
+      "X-browser-session-id": SessionRecordingManager.instance.currentSessionId || ""
     };
   }
 }

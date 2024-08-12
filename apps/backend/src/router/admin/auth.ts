@@ -29,6 +29,7 @@ router.post('/login', createPasswordValidation(), async (req: Request, res: Resp
             const env = dotenv.config({path: envPath})?.parsed || {}
             
             const passwordMatches = await bcrypt.compare(password, env.ADMIN_HASHED_PW)
+            console.log(passwordMatches)
             if (passwordMatches) {  
               res.status(200).send({ token: makeUserToken() })
             } else {

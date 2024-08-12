@@ -25,6 +25,10 @@ export class SessionRecordingManager{
 
     private _eventQueue: Array<eventWithTime> = []
 
+    public get currentSessionId(): string | undefined {
+        return this._sessionId
+    }
+
     pushEvent(event: eventWithTime){
         this._eventQueue.push(event)
     }

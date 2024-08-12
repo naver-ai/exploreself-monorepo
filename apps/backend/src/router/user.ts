@@ -14,12 +14,14 @@ import { InteractionType, SessionStatus } from '@core';
 import { logInteraction } from '../utils/logInteraction';
 import path from 'path';
 import { appendFile, appendFileSync, ensureDirSync } from 'fs-extra';
+import { Types } from 'mongoose';
 
-function getBrowserSessionsDirPath(user: IUserORM): string {
-  return path.join(process.cwd(), "storage", user._id.toString(), "browser_sessions")
+export function getBrowserSessionsDirPath(userId: Types.ObjectId | string): string {
+  return path.join(process.cwd(), "storage", userId.toString(), "browser_sessions")
 }
-function getBrowserSessionFilePath(user: IUserORM, sessionId: string): string {
-  const dirPath = getBrowserSessionsDirPath(user)
+
+export function getBrowserSessionFilePath(userId: Types.ObjectId | string, sessionId: string): string {
+  const dirPath = getBrowserSessionsDirPath(userId)
   ensureDirSync(dirPath)
   return path.join(dirPath, `${sessionId}.jsonl`)
 }
@@ -103,6 +105,7 @@ router.put(
 
       await logInteraction(
         req.user,
+        req.browserSessionId,
         InteractionType.UserChangeSessionStatus,
         { from: oldStatus, to: newStatus },
         undefined,
@@ -134,6 +137,7 @@ router.post(
 
     await logInteraction(
       req.user,
+      req.browserSessionId,
       InteractionType.UserTerminateExploration,
       { debriefing: req.user.debriefing },
       undefined,
@@ -169,6 +173,7 @@ router.delete(
     req.user.synthesis = [];
     req.user.debriefing = undefined;
     req.user.sessionStatus = SessionStatus.Exploring;
+
     await req.user.save();
 
     const updatedUser = await req.user.populate({
@@ -190,11 +195,13 @@ router.post(
   '/browser_sessions/start',
   signedInUserMiddleware,
   async (req: RequestWithUser, res) => {
-    const session = new BrowserSession();
+    const session = new BrowserSession({
+      localTimezone: req.localTimezone
+    });
     await session.save();
     req.user.browserSessions.push(session);
     await req.user.save();
-    await logInteraction(req.user, InteractionType.UserStartsBrowserSession, {
+    await logInteraction(req.user, session._id.toString(), InteractionType.UserStartsBrowserSession, {
       sessionId: session._id,
       startedTimestamp: session.startedTimestamp,
     });
@@ -219,7 +226,7 @@ router.post(
       },
       { new: true }
     );
-    await logInteraction(req.user, InteractionType.UserEndsBrowserSession, {
+    await logInteraction(req.user, req.browserSessionId, InteractionType.UserEndsBrowserSession, {
       sessionId: updatedSession._id,
       endedTimestamp: updatedSession.endedTimestamp,
     });
@@ -239,7 +246,7 @@ router.post(
     const sessionId = req.body.sessionId
     const events = JSON.parse(req.body.events)
 
-    const filePath = getBrowserSessionFilePath(req.user, sessionId)
+    const filePath = getBrowserSessionFilePath(req.user._id, sessionId)
 
     appendFileSync(filePath, "\n" + events.map(event => JSON.stringify(event)).join("\n"))
   }

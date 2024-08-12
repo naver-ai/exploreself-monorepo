@@ -5,7 +5,9 @@ import { AppState, AppThunk } from '../../../redux/store';
 
 
 const userEntityAdapter = createEntityAdapter<IUserWithThreadIds, string>({
-  selectId: (model: IUserWithThreadIds) => model._id
+  selectId: (model: IUserWithThreadIds) => {
+    console.log(model)
+    return model._id}
 })
 
 const initialUserEntityAdapterState = userEntityAdapter.getInitialState()
@@ -41,6 +43,11 @@ const manageSlice = createSlice({
   _setLoadedUsers: (state, action: PayloadAction<Array<IUserWithThreadIds>>) => {
     userEntityAdapter.setAll(state.userEntityState, action.payload)
   },
+
+  setOneUser: (state, action: PayloadAction<IUserWithThreadIds>) => {
+      userEntityAdapter.setOne(state.userEntityState, action.payload)
+  },
+
   _appendUser: (state, action: PayloadAction<IUserWithThreadIds>) => {
     userEntityAdapter.addOne(state.userEntityState, action.payload)
   }
@@ -55,7 +62,7 @@ export const loadUsers = (): AppThunk => {
     if(state.admin.auth.token != null) {
       dispatch(manageSlice.actions._setLoadingUserListFlag(true))
       try {
-        const resp = await Http.axios.get('/admin/manage/users', {
+        const resp = await Http.axios.get('/admin/users/all', {
           headers: Http.makeSignedInHeader(state.admin.auth.token)
         })
         const users: IUserWithThreadIds[] = resp.data.userList
@@ -75,7 +82,7 @@ export const createUser = (info: {passcode: string, alias: string}, onCreated: (
     if (state.admin.auth.token != null) {
       dispatch(manageSlice.actions._setCreatingUserFlag(true))
       try {
-        const resp = await Http.axios.post('/admin/manage/user', {
+        const resp = await Http.axios.post('/admin/users/new', {
           userInfo: info
         },{
           headers: Http.makeSignedInHeader(state.admin.auth.token)
@@ -91,5 +98,7 @@ export const createUser = (info: {passcode: string, alias: string}, onCreated: (
     }
   }
 }
+
+export const {setOneUser} = manageSlice.actions
 
 export default manageSlice.reducer;

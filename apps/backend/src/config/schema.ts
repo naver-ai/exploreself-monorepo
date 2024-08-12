@@ -1,4 +1,4 @@
-import { IThreadBase, IUserBase, IQASetBase, SessionStatus } from "@core";
+import { IThreadBase, IUserBase, IQASetBase, SessionStatus, IUserBrowserSessionBase } from "@core";
 import mongoose, {Schema, Document, mongo} from "mongoose";
 import { InteractionType, InteractionBase } from "@core";
 import * as nanoid from 'nanoid'
@@ -36,10 +36,9 @@ export interface InteractionORM extends InteractionBase, Document {
   user: mongoose.Types.ObjectId
 }
 
-export interface BrowserSessionORM extends Document {
+export interface BrowserSessionORM extends IUserBrowserSessionBase, Document {
   _id: mongoose.Types.ObjectId;
-  startedTimestamp: number
-  endedTimestamp: number | undefined
+  interactionLogs: Array<mongoose.Types.ObjectId | InteractionORM>
 }
 
 
@@ -86,8 +85,10 @@ export const ThreadItemSchema = new Schema({
 ThreadItemSchema.set('timestamps', true)
 
 export const BrowserSessionSchema = new Schema<BrowserSessionORM>({
+  localTimezone: {type: String, nullable: true, default: null},
+  interactionLogs: {type: [Schema.Types.ObjectId], ref: 'Interaction', default: []},
   startedTimestamp: {type: Number, index: true, default: Date.now},
-  endedTimestamp: {type: Number, nullable: true, default: null, index: true}
+  endedTimestamp: {type: Number, nullable: true, default: null, index: true},
 })
 
 export const UserSchema = new Schema({

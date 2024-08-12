@@ -19,7 +19,7 @@ const columns: ColumnsType<IUserWithThreadIds> = [{
   key: "action",
   render: (_, user) => {
     return <Space key="action" size="middle">
-      <Link to={`users/${user._id}`}>
+      <Link to={`/admin/users/${user._id}`}>
         <Button>Detail</Button>
       </Link>
     </Space>

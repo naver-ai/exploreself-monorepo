@@ -15,8 +15,8 @@ import { ProfilePage } from '../features/explore/pages/ProfilePage';
 import { SynthesisPage } from '../features/explore/pages/SynthesisPage';
 import { useVerifyAdminToken } from '../admin/features/auth/hooks';
 import { AdminLoginPage } from '../admin/features/auth/pages/AdminLoginPage';
-import { UserListPage } from '../admin/features/manage/pages/UserListPage';
-import UserDetailPage from '../admin/features/manage/pages/UserDetailPage';
+import { UserListPage } from '../admin/features/users/pages/UserListPage';
+import UserDetailPage from '../admin/features/user/pages/UserDetailPage';
 
 const AdminLoggedInRoute = () => {
   const { verify, isSignedIn } = useVerifyAdminToken();

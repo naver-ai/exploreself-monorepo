@@ -30,7 +30,7 @@ const updateResponse = async (req: RequestWithUser, res) => {
   const interaction: InteractionBase = req.body.interaction
   try {
     const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {response: response}})
-    await logInteraction(req.user, interaction.type, interaction.data, interaction.metadata, interaction.timestamp)
+    await logInteraction(req.user, req.browserSessionId, interaction.type, interaction.data, interaction.metadata, interaction.timestamp)
     res.json({
       success: true,
       qaSet: updatedQASet._id
