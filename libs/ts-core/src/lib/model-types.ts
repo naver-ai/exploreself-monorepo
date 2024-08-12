@@ -1,4 +1,8 @@
 export enum InteractionType {
+
+  UserStartsBrowserSession = "UserStartsBrowswerSession",
+  UserEndsBrowserSession = "UserEndsBrowswerSession",
+
   LLMElicitedTheme = 'LLMElicitedTheme', // O
   UserRequestExpression = 'UserRequestExpression', // O
   UserPinsTheme = 'UserPinsTheme', //  O 

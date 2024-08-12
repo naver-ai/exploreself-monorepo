@@ -26,8 +26,9 @@ if (process.env.NODE_ENV == 'production') {
 const app = express();
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use(bodyParser.json({type: 'application/json; charset=utf-8'}))
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({limit: '100mb'}));
+app.use(bodyParser.text({limit: '10mb'}))
 app.use(cors());
 app.options("*", cors());
 
@@ -50,7 +51,6 @@ mongoose.connect(process.env.MONGODB_URL+process.env.MONGODB_DBNAME)
     }
   })
   .catch(error => console.log(error))
-app.use(express.json());
 // app.use("/", testRouter)
 const apiRouter = express.Router()
 apiRouter.use("/user", userRouter)
