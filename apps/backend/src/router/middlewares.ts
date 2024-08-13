@@ -6,25 +6,25 @@ import { Types } from 'mongoose'
 export type RequestWithUser = Request & { user: IUserORM, browserSessionId: string | undefined, localTimezone: string | undefined }
 
 export const signedInUserMiddleware =  async (req: Request, res: Response, next) => {
+    try {
         if(req.headers.authorization){
             const token = req.headers.authorization.split(" ")[1]
             const decoded = jwt.verify(token, process.env.AUTH_SECRET)
-            if(Types.ObjectId.isValid(decoded.sub)){
-                let user = await User.findById(decoded.sub);
-                if (user) {  
-
-                    req["user"] = user
-                    req["browserSessionId"] = req.headers["x-browser-session-id"]
-                    req["localTimezone"] = req.headers["x-timezone"]
-
-                    next()
-                } else {
-                res.status(400).send("WrongCredential")
+            try {
+                if(Types.ObjectId.isValid(decoded.sub)){
+                    let user = await User.findById(decoded.sub);
+                    if (user) {  
+                        req["user"] = user
+                        req["browserSessionId"] = req.headers["x-browser-session-id"]
+                        req["localTimezone"] = req.headers["x-timezone"]
+                        next()
+                    } 
                 }
-            }else{
-                res.status(400).send("WrongCredential")
+            } catch (err) {
+                res.status(400).send("WrongCredential" + err)
             }
-        }else{
-            res.status(400).send("No auth header provided.")
         }
-    }
+    } catch (err) {
+        res.status(400).send("No auth header provided: " + err)
+    }        
+}
