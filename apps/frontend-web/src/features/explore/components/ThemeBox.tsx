@@ -3,6 +3,7 @@ import React from 'react';
 import { Button, Col, ButtonProps, Modal, Form, Input, Divider, Tour, TourProps } from 'antd';
 import {
   getNewThemes,
+  pinTheme,
   populateNewThread,
   resetNewThemes,
   setThemeSelectorOpen,
@@ -13,7 +14,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
-import { PlusCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
+import { BookmarkIcon, PlusCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import { POPULATE_NEW_THREAD_OPTS } from './common';
 import * as yup from 'yup';
@@ -22,23 +23,34 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FormItem } from 'react-hook-form-antd';
 import { InfoPopover } from '../../../components/InfoPopover';
 import { init } from 'i18next';
+import { PinnedThemesPanel } from './pinned-themes';
 
 interface ThemeButtonProps extends ButtonProps {
   theme: string;
 }
 
 const ThemeButton = React.forwardRef<HTMLButtonElement, ThemeButtonProps>((props, ref?) => {
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token) as string;
+
+  const handleAddPinnedTheme = async (theme: string) => {
+    dispatch(pinTheme(theme));
+    await postInteractionData(token, InteractionType.UserPinsTheme, {theme: theme}, {})
+  };
+
   return (
+    <div className='flex'>
     <Button
       {...props}
       ref={ref ? ref : null}
       type="default"
       className="w-full h-auto flex justify-between text-left pr-2"
       iconPosition="end"
-      icon={<PlusCircleIcon className="w-5 h-5 text-orange-300" />}
     >
       <span className="whitespace-normal text-left mr-2 flex-1">{props.theme}</span>
     </Button>
+    <Button icon={<BookmarkIcon className="w-5 h-5" style={{ color: '#CCCCCC' }}/>} type="text" onClick={() => handleAddPinnedTheme(props.theme)}/>
+    </div>
   );
 });
 
@@ -220,6 +232,16 @@ const ThemeBox = () => {
           <Button onClick={() => fetchThemes(1)} disabled={isCreatingNewThread || isLoadingThemes || isTourClosing} 
             className='min-h-16 h-full rounded-md' type="dashed" size="small" ref={refMoreThemes}><span className='text-sm'>{t("Theme.MoreThemes")}</span></Button>}
       </div>
+      {!isLoadingThemes && (
+        <div className='mt-8'>
+          <div className='flex'>
+          <BookmarkIcon className="w-5 h-5 text-orange-300"/>
+          <div className='ml-1 font-semibold text-blue-500 mb-2'> 담아둔 주제들</div>
+          </div>
+          
+          <PinnedThemesPanel/>
+        </div>
+      )}
       {isLoadingThemes == false ? <div className='mt-8' ref={refCreateTheme}>
         <Divider/>
         <div className='font-semibold text-blue-500 mb-2'>{t("Theme.CustomTitle")}</div>
