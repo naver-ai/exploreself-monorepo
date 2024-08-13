@@ -31,7 +31,7 @@ export const AggregateBox = () => {
     //     </div>
     //   ))}
     // </div>
-    <div className='bg-white p-8 rounded-xl overflow-y-auto max-h-[90vh]'>
+    <div className='bg-white p-8 rounded-xl'>
       <div className='mb-5 font-bold text-xl'>{name}{t("Synthesis.Aggregate")}</div>
       <div className='border p-5 rounded-lg mb-5 leading-7'>
         {initNarrative}

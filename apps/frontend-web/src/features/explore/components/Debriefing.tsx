@@ -34,14 +34,14 @@ const Debriefing = () => {
   const [t] = useTranslation()
 
   const handleSubmitDebriefing = useCallback(async (values: any) => {
-    dispatch(terminateSession(values.debriefing));
+    if(window.confirm("Synthesis.CompleteConfirm")){
+      dispatch(terminateSession(values.debriefing));
+    }
   }, []);
 
   const onReturnClick = useCallback(() => {
     dispatch(abortReviewStage())
   }, [])
-
-  console.log(sessionStatus)
 
   return (<div>{sessionStatus == SessionStatus.Reviewing ? <Form onFinish={handleSubmit(handleSubmitDebriefing)}>
   <FormItem control={control} name="debriefing">

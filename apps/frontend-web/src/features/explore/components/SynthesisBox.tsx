@@ -26,12 +26,12 @@ const SynthesisBox = () => {
       </div>
       {synthesisList.length && 
       <Carousel 
-      arrows
+      arrows = {synthesisList.length > 1}
       className='custom-carousel h-full'
       initialSlide={synthesisList.length > 0? synthesisList.length -1: 0}>
       {synthesisList?.map((item, i) => 
         <div className='rounded-lg flex items-center justify-center' key={i}>
-          <div className='flex items-center justify-center px-20 pb-10 leading-loose h-full'>
+          <div className='flex items-center justify-center px-10 pb-10 leading-loose h-full'>
             {item}
           </div>
         </div>)}

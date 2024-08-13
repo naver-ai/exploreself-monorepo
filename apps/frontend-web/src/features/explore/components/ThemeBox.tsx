@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState, useRef} from 'react';
 import React from 'react';
-import { Button, Col, ButtonProps, Modal, Form, Input, Divider, Tour, TourProps, Typography } from 'antd';
+import { Button, Col, ButtonProps, Modal, Form, Input, Divider, Tour, TourProps, Typography, Tooltip } from 'antd';
 import {
   getNewThemes,
   pinTheme,
   populateNewThread,
   resetNewThemes,
   setThemeSelectorOpen,
+  unpinTheme,
   updateDidTutorial,
 } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
@@ -33,27 +34,41 @@ interface ThemeButtonProps extends ButtonProps {
 }
 
 const ThemeButton = React.forwardRef<HTMLButtonElement, ThemeButtonProps>((props, ref?) => {
+
+  const [t] = useTranslation()
+
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
   const { buttonRef, theme, ...rest } = props;
+  const isPinned = useSelector(state => state.explore.pinnedThemes.includes(theme))
 
-  const handleAddPinnedTheme = async (theme: string) => {
-    dispatch(pinTheme(theme));
-    await postInteractionData(token, InteractionType.UserPinsTheme, {theme: theme}, {})
+  const onPinButtonClick = async () => {
+    if(isPinned){
+      dispatch(unpinTheme(theme, false))
+      await postInteractionData(token, InteractionType.UserUnpinsTheme, { theme }, {})
+    }else{
+      dispatch(pinTheme(theme));
+      await postInteractionData(token, InteractionType.UserPinsTheme, { theme }, {})
+    }
   };
 
   return (
     <div className='flex'>
-    <Button
-      {...rest}
-      ref={ref ? ref : null}
-      type="default"
-      className="w-full h-auto flex justify-between text-left pr-2"
-      iconPosition="end"
-    >
-      <span className="whitespace-normal text-left mr-2 flex-1">{theme}</span>
-    </Button>
-    <Button ref={buttonRef ? buttonRef : null} icon={<BookmarkIcon className="w-5 h-5" style={{ color: '#CCCCCC' }}/>} type="text" onClick={() => handleAddPinnedTheme(theme)}/>
+
+    <Tooltip mouseEnterDelay={0.2} mouseLeaveDelay={0} title={t("Theme.Tooltip.NewThread")}>
+      <Button
+        {...rest}
+        ref={ref ? ref : null}
+        type="default"
+        className="w-full h-auto flex justify-between text-left pr-2"
+        iconPosition="end"
+      >
+        <span className="whitespace-normal text-left mr-2 flex-1">{theme}</span>
+      </Button>
+    </Tooltip>
+    <Tooltip mouseEnterDelay={0.5} mouseLeaveDelay={0} title={isPinned === true ? t("Theme.Tooltip.UnpinTheme") : t("Theme.Tooltip.PinTheme")}>
+      <Button ref={buttonRef ? buttonRef : null} icon={<BookmarkIcon className={`w-5 h-5 ${isPinned ? 'text-orange-300' : 'text-[#CCCCCC]'}`}/>} type="text" onClick={onPinButtonClick}/>
+    </Tooltip>
     </div>
   );
 });
@@ -280,7 +295,10 @@ const ThemeBox = () => {
       title={<div className='flex items-center justify-between pl-2 pt-1'>
         <span>{t("Theme.Title")}</span>
         <div className='flex items-center'>
-          <div onClick={handleTourOpen} className='cursor-pointer hover:text-blue-500 text-sm font-thin pr-3'>사용 안내 다시보기</div>
+          {
+            isLoadingThemes == false && didTutorial.themeBox == true ? <div onClick={handleTourOpen} className='cursor-pointer hover:text-blue-500 text-sm font-thin pr-3'>사용 안내 다시보기</div> : null
+          }
+          
           <Button
             type="text"
             icon={<CloseOutlined />}
