@@ -68,7 +68,8 @@ export const QASetSchema = new Schema({
   keywords: {type: [String], default: []},
   response: {type: String, default: ''},
   createdAt: {type: Date, default: Date.now},
-  updatedAt: {type: Date}
+  updatedAt: {type: Date},
+  selectedAt: {type: Date, default: null}
  })
 
 QASetSchema.set('timestamps', true);

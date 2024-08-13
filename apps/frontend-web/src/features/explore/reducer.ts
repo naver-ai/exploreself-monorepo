@@ -292,7 +292,16 @@ export const selectedQuestionsSelector = createSelector([questionSelectors.selec
 
 
 export const selectedQuestionIdsSelector = createSelector([selectedQuestionsSelector], (questions) => {
-  return questions.map(q => q._id)
+  {
+    return questions
+    .slice() 
+    .sort((a, b) => {
+      if (!a.selectedAt) return 1; 
+      if (!b.selectedAt) return -1; 
+      return new Date(a.selectedAt).getTime() - new Date(b.selectedAt).getTime();
+    })
+    .map(q => q._id);
+  }
 })
 
 export const unSelectedQuestionsSelector = createSelector([questionSelectors.selectAll, (state: AppState, tid: string) => tid], (questions, tid) => {

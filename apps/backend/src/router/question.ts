@@ -23,7 +23,7 @@ const getQuestionData = async(req: RequestWithUser, res) => {
 const selectQuestion = async(req: RequestWithUser, res) => {
   const qid = req.params.qid
   try {
-    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {selected: true}}, {new: true})
+    const updatedQASet = await QASet.findByIdAndUpdate(qid,{$set: {selected: true, selectedAt: Date.now()}}, {new: true})
     res.json({
       success: true,
       qaSet: updatedQASet

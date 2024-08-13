@@ -158,8 +158,8 @@ export const QuestionBox = (props: { qid: string }) => {
     }
   }, [response, isInputFieldActive, saveResponse]);
 
-  useEffect(() => {
-    if(question.aiGuides.length == 0) {
+  useEffect(() => { 
+    if(question.aiGuides.length === 0) {
       getNewCommentHandler()
     } 
   },[question])
