@@ -13,7 +13,7 @@ import {
 } from '@ant-design/icons';
 const { TextArea } = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
-import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, setRecentlyActiveQuestionId, updateQuestion, updateQuestionResponse } from '../reducer';
+import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, setRecentlyActiveQuestionId, updateDidTutorial, updateQuestion, updateQuestionResponse } from '../reducer';
 import { diffChars, Change } from 'diff';
 import { InteractionBase, InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
@@ -46,6 +46,8 @@ export const QuestionBox = (props: { qid: string }) => {
 
   const viewRef = useRef<HTMLDivElement>(null)
   const textFieldRef = useRef<TextAreaRef>(null)
+
+  const didTutorial = useSelector((state) => state.explore.didTutorial)
 
   const [t] = useTranslation()
 
@@ -133,6 +135,9 @@ export const QuestionBox = (props: { qid: string }) => {
   const isQuestionKeywordsShown = useSelector(state => state.explore.questionShowKeywordsFlags[props.qid] || false)
 
   const handleToggleChange = async (checked: boolean) => {
+    if(!didTutorial.explore){
+      dispatch(updateDidTutorial('explore', true))
+    }
     dispatch(setQuestionShowKeywordsFlag({ qid: props.qid, flag: checked }));
     if(token){
       await postInteractionData(token, InteractionType.UserToggleKeywords, {flag: checked, currentResponse: response, keywords }, {qid: props.qid})
@@ -188,8 +193,8 @@ export const QuestionBox = (props: { qid: string }) => {
       </Flex>
        {<Row>
         <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-transparent" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
-          <div className='flex items-center gap-x-2 mb-2 last:mb-0'>
-            <Switch id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={handleToggleChange}/><label className='select-none text-sm cursor-pointer' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
+          <div className={`flex items-center gap-x-2 mb-2 last:mb-0`}>
+            <Switch className={`${didTutorial.explore? '': 'outline animate-focus-indicate'}`} id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={handleToggleChange}/><label className='select-none text-sm cursor-pointer' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
             <InfoPopover title="표현을 돕는 단어들" content='생각이 쉽게 나지 않을 때 눌러보세요. 머릿속으로부터 표현이나 생각을 끄집어내주는 단어들을 보여줄거에요.'/>
           </div>
           {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
