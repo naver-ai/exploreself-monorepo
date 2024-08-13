@@ -51,6 +51,7 @@ export interface IQASetBase {
   aiGuides: IAIGuide[];
   createdAt?: Date;
   updatedAt?: Date;
+  selectedAt?: Date;
 }
 
 
