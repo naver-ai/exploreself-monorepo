@@ -97,7 +97,8 @@ export interface IUserBase {
   createdAt: Date;
   updatedAt: Date;
   debriefing: string | undefined;
-  sessionStatus: SessionStatus
+  sessionStatus: SessionStatus;
+  didTutorial: boolean;
 }
 
 export interface IUserWithThreadIds extends IUserBase {

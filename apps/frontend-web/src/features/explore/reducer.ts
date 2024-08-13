@@ -29,7 +29,7 @@ export type IExploreState = {
   isCreatingSynthesis: boolean;
   isLoadingThemes: boolean;
   newThemes: ThemeWithExpressions[];
-  isInitOpenThemeBox: boolean;
+  didTutorial: boolean;
 
   userId?: string;
 
@@ -64,7 +64,7 @@ const initialState: IExploreState = {
   isCreatingSynthesis: false,
   isLoadingThemes: false,
   newThemes: [],
-  isInitOpenThemeBox: true,
+  didTutorial: false,
 
   userId: undefined,
 
@@ -153,10 +153,9 @@ const exploreSlice = createSlice({
     setLoadingThemesFlag: (state, action: PayloadAction<boolean>) => {
       state.isLoadingThemes = action.payload
     },
-    setInitOpenThemeboxFlag: (state, action: PayloadAction<boolean>) => {
-      state.isInitOpenThemeBox = action.payload
+    setDidTutorialFlag: (state, action: PayloadAction<boolean>) => {
+      state.didTutorial = action.payload
     },
-
     setRecentlyActiveQuestionId: (state, action: PayloadAction<string | undefined>) => {
       state.recentlyActiveQuestionId = action.payload
     },
@@ -380,6 +379,24 @@ export function submitInitialNarrative(
       }
     }
   };
+}
+
+export function updateDidTutorial(
+
+): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState();
+    if (state.auth.token) {
+      try {
+        const response = await Http.axios.put(`/user/did_tutorial`,{}, {
+          headers: Http.makeSignedInHeader(state.auth.token),
+        })
+        dispatch(exploreSlice.actions.setDidTutorialFlag(true));
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  }
 }
 
 export function submitUserProfile(
@@ -724,7 +741,6 @@ export const {
   setSynthesisBoxOpen,
   setFloatingHeaderFlag,
   setRecentlyActiveQuestionId,
-  setInitOpenThemeboxFlag,
   updateQuestion,
   setQuestionShowKeywordsFlag,
   setLoadingThemesFlag,

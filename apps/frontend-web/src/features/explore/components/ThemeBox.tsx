@@ -5,8 +5,8 @@ import {
   getNewThemes,
   populateNewThread,
   resetNewThemes,
-  setInitOpenThemeboxFlag,
   setThemeSelectorOpen,
+  updateDidTutorial,
 } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { CloseOutlined } from '@ant-design/icons';
@@ -50,7 +50,7 @@ const schema = yup.object({
 const ThemeBox = () => {
 
   const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
-  const initOpen = useSelector((state) => state.explore.isInitOpenThemeBox);
+  const didTutorial = useSelector((state) => state.explore.didTutorial)
 
   const themes = useSelector(state => state.explore.newThemes)
   const dispatch = useDispatch();
@@ -150,7 +150,7 @@ const ThemeBox = () => {
   const handleTourClose = () => {
     setIsTourClosing(true);
     setTimeout(() => {
-      dispatch(setInitOpenThemeboxFlag(false));
+      dispatch(updateDidTutorial());
       setIsTourClosing(false); 
     }, 500);
   };
@@ -234,7 +234,7 @@ const ThemeBox = () => {
       </div> : null }
       {!isLoadingThemes && (
         <Tour 
-          open={initOpen} 
+          open={!didTutorial} 
           steps={steps} 
           onFinish={handleTourClose}
         />

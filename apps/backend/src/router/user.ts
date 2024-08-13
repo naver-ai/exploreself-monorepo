@@ -242,4 +242,18 @@ router.post(
   }
 );
 
+router.put(
+  '/did_tutorial',
+  signedInUserMiddleware,
+  async (req: RequestWithUser, res) => {
+    const uid = req.user._id;
+    const updatedUser = await User.findByIdAndUpdate(
+      uid,
+      { $set: { didTutorial: true } },
+      { new: true }
+    );
+    res.sendStatus(200);
+  }
+);
+
 export default router;
