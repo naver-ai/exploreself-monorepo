@@ -62,16 +62,20 @@
     "Generating": "탐색해볼 주제 생성 중",
     "NoTheme": "아직 담은 주제가 없습니다.",
     "Tooltip":{
-      "NewThread": "이 주제로 새로운 생각 타래를 열려면 클릭하세요."
+      "NewThread": "이 주제로 새로운 생각 타래를 열려면 클릭하세요.",
+      "PinTheme": "나중에 다시 탐색하기 위해 주제 바구니에 담아두려면 클릭하세요.",
+      "UnpinTheme": "주제 바구니에서 제거하려면 클릭하세요.",
+      "AlreadyPinned": "이미 주제 바구니에 넣었습니다."
     },
     "UndoDelete": "주제 삭제 취소"
   },
   "Synthesis": {
     "Title": "AI 요약",
-    "Open": "의 정리",
+    "Open": "AI의 정리",
     "Generating": "요약 생성 중",
     "More": "새로운 요약 보기",
     "Complete": "고민 탐색 마치기",
+    "CompleteConfirm": "고민 탐색을 모두 마치시겠습니까?", 
     "CompleteMessage": "고민 탐색이 종료되었습니다. 감사합니다.",
     "BackToExplore": "탐색 화면으로 돌아가기",
     "Aggregate": "님의 고민 탐색 과정 돌아보기",

@@ -38,6 +38,10 @@ p strong {
   @apply container max-w-[640px];
 }
 
+.container-wide {
+  @apply container sm:max-w-[1024px] md:max-w-[1280px]
+}
+
 .ant-card {
   @apply shadow-xl shadow-teal-950/5 border-none;
 }

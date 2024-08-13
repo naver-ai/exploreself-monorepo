@@ -29,20 +29,20 @@ export const SynthesisPage = () => {
     return <Navigate to="/app"/>
   }else{
     return (
-      <div className="flex py-10">
-        <div className="flex-none w-1/2 px-20">
-          <AggregateBox/>
-        </div>
-        
-        <div className="flex flex-col w-1/2 pr-20">
-          <div className="pb-10">
-            <SynthesisBox/>
+        <div className="container-wide flex h-full">
+          <div className="flex-1 !pl-8 !pr-4 py-10 overflow-y-scroll">
+            <AggregateBox/>
           </div>
-          <div>
-            <Debriefing/>
+          
+          <div className="flex-1 flex flex-col !pl-4 !pr-8 py-10 overflow-y-scroll">
+            <div className="pb-10">
+              <SynthesisBox/>
+            </div>
+            <div>
+              <Debriefing/>
+            </div>
           </div>
         </div>
-      </div>
     )
   }
 }
