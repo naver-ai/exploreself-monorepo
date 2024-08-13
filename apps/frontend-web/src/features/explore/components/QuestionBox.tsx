@@ -162,7 +162,7 @@ export const QuestionBox = (props: { qid: string }) => {
     if(question.aiGuides.length === 0) {
       getNewCommentHandler()
     } 
-  },[question])
+  },[])
 
   useEffect(()=>{
     const focusRequestSubscription = ShortcutManager.instance.onFocusRequestedEvent.pipe(filter(val => val.type == 'question' && val.id == props.qid)).subscribe({
@@ -253,7 +253,7 @@ export const QuestionBox = (props: { qid: string }) => {
                 icon={<ReloadOutlined />}
                 onClick={() => getNewCommentHandler()}
                 size="small"
-                className="text-xs self-end"
+                className="text-xs justify-center py-3"
               >{t("Thread.Questions.RequestHelp")}</Button>
               </>
             }
