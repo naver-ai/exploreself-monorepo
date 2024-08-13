@@ -14,6 +14,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
   const threadData = await ThreadItem.findById(tid);
 
   const threadLength = userData.threads.length;
+  const language = userData.isKorean ? "in KOREAN": "in English"
 
   const systemTemplate = `
   [Role]
@@ -21,7 +22,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
   Per each session within the system, the client brings up a Theme in one's narrative that one would like to navigate about.
   
   [Task]
-  Given a client's personal narrative and context, your task is to generate list of "just ${opt}" socratic questions and intention of the question in KOREAN. 
+  Given a client's personal narrative and context, your task is to generate list of "just ${opt}" socratic questions and intention of the question ${language}. 
   Try at most to follow up with the user's previous response (if there is any). 
 
   [Input type and format]
@@ -48,8 +49,8 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
 
   const questionSchema = z.object({
     questions: z.array(z.object({
-      question: z.string().describe('Socratic question to be provided to the user. (in Korean). Use honorific in Korean'),
-      intention: z.string().describe('Therapeutic intention of asking the question to the client. (in Korean)')
+      question: z.string().describe(`Socratic question to be provided to the user. (${language}). Use honorific ${language}`),
+      intention: z.string().describe(`Therapeutic intention of asking the question to the client. (${language})`)
     }))
   })
   

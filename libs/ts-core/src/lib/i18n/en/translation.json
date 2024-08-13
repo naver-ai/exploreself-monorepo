@@ -24,7 +24,7 @@
 
   "Narrative": {
     "Title": "Jot down Your Story of Difficulty",
-    "Prompt": "Everyone has their own difficulties. Conflicts with an old friend, an obsession with dieting, etc... Do you have a story you want to understand better? Please write it down below!",
+    "Prompt": "Everyone has their own difficulties. Feel free to write about any aspect of the difficult situation and the way you feel about it that comes to mind. Afterwards, AI will suggest various topics for you to think about regarding your difficulty, and through simple writing activities, it aims to help you better understand your worries and the thoughts surrounding them. Remember, all of your writing will be completely confidential.",
     "Placeholder": "Write your difficulty here.",
     "Complete": "Start Exploring Difficulties",
     "InitialNarrative": "My Difficulty"
@@ -56,6 +56,7 @@
     "Title": "Theme Basket",
     "MoreThemes": "See More Themes",
     "AltExpressions": "See Other Expressions",
+    "CustomTitle": "🤔 Is there no topic that interests you?",
     "Add": "Add",
     "AddMyself": "Add Myself",
     "Generating": "Generating themes to explore",

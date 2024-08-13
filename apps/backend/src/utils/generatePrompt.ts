@@ -10,6 +10,7 @@ import { synthesizePrevThreads } from './synthesizeThread';
 const generatePrompt = async (user: IUserORM, qid: string, keyword: string, curr_response: string, opt: number=3) => {
   const qaSet = await QASet.findById(qid)
   const question = qaSet.question.content
+  const language = user.isKorean ? "in KOREAN": "in English"
   const systemTemplae = `
   [Role]
   You are a therapeutic assistant specializing in supporting users to response to socratic questions, facilitating self-reflection and personal growth. 
@@ -25,7 +26,7 @@ const generatePrompt = async (user: IUserORM, qid: string, keyword: string, curr
   For example, if the user selects 'fear', the generated prompts might be such as 'When I felt fear was, ', 'I think feeling fear is understandable in such situation. Therefore, also in mine, '. Likewise, the prompt shouldn't be finsihed as a sentence. It should always be unfinished so that the user has space to fill in by self-reflection.
   This is just a very simple example, only to give a sense, so do not rely too much on this. 
   Along with the prompt, each provide a rationale of why this prompt can be helpful. It could be cognitively helpful in thinking about the question, it could be therapeutically meaningful/helpful, user might want to select that prompt considering the current context, etc ---there could be diverse rationales. 
-  The prompt should be provided in a first-person perspective, since it can be imported to the textarea that the user is responding to, in one's own perspective, and it should be written "In Korean". (The rationale can be English)
+  The prompt should be provided in a first-person perspective, since it can be imported to the textarea that the user is responding to, in one's own perspective, and it should be written "${language}". (The rationale can be English)
   
   [Checkpoints]
   - User should be attracted to importing the prompt in answering the given question

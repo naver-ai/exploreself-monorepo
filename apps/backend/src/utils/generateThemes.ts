@@ -14,6 +14,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
   const userData = await User.findById(uid).populate({path: 'threads'}) as IUserBase & {threads: IThreadORM[]}
   const themeList = userData.threads?.map(iteme => iteme.theme)
   const pinnedThemes = userData.pinnedThemes
+  const language = userData.isKorean ? "in KOREAN": "in English"
   
   const system_message =  nunjucks.renderString(`
   [Role] You are a therapeutic assistant specializing in generating socratic questions to facilitate self-reflection and personal growth in clients. 
@@ -22,7 +23,7 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
 
   [Task] 
   Your specific task is to identify new themes that the client can navigate on. You can think of it as a list of topic of the follow-up question of the user's previous responses.
-  For each main_theme, also provide the referred part/quote of user input of the previous session "in Korean". 
+  For each main_theme, also provide the referred part/quote of user input of the previous session "${language}". 
   Try not do interpret in generating cards by going ahead by assuming, but stick to the user's expression. Being synced with user's language/expression is important. 
   Try at most to adopt language and expressions that the user used in their log for eliciting the main_theme.  
   If therapeutically important asepcts(e.g., emotion, new character, etc), do include them in the theme.
@@ -62,8 +63,8 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
 
   const edgeSchema = z.object({
     themes: z.array(z.object({
-      main_theme: z.string().describe("Each theme from the user's initial narrative and previous log. (in Korean). Try most to adopt expression/language of the user."),
-      expressions: z.array(z.string()).describe("An array of diverse different expressions of the main_theme (in Korean)."),
+      main_theme: z.string().describe(`Each theme from the user's initial narrative and previous log. (${language}). Try most to adopt expression/language of the user.`),
+      expressions: z.array(z.string()).describe(`An array of diverse different expressions of the main_theme (${language}).`),
       quote: z.string().describe("Most relevant part of the user's log to the theme")
     }))
   })

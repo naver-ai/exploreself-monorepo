@@ -12,6 +12,7 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
   const qData = await QASet.findById(qid)
   const question = qData.question.content
   const response_stat = response
+  const language = user.isKorean ? "in Korean": "in English"
 
   const systemTemplae = nunjucks.renderString(`
   [Role]
@@ -39,7 +40,7 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
   [Output]
   For each category of comment a) b) c) d) e), generate 2 comments with the rationale of why this comment would be helpful at this moment to the user in responding to the question. 
   Then, select one comment that would be most appropriate and helpful for the client at the moment. 
-  All should be in Korean.
+  All should be ${language}.
   `,{response_stat: response_stat})
 
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplae)
@@ -64,15 +65,15 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
 
   const commentSchema = z.object({
     candidates: z.array(z.object({
-      category: z.string().describe('Category of the comment (in Korean)'),
-      comment: z.string().describe('comment (in Korean)'),
-      rationale: z.string().describe('rationale of why this comment would be appropriate and helpful for the client, considering the overall background and the response status (in Korean)')
+      category: z.string().describe(`Category of the comment (${language})`),
+      comment: z.string().describe(`comment (${language})`),
+      rationale: z.string().describe(`rationale of why this comment would be appropriate and helpful for the client, considering the overall background and the response status (${language})`)
     })),
     selected: z.object({
-      category: z.string().describe('category of the selected comment (in Korean)'),
-      comment: z.string().describe('selected commenin Koreant'),
-      rationale: z.string().describe('rationale of the selected comment (in Korean)')
-    }).describe('each category, comment, rationale of the selected comment (in Korean)')
+      category: z.string().describe(`category of the selected comment (${language})`),
+      comment: z.string().describe(`selected comment ${language}`),
+      rationale: z.string().describe(`rationale of the selected comment (${language})`)
+    }).describe(`each category, comment, rationale of the selected comment (${language})`)
   }) 
 
   const structuredLlm = chatModel.withStructuredOutput(commentSchema)
