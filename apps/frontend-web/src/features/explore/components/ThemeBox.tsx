@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useRef} from 'react';
 import React from 'react';
-import { Button, Col, ButtonProps, Modal, Form, Input, Divider, Tour, TourProps } from 'antd';
+import { Button, Col, ButtonProps, Modal, Form, Input, Divider, Tour, TourProps, Typography } from 'antd';
 import {
   getNewThemes,
   pinTheme,
@@ -24,14 +24,18 @@ import { FormItem } from 'react-hook-form-antd';
 import { InfoPopover } from '../../../components/InfoPopover';
 import { init } from 'i18next';
 import { PinnedThemesPanel } from './pinned-themes';
+const { Text } = Typography;
+
 
 interface ThemeButtonProps extends ButtonProps {
   theme: string;
+  buttonRef?: React.Ref<HTMLButtonElement>;
 }
 
 const ThemeButton = React.forwardRef<HTMLButtonElement, ThemeButtonProps>((props, ref?) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
+  const { buttonRef, theme, ...rest } = props;
 
   const handleAddPinnedTheme = async (theme: string) => {
     dispatch(pinTheme(theme));
@@ -41,15 +45,15 @@ const ThemeButton = React.forwardRef<HTMLButtonElement, ThemeButtonProps>((props
   return (
     <div className='flex'>
     <Button
-      {...props}
+      {...rest}
       ref={ref ? ref : null}
       type="default"
       className="w-full h-auto flex justify-between text-left pr-2"
       iconPosition="end"
     >
-      <span className="whitespace-normal text-left mr-2 flex-1">{props.theme}</span>
+      <span className="whitespace-normal text-left mr-2 flex-1">{theme}</span>
     </Button>
-    <Button icon={<BookmarkIcon className="w-5 h-5" style={{ color: '#CCCCCC' }}/>} type="text" onClick={() => handleAddPinnedTheme(props.theme)}/>
+    <Button ref={buttonRef ? buttonRef : null} icon={<BookmarkIcon className="w-5 h-5" style={{ color: '#CCCCCC' }}/>} type="text" onClick={() => handleAddPinnedTheme(theme)}/>
     </div>
   );
 });
@@ -78,32 +82,126 @@ const ThemeBox = () => {
   const refAltExp = useRef(null);
   const refMoreThemes = useRef(null);
   const refCreateTheme = useRef(null);
+  const refBookmark = useRef(null);
+  const refPinnedThemes = useRef(null);
 
   const steps: TourProps['steps'] = [
     {
+      title: "주제 탐색하기 창 활용 안내",
+      description: (
+        <Text style={{color: '#555'}}>
+          <span className='font-semibold'>[주제 탐색하기] </span>창에 들어오셨군요!👍 <br/> <span className='font-semibold'>[다음]</span> 버튼을 눌러 안내를 확인해주세요.
+        </Text>
+      ),
+      target: null,
+      nextButtonProps: {
+        children: '다음'
+      },
+      prevButtonProps: {
+        children: '이전'
+      },
+    },
+    {
       title: "AI 생성 주제들",
-      description: "AI가 나의 고민 이야기로부터 생성한 주제들",
+      description: (
+        <Text style={{color: '#555'}}>
+          AI가 나의 이야기로부터 생성한 주제들
+        </Text>
+      ),
       target: () => refNewThemes.current || null,
+      nextButtonProps: {
+        children: '다음'
+      },
+      prevButtonProps: {
+        children: '이전'
+      },
     },
     {
       title: "",
       description: "비슷한 주제의 다양한 표현을 살펴볼 수 있어요.",
       target: () => refAltExp.current || null,
+      nextButtonProps: {
+        children: '다음'
+      },
+      prevButtonProps: {
+        children: '이전'
+      },
     }, 
     {
       title: "",
-      description: "주제를 누르게 되면, 바로 주제에 대한 타래가 생성되어요.",
-      target: () => refOneTheme.current || null
+      description: (
+        <Text style={{color: '#555'}}>
+          주제를 누르게 되면, 바로 주제에 대한 타래가 생성되어요.
+        </Text>
+      ),
+      target: () => refOneTheme.current || null,
+      nextButtonProps: {
+        children: '다음'
+      },
+      prevButtonProps: {
+        children: '이전'
+      },
     },
     {
       title: "주제 더 보기",
-      description: "더 많은 주제를 보고 싶으면 AI가 생성해주어요. AI가 주제를 더 만들 수 없을 경우도 있어요.",
+      description: (
+        <Text style={{color: '#555'}}>
+          더 많은 주제를 보고 싶으면 AI가 생성해주어요. AI가 주제를 더 만들 수 없을 경우도 있어요.
+        </Text>
+      ),
       target: () => refMoreThemes.current || null,
+      nextButtonProps: {
+        children: '다음'
+      },
+      prevButtonProps: {
+        children: '이전'
+      },
+    },
+    {
+      title: "주제 담아두기",
+      description: (
+        <Text style={{color: '#555'}}>
+          이따 탐색해보고 싶은 주제를 없어지지 않게 보관해두고 싶나요? <br/>
+          <span style={{ display: 'inline-flex', alignItems: 'center' }}><BookmarkIcon className="w-5 h-5" style={{ color: '#CCCCCC' }}/></span> 버튼을 누르면 아래의 <span>주제 바구니</span>에 주제를 담아둘 수 있어요. 
+        </Text>
+      ),
+      target: () => refBookmark.current || null,
+      nextButtonProps: {
+        children: '다음'
+      },
+      prevButtonProps: {
+        children: '이전'
+      },
+    },
+    {
+      title: "주제 바구니",
+      description: (
+        <Text style={{color: '#555'}}>
+          <span style={{ display: 'inline-flex', alignItems: 'center' }}><BookmarkIcon className="w-5 h-5" style={{ color: '#CCCCCC' }}/></span> 버튼을 누르면, 이곳의 <span className='font-semibold'>주제 바구니</span>에 주제를 담아둘 수 있어요. 
+        </Text>
+      ),
+      target: () => refPinnedThemes.current || null,
+      nextButtonProps: {
+        children: '다음'
+      },
+      prevButtonProps: {
+        children: '이전'
+      },
     },
     {
       title: "주제 직접 작성하기",
-      description: "내가 직접 추가하고 싶은 주제가 있다면, 직접 작성해보아요.",
-      target: () => refCreateTheme.current || null
+      description: (
+        <Text style={{color: '#555'}}>
+          내가 직접 추가하고 싶은 주제가 있다면, 직접 작성해보아요.
+        </Text>
+      ),
+      target: () => refCreateTheme.current || null,
+      nextButtonProps: {
+        children: '완료'
+      },
+      prevButtonProps: {
+        children: '이전'
+      },
     }
   ];
 
@@ -162,10 +260,13 @@ const ThemeBox = () => {
   const handleTourClose = () => {
     setIsTourClosing(true);
     setTimeout(() => {
-      dispatch(updateDidTutorial());
+      dispatch(updateDidTutorial('themeBox', true));
       setIsTourClosing(false); 
-    }, 500);
+    }, 300);
   };
+  const handleTourOpen = () => {
+    dispatch(updateDidTutorial('themeBox', false))
+  }
 
   useEffect(() => {
     setCurrentExpressionIndex([])
@@ -178,12 +279,16 @@ const ThemeBox = () => {
       footer={null}
       title={<div className='flex items-center justify-between pl-2 pt-1'>
         <span>{t("Theme.Title")}</span>
-        <Button
-          type="text"
-          icon={<CloseOutlined />}
-          onClick={onCloseThemeSelector}
-          disabled={isLoadingThemes || isTourClosing}
-        />
+        <div className='flex items-center'>
+          <div onClick={handleTourOpen} className='cursor-pointer hover:text-blue-500 text-sm font-thin pr-3'>사용 안내 다시보기</div>
+          <Button
+            type="text"
+            icon={<CloseOutlined />}
+            onClick={onCloseThemeSelector}
+            disabled={isLoadingThemes || isTourClosing}
+          />
+        </div>
+        
       </div>}
       maskClosable={false}
       onClose={onCloseThemeSelector}
@@ -204,6 +309,7 @@ const ThemeBox = () => {
                 onClick={() => addToThread(themeItem.main_theme)}
                 theme={themeItem.main_theme}
                 ref={index == 0? refOneTheme: null}
+                buttonRef={index == 0? refBookmark: null}
               />
               {themeItem.expressions.slice(0, currentExpressionIndex[index]).map((exp, i) => {
                 return (
@@ -233,10 +339,10 @@ const ThemeBox = () => {
             className='min-h-16 h-full rounded-md' type="dashed" size="small" ref={refMoreThemes}><span className='text-sm'>{t("Theme.MoreThemes")}</span></Button>}
       </div>
       {!isLoadingThemes && (
-        <div className='mt-8'>
+        <div className='mt-8' ref={refPinnedThemes}>
           <div className='flex'>
           <BookmarkIcon className="w-5 h-5 text-orange-300"/>
-          <div className='ml-1 font-semibold text-blue-500 mb-2'> 담아둔 주제들</div>
+          <div className='ml-1 font-semibold text-blue-500 mb-2'> 주제 바구니</div>
           </div>
           
           <PinnedThemesPanel/>
@@ -256,9 +362,10 @@ const ThemeBox = () => {
       </div> : null }
       {!isLoadingThemes && (
         <Tour 
-          open={!didTutorial} 
+          open={!(didTutorial.themeBox)} 
           steps={steps} 
           onFinish={handleTourClose}
+          onClose={handleTourClose}
         />
       )}
     </Modal>

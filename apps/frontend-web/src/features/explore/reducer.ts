@@ -11,6 +11,7 @@ import { postInteractionData } from '../../api_call/postInteractionData';
 import generateSynthesisMappings from '../../api_call/generateSynthesisMapping';
 import generateThemes from '../../api_call/generateThemes';
 import exp from 'constants';
+import { IDidTutorial } from '@core';
 
 const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>({
   selectId: (model: IThreadWithQuestionIds) => model._id
@@ -23,13 +24,14 @@ const questionEntityAdapter = createEntityAdapter<IQASetWithIds, string>({
 const initialThreadEntityState = threadEntityAdapter.getInitialState()
 const initialQuestionEneityState = questionEntityAdapter.getInitialState()
 
+
 export type IExploreState = {
   isLoadingUserInfo: boolean;
   isCreatingNewThread: boolean;
   isCreatingSynthesis: boolean;
   isLoadingThemes: boolean;
   newThemes: ThemeWithExpressions[];
-  didTutorial: boolean;
+  didTutorial: IDidTutorial;
 
   userId?: string;
 
@@ -64,7 +66,7 @@ const initialState: IExploreState = {
   isCreatingSynthesis: false,
   isLoadingThemes: false,
   newThemes: [],
-  didTutorial: false,
+  didTutorial: {themeBox: false, explore: false},
 
   userId: undefined,
 
@@ -153,8 +155,12 @@ const exploreSlice = createSlice({
     setLoadingThemesFlag: (state, action: PayloadAction<boolean>) => {
       state.isLoadingThemes = action.payload
     },
-    setDidTutorialFlag: (state, action: PayloadAction<boolean>) => {
-      state.didTutorial = action.payload
+    setDidTutorialFlag: (state, action: PayloadAction<{
+      key: keyof IDidTutorial;
+      value: boolean;
+    }>) => {
+      const { key, value } = action.payload;
+      state.didTutorial[key] = value;
     },
     setRecentlyActiveQuestionId: (state, action: PayloadAction<string | undefined>) => {
       state.recentlyActiveQuestionId = action.payload
@@ -382,16 +388,17 @@ export function submitInitialNarrative(
 }
 
 export function updateDidTutorial(
-
+  tutorialType: keyof IDidTutorial,
+  didTutorial: boolean
 ): AppThunk {
   return async (dispatch, getState) => {
     const state = getState();
     if (state.auth.token) {
       try {
-        const response = await Http.axios.put(`/user/did_tutorial`,{}, {
+        const response = await Http.axios.put(`/user/did_tutorial`,{type: tutorialType, value: didTutorial}, {
           headers: Http.makeSignedInHeader(state.auth.token),
         })
-        dispatch(exploreSlice.actions.setDidTutorialFlag(true));
+        dispatch(exploreSlice.actions.setDidTutorialFlag({key: tutorialType, value: didTutorial}));
       } catch (err) {
         console.error(err)
       }

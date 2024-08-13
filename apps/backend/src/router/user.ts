@@ -10,7 +10,7 @@ import {
 import { signedInUserMiddleware } from './middlewares';
 import type { RequestWithUser } from './middlewares';
 import { body, ExpressValidator } from 'express-validator';
-import { InteractionType, SessionStatus } from '@core';
+import { IDidTutorial, InteractionType, SessionStatus } from '@core';
 import { logInteraction } from '../utils/logInteraction';
 import path from 'path';
 import { appendFile, appendFileSync, ensureDirSync } from 'fs-extra';
@@ -247,12 +247,18 @@ router.put(
   signedInUserMiddleware,
   async (req: RequestWithUser, res) => {
     const uid = req.user._id;
-    const updatedUser = await User.findByIdAndUpdate(
-      uid,
-      { $set: { didTutorial: true } },
-      { new: true }
-    );
-    res.sendStatus(200);
+    const { key, value }: { key: keyof IDidTutorial; value: boolean } = req.body;
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        uid,
+        { $set: { [`didTutorial.${key}`]: value } },
+        { new: true }
+      );
+      res.sendStatus(200);
+    } catch (err) {
+      res.sendStatus(400);
+      console.error(err)
+    }
   }
 );
 

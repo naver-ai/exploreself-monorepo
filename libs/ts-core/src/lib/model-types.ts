@@ -98,7 +98,7 @@ export interface IUserBase {
   updatedAt: Date;
   debriefing: string | undefined;
   sessionStatus: SessionStatus;
-  didTutorial: boolean;
+  didTutorial: {themeBox: boolean, explore: boolean};
 }
 
 export interface IUserWithThreadIds extends IUserBase {
@@ -127,3 +127,8 @@ export interface IUserBrowserSessionObj extends IUserBrowserSessionBase {
   _id: string
   interactionLogs: Array<InteractionBase>
 }
+
+export interface IDidTutorial {
+  themeBox: boolean;
+  explore: boolean;
+};

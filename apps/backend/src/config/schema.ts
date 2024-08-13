@@ -106,7 +106,7 @@ export const UserSchema = new Schema({
     debriefing: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     sessionStatus: {type: String, enum: Object.keys(SessionStatus), default: SessionStatus.Exploring},
     browserSessions: {type: [Schema.Types.ObjectId], ref: 'BrowserSession', required: true, default: []},
-    didTutorial: {type: Boolean, default: false}
+    didTutorial: {type: {themeBox: Boolean, explore: Boolean}, default: {themeBox: false, explore: false}}
   });
  
 UserSchema.set('timestamps', true);
