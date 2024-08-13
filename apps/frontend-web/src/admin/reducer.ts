@@ -8,7 +8,7 @@ import storage from 'redux-persist/lib/storage';
 
 export const adminReducer = combineReducers({
   auth: persistReducer({
-    key: 'root',
+    key: 'root.admin',
     storage,
     whitelist: ['token']
   }, authReducer),

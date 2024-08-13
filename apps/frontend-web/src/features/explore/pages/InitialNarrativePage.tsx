@@ -63,7 +63,7 @@ export const InitialNarrativePage = () => {
               setFocus("narrative", {shouldSelect: false})
             }}>
               <FormItem control={control} name="narrative" rootClassName="mb-4" className='bg-gray-100'>
-                <TextArea size="large" autoFocus className='minimal !leading-8 text-gray-700' autoSize={{minRows:10}} placeholder={t("Narrative.Placeholder")}/>
+                <TextArea size="large" autoFocus data-enable-grammarly={false} className='minimal !leading-8 text-gray-700' autoSize={{minRows:10}} placeholder={t("Narrative.Placeholder")}/>
               </FormItem>
             </Form>
         </div>

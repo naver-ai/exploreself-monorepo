@@ -58,7 +58,6 @@ export function fetchBrowserSessionsOfUser(userId: string): AppThunk {
             try {
                 const resp = await Http.axios.get(`/admin/users/${userId}/browser_sessions/all`, {headers: Http.makeSignedInHeader(state.admin.auth.token)})
                 const browserSessions: Array<IUserBrowserSessionObj> = resp.data.browserSessions
-                console.log(browserSessions)
                 dispatch(adminUserSlice.actions.mountSessions({userId, sessions: browserSessions}))
                 dispatch(setOneUser(resp.data))
             }catch(ex){

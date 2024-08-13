@@ -229,6 +229,7 @@ export const QuestionBox = (props: { qid: string }) => {
             onFocus={handleFocus}
             placeholder={t("Thread.Questions.AnswerPlaceholder")}
             className='minimal dimmed !min-h-full'
+            data-enable-grammarly={false}
             autoSize={{ minRows: 2 }}
           />
         </Col>

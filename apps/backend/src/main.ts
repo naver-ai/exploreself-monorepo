@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import express from 'express';
 import * as path from 'path';
 import * as fs from 'fs-extra'
 import * as bodyParser from 'body-parser';
@@ -14,9 +14,10 @@ import adminAuthRouter from './router/admin/auth'
 import adminUserRouter from './router/admin/user'
 import * as morgan from 'morgan'
 import cors from 'cors'
-import mongoose, { mongo } from 'mongoose'; 
+import mongoose from 'mongoose'; 
 import { User } from './config/schema';
 import { signedInAdminUserMiddleware } from './router/admin/middleware';
+import { initSocket } from './socket';
 
 process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production' ) ? 'production' : 'development';
 if (process.env.NODE_ENV == 'production') {
@@ -85,11 +86,11 @@ if(fs.existsSync(frontend_dist_path)){
   console.log("No distribution files for frontend was found. If you want to serve it on the backend, please run 'nx build frontend-web' in advance.")
 }
 
-
-
 const port = process.env.BACKEND_PORT != null ? Number.parseInt(process.env.BACKEND_PORT) : 3000;
 const server = app.listen(port, "0.0.0.0", () => {
   console.log(`Listening at ${process.env.BACKEND_HOSTNAME}:${port}`);
 });
+
+initSocket(server, ["http://localhost:3000", "http://localhost:4200"])
 
 server.on('error', console.error);
