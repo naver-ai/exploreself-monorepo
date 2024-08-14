@@ -15,11 +15,11 @@ export const UserAvatar = (props: { buttonClassName?: string, disabled?: boolean
   const menuData: MenuProps = useMemo(() => {
     return {
       items: [
-        {
-          key: 'reset',
-          danger: true,
-          label: t("Reset.Title")
-        },
+        // {
+        //   key: 'reset',
+        //   danger: true,
+        //   label: t("Reset.Title")
+        // },
         {
           key: 'logout',
           danger: true,

@@ -462,6 +462,33 @@ export function terminateSession(
   };
 }
 
+export function revertTerminateSession(
+  onSuccess?: () => void
+): AppThunk {
+  return async (dispatch, getState) => {
+    const state = getState();
+    if (state.auth.token) {
+      try {
+        const response = await Http.axios.post(
+          `/user/revert_terminate`,
+          {},
+          {
+            headers: Http.makeSignedInHeader(state.auth.token),
+          }
+        );
+
+        dispatch(
+          exploreSlice.actions.updateUserInfo(response.data)
+        );
+
+        onSuccess?.();
+      } catch (err) {
+      } finally {
+      }
+    }
+  };
+}
+
 export function enterReviewStage(): AppThunk {
   return async (dispatch, getState) => {
     const state = getState();

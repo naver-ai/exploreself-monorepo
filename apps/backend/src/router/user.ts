@@ -152,6 +152,30 @@ router.post(
   }
 );
 
+router.post(
+  '/revert_terminate',
+  signedInUserMiddleware,
+  async (req: RequestWithUser, res) => {
+    const timestamp = Date.now();
+
+    req.user.sessionStatus = SessionStatus.Reviewing;
+
+    await req.user.save();
+
+    await logInteraction(
+      req.user,
+      req.browserSessionId,
+      InteractionType.UserRevertTermination,
+      {},
+      undefined,
+      timestamp
+    );
+    res.json({
+      sessionStatus: req.user.sessionStatus,
+    });
+  }
+);
+
 router.delete(
   '/reset',
   signedInUserMiddleware,

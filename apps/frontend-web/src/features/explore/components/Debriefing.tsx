@@ -4,14 +4,15 @@ import * as yup from 'yup';
 import { useCallback } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { abortReviewStage, terminateSession } from "../reducer";
-import { Form, Input, Button } from "antd";
+import { abortReviewStage, revertTerminateSession, terminateSession } from "../reducer";
+import { Form, Input, Button, Switch } from "antd";
 import { FormItem } from 'react-hook-form-antd';
 const {TextArea} = Input
 import { useTranslation } from 'react-i18next';
 import { SessionStatus } from "@core";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
+import session from "redux-persist/lib/storage/session";
 
 
 const schema = yup.object({
@@ -39,11 +40,25 @@ const Debriefing = () => {
     }
   }, []);
 
+  const handleRevertTerminateSession = useCallback(async () => {
+    dispatch(revertTerminateSession())
+  },[])
+
+  const handleSwitchChange = useCallback((checked: boolean) => {
+    if (checked) {
+      handleSubmitDebriefing({ debriefing });
+    } else {
+      handleRevertTerminateSession();
+    }
+  }, [debriefing, handleSubmitDebriefing, handleRevertTerminateSession]);
+
   const onReturnClick = useCallback(() => {
     dispatch(abortReviewStage())
   }, [])
 
-  return (<div>{sessionStatus == SessionStatus.Reviewing ? <Form onFinish={handleSubmit(handleSubmitDebriefing)}>
+  return (<div>
+  {sessionStatus == SessionStatus.Reviewing ? 
+  <Form onFinish={handleSubmit(handleSubmitDebriefing)}>
   <FormItem control={control} name="debriefing">
     <TextArea
       data-enable-grammarly={false}
@@ -55,15 +70,34 @@ const Debriefing = () => {
   </FormItem>
   <div className="flex justify-end mt-10 gap-3">
     <Button type="text" icon={<ArrowLeftIcon className="w-4 h-4"/>} onClick={onReturnClick}>{t("Synthesis.BackToExplore")}</Button>
-    <Button disabled={!isValid} htmlType="submit" type="primary">{t("Synthesis.Complete")}</Button>
-  </div></Form> : <div>
-    <div>{debriefing}</div>
-    <div className="text-center text-lg text-gray-500 flex items-center justify-center gap-x-2">
-      <CheckCircleIcon className="w-6 h-6 text-green-500"/> 
-      <span className="leading-0">{t("Synthesis.CompleteMessage")}</span>
-    </div>
   </div>
-    }</div>)
+  <div className="flex justify-end mt-4">
+    <div className="mr-3">{t("Synthesis.Complete")}</div>
+    <Switch
+      checked={sessionStatus !== SessionStatus.Reviewing}
+      onChange={handleSwitchChange}
+    />
+  </div>
+  </Form>
+   : 
+   <div>
+    <div>{debriefing}</div>
+    {/* <div className="flex justify-end mt-10 gap-3">
+    <Button type="text" icon={<ArrowLeftIcon className="w-4 h-4"/>} onClick={onReturnClick}>{t("Synthesis.BackToExplore")}</Button>
+    </div> */}
+    <div className="flex justify-end mt-4">
+    <CheckCircleIcon className="w-6 h-6 text-green-500"/> 
+    <span className="leading-0 mr-3">{t("Synthesis.CompleteMessage")}</span>
+    <Switch
+      checked={sessionStatus == SessionStatus.Terminated}
+      onChange={handleSwitchChange}
+    />
+  </div>
+  
+   </div>}
+  
+  
+  </div>)
 }
 
 export default Debriefing;

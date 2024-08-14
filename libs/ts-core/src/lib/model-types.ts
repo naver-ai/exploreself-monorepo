@@ -22,7 +22,8 @@ export enum InteractionType {
 
   UserRequestsSynthesize = 'UserRequestsSynthesize',
   UserChangeSessionStatus = "UserChangeSessionStatus",
-  UserTerminateExploration = "UserTerminateExploration"
+  UserTerminateExploration = "UserTerminateExploration",
+  UserRevertTermination = "UserRevertTermination"
 }
 
 export interface InteractionBase {
