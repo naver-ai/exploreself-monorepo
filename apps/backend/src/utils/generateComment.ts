@@ -38,9 +38,8 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
   {% endif %}
 
   [Output]
-  For each category of comment a) b) c) d) e), generate 2 comments with the rationale of why this comment would be helpful at this moment to the user in responding to the question. 
-  Then, select one comment that would be most appropriate and helpful for the client at the moment. 
-  All should be ${language}.
+  Generate the most helpful and appropriate comment with the rationale of why this comment would be helpful at this moment to the user in responding to the question. 
+  All should be ${language}. Don't make it long but concise that the user is no overwhelmed with the comment.
   `,{response_stat: response_stat})
 
   const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplae)
@@ -64,14 +63,14 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
   ])
 
   const commentSchema = z.object({
-    candidates: z.array(z.object({
-      category: z.string().describe(`Category of the comment (${language})`),
-      comment: z.string().describe(`comment (${language})`),
-      rationale: z.string().describe(`rationale of why this comment would be appropriate and helpful for the client, considering the overall background and the response status (${language})`)
-    })),
+    // candidates: z.array(z.object({
+    //   category: z.string().describe(`Category of the comment (${language})`),
+    //   comment: z.string().describe(`comment (${language})`),
+    //   rationale: z.string().describe(`rationale of why this comment would be appropriate and helpful for the client, considering the overall background and the response status (${language})`)
+    // })),
     selected: z.object({
       category: z.string().describe(`category of the selected comment (${language})`),
-      comment: z.string().describe(`selected comment ${language}`),
+      comment: z.string().describe(`comment ${language}`),
       rationale: z.string().describe(`rationale of the selected comment (${language})`)
     }).describe(`each category, comment, rationale of the selected comment (${language})`)
   }) 

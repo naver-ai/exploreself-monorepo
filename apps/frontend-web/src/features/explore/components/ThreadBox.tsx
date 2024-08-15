@@ -114,7 +114,6 @@ const NewQuestionList = (props: {tid: string}) => {
 
   const handleQuestionSelect = useCallback(() => {
     setIsQSelectorOpen(false); 
-    console.log("OPEN? ", isQSelectorOpen)
     setQuestions([]);
   }, []);
 
