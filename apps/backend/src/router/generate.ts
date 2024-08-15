@@ -18,8 +18,9 @@ const generateQuestionsHandler = async (req: RequestWithUser, res) => {
   const uid = req.user._id;
   const tid = req.params.tid;
   const opt = parseInt(req.query.opt as string, 10)
+  const prevQ = req.body.prevQ
   try {
-    const questions = await generateQuestions(uid, tid, opt)
+    const questions = await generateQuestions(uid, tid, opt, prevQ)
     const qaPromises = questions.map(async(question, index) => {
       const newQASet = new QASet({
         tid: tid,
@@ -141,7 +142,7 @@ const generateAndMapSynthesis = async(req: RequestWithUser, res) => {
   }
 }
 router.post('/comment/:qid', signedInUserMiddleware, generateCommentHandler)
-router.get('/question/:tid', signedInUserMiddleware, generateQuestionsHandler)
+router.post('/question/:tid', signedInUserMiddleware, generateQuestionsHandler)
 router.get('/keywords/:qid', signedInUserMiddleware, generateKeywordsHandler)
 router.post('/themes', signedInUserMiddleware, generateThemesHandler)
 router.put('/synthesis', signedInUserMiddleware, generateSynthesisHandler)

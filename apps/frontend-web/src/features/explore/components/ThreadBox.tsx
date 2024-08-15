@@ -10,15 +10,15 @@ import {
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ShortcutManager } from '../../../services/shortcut';
-import { getMoreQuestion, questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeaderFlag, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
+import { getMoreQuestion, getNewQuestions, questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeaderFlag, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
 import { useInView } from 'react-intersection-observer';
 import { QuestionBox } from './QuestionBox';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { useTranslation } from 'react-i18next';
 import { ArrowDownIcon, PencilIcon } from '@heroicons/react/20/solid';
-import { usePrevious } from "@uidotdev/usehooks";
+import { IQASetWithIds } from '@core';
 
-const UnselectedQuestionItem = (props: { qid: string }) => {
+const UnselectedQuestionItem = (props: { qid: string, onSelectQuestion?: () => void }) => {
 
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
 
@@ -35,7 +35,11 @@ const UnselectedQuestionItem = (props: { qid: string }) => {
       requestAnimationFrame(()=>{
         ShortcutManager.instance.requestFocus({type:"question", id: q._id})
       })
-    }))}, [props.qid])
+    }))
+    if (props.onSelectQuestion) {
+      props.onSelectQuestion(); 
+    }
+  }, [props.qid])
   const [t] = useTranslation()
 
   return (
@@ -77,60 +81,69 @@ const SelectedQuestionList = (props: { tid: string }) => {
     </div> : null)
 };
 
-const UnselectedQuestionList = (props: { tid: string }) => {
-
+const NewQuestionList = (props: {tid: string}) => {
   const [t] = useTranslation()
 
   const dispatch = useDispatch();
-  const questionIds = useSelector(state => unSelectedQuestionIdsSelector(state, props.tid))
   const isCreatingQuestions = useSelector(state => state.explore.threadQuestionCreationLoadingFlags[props.tid] || false)
+  const selectedQuestionIds = useSelector(state => selectedQuestionIdsSelector(state, props.tid))
+  const [isQSelectorOpen, setIsQSelectorOpen] = useState<boolean>(true)
+  const [questions, setQuestions] = useState<Array<IQASetWithIds>>([])
 
-  const [isPanelExpanded, setIsPanelExpanded] = useState(true)
+  const _handleGetQuestions = useCallback(async () => {
+    const newQuestions = await dispatch(getNewQuestions(props.tid, 3, questions.map(q => q.question.content))) as IQASetWithIds[]
+    const newQuestionList = [...questions, ...newQuestions]
+    setQuestions(newQuestionList)
+    setIsQSelectorOpen(true)
+  },[props.tid, questions])
 
-  const onMoreQuestionsClick = useCallback<MouseEventHandler<HTMLElement>>((ev) => {
+  const handleGetQuestions = useCallback<MouseEventHandler<HTMLElement>>(async (ev) => {
     ev.stopPropagation()
-    dispatch(getMoreQuestion(props.tid))
-  }, [props.tid])
+    _handleGetQuestions()
+  },[props.tid, questions])
 
-  const moreButton = <Button className='' disabled={isCreatingQuestions} onClick={onMoreQuestionsClick}>{t("Thread.Questions.More")}</Button>
+  const handleMoreQuestions = useCallback<MouseEventHandler<HTMLElement>>(async (ev) => {
+    ev.stopPropagation()
+    const newQuestions = await dispatch(getNewQuestions(props.tid, 1, questions.map(q => q.question.content))) as IQASetWithIds[]
+    const newQuestionList = [...questions, ...newQuestions]
+    setQuestions(newQuestionList)
+  },[props.tid, questions])
 
-  const items = useMemo(()=>{
-    return [
-      {
-        key: '1',
-        label: <div className='flex items-center justify-between'>
-              <span className='font-semibold select-none text-base'>{t("Thread.Questions.Title")} ({questionIds.length}){t("Labels.Count")}</span>
-              {
-            isCreatingQuestions === false ? (isPanelExpanded === true ? moreButton : null) : <LoadingIndicator className='!justify-end' title={t("Thread.Questions.Generating")}/>
-            }
-          </div>,
-        children: (
-            <div>
-            {[...questionIds].reverse().map((qid) => (<UnselectedQuestionItem key={qid} qid={qid} />))}</div>
-        ),
-      },
-    ]
-  }, [questionIds, onMoreQuestionsClick, isCreatingQuestions, t, isPanelExpanded])
+  const moreButton = <Button className='' disabled={isCreatingQuestions} onClick={handleMoreQuestions}>{t("Thread.Questions.More")}</Button>
+  const newButton = <Button className='' disabled={isCreatingQuestions} onClick={handleGetQuestions}>새로운 질문 추천받기</Button>
 
-  const onPanelChange =useCallback((key: string | string[])=>{
-    if(key == '1'){
-      setIsPanelExpanded(true)
-    }else{
-      setIsPanelExpanded(false)
+  const handleQuestionSelect = useCallback(() => {
+    setIsQSelectorOpen(false); 
+    console.log("OPEN? ", isQSelectorOpen)
+    setQuestions([]);
+  }, []);
+
+  useEffect(() => {
+    if(isQSelectorOpen && selectedQuestionIds.length === 0) {
+      _handleGetQuestions()
     }
-  }, [])
+  },[isQSelectorOpen])
 
-  return <>
-  {
-    questionIds.length > 0 ?<Collapse
-        onChange={onPanelChange}
-        className='bg-slate-100'
-        defaultActiveKey={1}
-        activeKey={isPanelExpanded ? 1 : undefined}
-        ghost
-        items={items}
-      /> : (!isCreatingQuestions ? moreButton : <LoadingIndicator title={t("Thread.Questions.Generating")}/>)}</>
-};
+  return (
+    <>
+    {!isQSelectorOpen? 
+    <div>
+      {newButton}
+      {isCreatingQuestions && <LoadingIndicator title={t("Thread.Questions.Generating")}/>}
+    </div>
+    :
+    <div>
+      {isCreatingQuestions? 
+      <LoadingIndicator title={t("Thread.Questions.Generating")}/>:
+      <div>
+        {moreButton}
+      </div>
+      }
+      {[...questions].reverse().map((q) => (<UnselectedQuestionItem key={q._id} qid={q._id} onSelectQuestion={() => handleQuestionSelect()}/>))}
+    </div>}
+    </>
+  )
+}
 
 function buildThresholdList(numSteps: number): Array<number> {
   let thresholds = [];
@@ -187,6 +200,6 @@ export const ThreadBox = (props: { tid: string }) => {
           className="scroll-anchor absolute -top-6 w-10 h-10"
         />
             <SelectedQuestionList tid={props.tid} />
-            <UnselectedQuestionList tid={props.tid} />
+            <NewQuestionList tid={props.tid}/>
       </Card>)
 };

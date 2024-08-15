@@ -590,11 +590,32 @@ export function getMoreQuestion(tid: string): AppThunk {
     if (state.auth.token) {
       try {
         dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({ tid: tid, flag: true }))
-        const fetchedQuestion = await generateQuestions(state.auth.token, tid, 1)
+        const fetchedQuestion = await generateQuestions(state.auth.token, tid, 3)
         if (fetchedQuestion) {
           dispatch(exploreSlice.actions.appendQuestions(fetchedQuestion))
           await postInteractionData(state.auth.token, InteractionType.UserRequestsQuestion, { generated_questions: fetchedQuestion }, { tid: tid })
         }
+      } catch (ex) {
+        console.log(ex)
+      } finally {
+        dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({ tid: tid, flag: false }))
+      }
+    }
+  }
+}
+
+export function getNewQuestions(tid: string, opt: number=3, prevQ: Array<string>=[]): AppThunk<Promise<IQASetWithIds[] | undefined>> {
+  return async (dispatch, getState) => {
+    const state = getState()
+    if (state.auth.token) {
+      try {
+        dispatch(exploreSlice.actions.setCreatingThreadQuestionsFlag({ tid: tid, flag: true }))
+        const fetchedQuestion = await generateQuestions(state.auth.token, tid, opt, prevQ)
+        if (fetchedQuestion) {
+          dispatch(exploreSlice.actions.appendQuestions(fetchedQuestion))
+          await postInteractionData(state.auth.token, InteractionType.UserRequestsQuestion, { generated_questions: fetchedQuestion }, { tid: tid })
+        }
+        return fetchedQuestion
       } catch (ex) {
         console.log(ex)
       } finally {
