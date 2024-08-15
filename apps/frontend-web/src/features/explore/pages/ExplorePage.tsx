@@ -165,7 +165,7 @@ export const ExplorerPage = () => {
                 icon={themeButtonIcon}
                 onClick={onThemeSelectionButtonClick}
               >{themeButtonLabel}
-                <InfoPopover content="고민과 관련하여 탐색해볼 수 있는 주제들을 볼 수 있어요." iconColor='white'/>
+                <InfoPopover content="내 이야기와 관련하여 탐색해볼 수 있는 주제들을 볼 수 있어요." iconColor='white'/>
               </Button>
             </div>
 
@@ -177,7 +177,7 @@ export const ExplorerPage = () => {
                     className="w-full border-none h-12 mt-4 shadow-lg shadow-teal-900/50 animate-slidein-up"
                     icon={themeButtonIcon}
                     onClick={onThemeSelectionButtonClick}
-                  >{themeButtonLabel}<InfoPopover content="고민과 관련하여 탐색해볼 수 있는 주제들을 볼 수 있어요." iconColor='white'/></Button>
+                  >{themeButtonLabel}<InfoPopover content="내 이야기와 관련하여 탐색해볼 수 있는 주제들을 볼 수 있어요." iconColor='white'/></Button>
                 </div>
               </div>
             ) : null}

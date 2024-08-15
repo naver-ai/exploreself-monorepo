@@ -110,7 +110,7 @@ const NewQuestionList = (props: {tid: string}) => {
   },[props.tid, questions])
 
   const moreButton = <Button className='' disabled={isCreatingQuestions} onClick={handleMoreQuestions}>{t("Thread.Questions.More")}</Button>
-  const newButton = <Button className='' disabled={isCreatingQuestions} onClick={handleGetQuestions}>새로운 질문 추천받기</Button>
+  const newButton = <Button className='' type='primary' disabled={isCreatingQuestions} onClick={handleGetQuestions}>새로운 질문 추천받기</Button>
 
   const handleQuestionSelect = useCallback(() => {
     setIsQSelectorOpen(false); 
