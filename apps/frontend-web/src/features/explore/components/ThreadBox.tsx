@@ -134,7 +134,7 @@ const NewQuestionList = (props: {tid: string}) => {
     <div>
       {isCreatingQuestions? 
       <LoadingIndicator title={t("Thread.Questions.Generating")}/>:
-      <div>
+      <div className="flex justify-end mb-2">
         {moreButton}
       </div>
       }
