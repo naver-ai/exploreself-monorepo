@@ -27,7 +27,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
 
   [Input type and format]
   <initial_information/>: Client's initial brief introductory of difficulty, and the client's background.
-  <previous_session_log>: Logs of sessions before the current session. Don't overlap with the previously selected questions!
+  <previous_session_log>: Logs of sessions before the current session. "DO NOT" overlap with the previously selected questions!!
   <theme_of_session/>: Theme of the current session. 
   {% if prevQLen > 0 %}
     <existing_questions/>: The questions that are already provided to the users as options. Do not overlap with these existing questions. 
@@ -55,7 +55,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
 
   const questionSchema = z.object({
     questions: z.array(z.object({
-      question: z.string().describe(`Socratic question to be provided to the user. (${language}). Use honorific ${language}`),
+      question: z.string().describe(`Socratic question to be provided to the user. (${language}). Use honorific ${language}. Do not overlap with previous questions`),
       intention: z.string().describe(`Therapeutic intention of asking the question to the client. (${language})`)
     }))
   })
@@ -67,6 +67,7 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
   
   try {
     const prev_session_log = await synthesizePrevThreads(uid, "question")
+    console.log("Q: ", prev_session_log)
     const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: threadData.theme})
     return (result as any).questions;
   } catch (err){
