@@ -46,7 +46,7 @@ const Debriefing = () => {
 
   const handleSwitchChange = useCallback((checked: boolean) => {
     if (checked) {
-      handleSubmitDebriefing({ debriefing });
+      handleSubmit(handleSubmitDebriefing)();
     } else {
       handleRevertTerminateSession();
     }
@@ -56,48 +56,54 @@ const Debriefing = () => {
     dispatch(abortReviewStage())
   }, [])
 
-  return (<div>
-  {sessionStatus == SessionStatus.Reviewing ? 
-  <Form onFinish={handleSubmit(handleSubmitDebriefing)}>
-  <FormItem control={control} name="debriefing">
-    <TextArea
-      data-enable-grammarly={false}
-      defaultValue={debriefing}
-      autoFocus
-      autoSize={{ minRows: 5, maxRows: 10 }}
-      placeholder={t("Synthesis.FinalReflection")}
-    />
-  </FormItem>
-  <div className="flex justify-end mt-10 gap-3">
-    <Button type="text" icon={<ArrowLeftIcon className="w-4 h-4"/>} onClick={onReturnClick}>{t("Synthesis.BackToExplore")}</Button>
-  </div>
-  <div className="flex justify-end mt-4">
-    <div className="mr-3">{t("Synthesis.Complete")}</div>
-    <Switch
-      checked={sessionStatus !== SessionStatus.Reviewing}
-      onChange={handleSwitchChange}
-    />
-  </div>
-  </Form>
-   : 
-   <div>
-    <div>{debriefing}</div>
-    {/* <div className="flex justify-end mt-10 gap-3">
-    <Button type="text" icon={<ArrowLeftIcon className="w-4 h-4"/>} onClick={onReturnClick}>{t("Synthesis.BackToExplore")}</Button>
-    </div> */}
-    <div className="flex justify-end mt-4">
-    <CheckCircleIcon className="w-6 h-6 text-green-500"/> 
-    <span className="leading-0 mr-3">{t("Synthesis.CompleteMessage")}</span>
-    <Switch
-      checked={sessionStatus == SessionStatus.Terminated}
-      onChange={handleSwitchChange}
-    />
-  </div>
+  return (
+    <div>
+      {sessionStatus == SessionStatus.Reviewing ? (
+        <Form onFinish={handleSubmit(handleSubmitDebriefing)}>
+          <FormItem control={control} name="debriefing">
+            <TextArea
+              data-enable-grammarly={false}
+              defaultValue={debriefing}
+              autoFocus
+              autoSize={{ minRows: 5, maxRows: 10 }}
+              placeholder={t("Synthesis.FinalReflection")}
+            />
+          </FormItem>
+          <div className="flex justify-end mt-10 gap-3">
+            <Button
+              type="text"
+              icon={<ArrowLeftIcon className="w-4 h-4" />}
+              onClick={onReturnClick}
+            >
+              {t("Synthesis.BackToExplore")}
+            </Button>
+          </div>
+          <div className="flex justify-end mt-4">
+            <div className="mr-3">{t("Synthesis.Complete")}</div>
+            <Switch
+              checked={sessionStatus !== SessionStatus.Reviewing}
+              onChange={handleSwitchChange}
+            />
+          </div>
+        </Form>
+      ) : (
+        <div>
+          <div>{debriefing}</div>
+          <div className="flex justify-end mt-4">
+            <CheckCircleIcon className="w-6 h-6 text-green-500" />
+            <span className="leading-0 mr-3">
+              {t("Synthesis.CompleteMessage")}
+            </span>
+            <Switch
+              checked={sessionStatus == SessionStatus.Terminated}
+              onChange={handleSwitchChange}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
   
-   </div>}
-  
-  
-  </div>)
 }
 
 export default Debriefing;
