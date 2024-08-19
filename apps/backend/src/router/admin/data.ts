@@ -5,7 +5,7 @@ import { signedInAdminUserMiddleware } from './middleware';
 import bcrypt from 'bcrypt';
 import path from 'path';
 import dotenv from 'dotenv';
-import { User } from '../../config/schema';
+import { Interaction, User } from '../../config/schema';
 
 const router = express.Router();
 
@@ -19,9 +19,11 @@ router.get('/all', query('exclude').optional().isArray(), async (req, res) => {
                 path: 'questions',
             },
         }
-    ).populate({path: "browserSessions", populate: "interactionLogs"})).map(user => user.toJSON())
+    )).map(user => user.toJSON())
 
-    res.json(users)
+    const interactionLogs = (await Interaction.find({user:{$not: {$in: exclude}}})).map(log => log.toJSON())
+
+    res.json({users, logs: interactionLogs})
 });
 
 

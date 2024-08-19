@@ -44,7 +44,7 @@ export const DataPage = () => {
         dispatch(loadUsers())
     }, [])
 
-    return <div className="container mx-auto px-10 py-10">
+    return <div className="px-10 py-10">
         {
             isLoadingUsers === true ? <LoadingIndicator title="Loading users..." /> : <>
                 <Card size="small" className="mb-12" bordered={false} title="Included Users">
