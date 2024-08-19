@@ -58,7 +58,7 @@ export const usersSelectors = userEntityAdapter.getSelectors((state: AppState) =
 export const loadUsers = (): AppThunk => {
   return async(dispatch, getState) => {
     const state = getState();
-    if(state.admin.auth.token != null) {
+    if(state.admin.auth.token != null && state.admin.users.isLoadingUserList == false) {
       dispatch(manageSlice.actions._setLoadingUserListFlag(true))
       try {
         const resp = await Http.axios.get('/admin/users/all', {

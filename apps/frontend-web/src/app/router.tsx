@@ -18,6 +18,7 @@ import { AdminLoginPage } from '../admin/features/auth/pages/AdminLoginPage';
 import { UserListPage } from '../admin/features/users/pages/UserListPage';
 import UserDetailPage from '../admin/features/user/pages/UserDetailPage';
 import { AdminSignedInRouteFrame } from '../admin/components/AdminSignedInRouteFrame';
+import { DataPage } from '../admin/features/data/pages/DataPage';
 
 const AdminLoggedInRoute = () => {
   const { verify, isSignedIn } = useVerifyAdminToken();
@@ -73,19 +74,21 @@ export const MainRouter = () => {
             <Route element={<SignedInScreenFrame withHeader={true} />}>
               <Route path="narrative" element={<InitialNarrativePage />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="synthesis" element={<SynthesisPage/>}/>
+              <Route path="synthesis" element={<SynthesisPage />} />
             </Route>
           </Route>
         </Route>
         <Route path="admin">
-          <Route path="login" element={<AdminLoginPage/>}/>
-          <Route element={<AdminLoggedInRoute/>}>
-            <Route element={<AdminSignedInRouteFrame/>}>
+          <Route path="login" element={<AdminLoginPage />} />
+          <Route element={<AdminLoggedInRoute />}>
+            <Route element={<AdminSignedInRouteFrame />}>
               <Route index element={<Navigate to={'users'} />} />
-                <Route path="users">
-                  <Route index element={<UserListPage/>} />
-                  <Route path=":id" element={<UserDetailPage/>}>
-                </Route>
+              <Route path="users">
+                <Route index element={<UserListPage />} />
+                <Route path=":id" element={<UserDetailPage />} />
+              </Route>
+              <Route path="data">
+                <Route index element={<DataPage/>} />
               </Route>
             </Route>
           </Route>

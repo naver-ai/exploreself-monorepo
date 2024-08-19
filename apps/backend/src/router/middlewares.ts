@@ -18,8 +18,8 @@ export const signedInUserMiddleware =  async (req: Request, res: Response, next)
                         req["browserSessionId"] = req.headers["x-browser-session-id"]
                         req["localTimezone"] = req.headers["x-timezone"]
                         next()
-                    } 
-                }
+                    }else throw "WrongCredential" 
+                }else throw "WrongCredential"
             } catch (err) {
                 res.status(400).send("WrongCredential" + err)
             }

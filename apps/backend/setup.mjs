@@ -22,7 +22,7 @@ function makeExistingValidator(message) {
     }
 }
 
-const VITE_BLACKLISTS = ["OPENAI_API_KEY", "AUTH_SECRET", "MONGODB_URL", "MONGODB_DBNAME", "ADMIN_ID", "ADMIN_HASHED_PASSWORD"]
+const VITE_BLACKLISTS = ["OPENAI_API_KEY", "AUTH_SECRET", "MONGODB_URL", "MONGODB_DBNAME", "ADMIN_ID", "ADMIN_HASHED_PW"]
 
 async function hashPassword(password){
     let hp = await bcrypt.hash(password.trim(), 10)

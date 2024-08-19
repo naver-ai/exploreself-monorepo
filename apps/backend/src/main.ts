@@ -12,6 +12,7 @@ import generateRouter from './router/generate'
 import interactionRouter from './router/interaction'
 import adminAuthRouter from './router/admin/auth'
 import adminUserRouter from './router/admin/user'
+import adminDataRouter from './router/admin/data'
 import * as morgan from 'morgan'
 import cors from 'cors'
 import mongoose from 'mongoose'; 
@@ -65,6 +66,7 @@ apiRouter.use("/generate", generateRouter)
 apiRouter.use("/interaction", interactionRouter)
 apiRouter.use("/admin/auth", adminAuthRouter)
 apiRouter.use("/admin/users", signedInAdminUserMiddleware, adminUserRouter)
+apiRouter.use("/admin/data", signedInAdminUserMiddleware, adminDataRouter)
 
 
 apiRouter.get("/ping", (req, res) => {

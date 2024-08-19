@@ -110,6 +110,7 @@ export interface IUserWithThreadIds extends IUserBase {
 export interface IUserAllPopulated extends IUserBase {
   _id: string,
   threads: Array<IThreadAllPopulated>
+  browserSessions: Array<IUserBrowserSessionObj>
 }
 
 export interface ThemeWithExpressions {
