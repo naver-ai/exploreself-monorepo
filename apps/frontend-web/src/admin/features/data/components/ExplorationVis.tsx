@@ -4,7 +4,7 @@ import { IUserAllPopulated, InteractionObj, InteractionType } from "@core"
 import { usePrevious } from "@uidotdev/usehooks"
 import { Button } from "antd"
 import { Http } from "../../../../net/http"
-import { documentToSVG, elementToSVG, inlineResources } from 'dom-to-svg'
+import { elementToSVG, inlineResources } from 'dom-to-svg'
 import FileSaver from "file-saver"
 import moment from 'moment'
 
@@ -36,7 +36,7 @@ const TextPlaceholder = (props: {numLines: number, className?: string}) => {
     return <div className={`flex flex-col gap-y-1 ${props.className}`}>
         {
             props.numLines == 0 ? <div className="block h-0.5 w-3 bg-gray-600"/> : <>{Array.from(new Array(numLineClamped).keys()).map((_, i) => {
-                    return <div key={i} className={`bg-white/70 block h-[5px] ${i == numLineClamped - 1 && numLineClamped > 1 && isNumLineClamped ==false ? "w-[60%]" : ""}`}/>
+                    return <div key={i} className={`bg-white/70 block h-[3px] ${i == numLineClamped - 1 && numLineClamped > 1 && isNumLineClamped ==false ? "w-[60%]" : ""}`}/>
                 })}{isNumLineClamped ? <div className="flex flex-wrap gap-0.5">{
                     Array.from(new Array(props.numLines - MAX_LINE_CLAMP).keys()).map(n => <div key={n} className="bg-white/80 block w-1 h-1 rounded-full"/>)
                 }</div> : null}</>
@@ -66,7 +66,7 @@ export const ExplorationVis = (props: {
     }, [token, props.excludedUserIds])
 
     const onExportClick = useCallback(async () => {
-        const svgDocument = elementToSVG(document.querySelector('#chart-exploration')!)
+        const svgDocument = elementToSVG(document.querySelector('#chart-exploration')!, {})
 
         // Inline external resources (fonts, images, etc) as data: URIs
         await inlineResources(svgDocument.documentElement)
@@ -100,9 +100,9 @@ export const ExplorationVis = (props: {
                             }
                             {
                                 user.threads.map(thread=> {
-                                    return <div key={thread._id} className="bg-slate-200 border border-gray-400 rounded-[5px] mt-2">
+                                    return <div key={thread._id} className="bg-slate-200 border border-gray-400 rounded-[5px] mt-1.5">
                                         <div className="bg-gray-500 block h-2 rounded-t-[3px]"/>
-                                        <div className="p-1.5">
+                                        <div className="p-1">
                                         {
                                             thread.questions.filter(question => question.selected === true).map(question => {
 
@@ -120,7 +120,7 @@ export const ExplorationVis = (props: {
                                                 }
 
                                                 const guideCountArray = Array.from(new Array((question.aiGuides?.length || 1) - 1).keys())
-                                                return <div key={question._id} className="bg-teal-400 p-1.5 rounded-md mt-1.5 first:mt-0">
+                                                return <div key={question._id} className="bg-teal-400 p-1 rounded-md mt-1.5 first:mt-0">
                                                     <div className="flex flex-wrap gap-0.5 mb-2">
                                                         {isKeywordOn == true ? question.keywords.map((keywords, i) => {
                                                                 return <div key={i} className="w-3 h-1.5 block rounded-full bg-rose-400"/>
@@ -131,7 +131,7 @@ export const ExplorationVis = (props: {
                                                         <TextPlaceholder numLines={numLines(question.response)} className="flex-1"/>
                                                         <div className="grid grid-flow-cols grid-cols-2 flex-wrap gap-0.5">{
                                                             guideCountArray.map((guide, i) => {
-                                                                return <div key={i} className="w-2 h-2 block bg-black rounded-full"/>
+                                                                return <div key={i} className="w-1.5 h-1.5 block bg-black rounded-full"/>
                                                             })
                                                         }</div>
                                                     </div>
