@@ -19,7 +19,7 @@ export const signedInAdminUserMiddleware = async (
       } catch (err) {
         res.status(400).send('WrongCredential' + err);
       }
-    }
+    } else throw "WrongCredential"
   } catch (err) {
     res.status(400).send('No auth header provided.' + err);
   }

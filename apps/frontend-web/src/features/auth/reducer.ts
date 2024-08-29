@@ -4,18 +4,21 @@ import { AppThunk } from '../../redux/store';
 import { jwtDecode } from 'jwt-decode';
 import { Http } from '../../net/http';
 import { updateUserInfo } from '../explore/reducer';
+import i18next from 'i18next';
 
 export type IAuthState = {
   isAuthorizing: boolean;
   authorizationError?: string;
   token?: string;
   userId?: string;
+  locale: string
 };
 
 const initialState: IAuthState = {
   isAuthorizing: false,
   authorizationError: undefined,
   token: undefined,
+  locale: 'en'
 };
 
 const authSlice = createSlice({
@@ -34,6 +37,7 @@ const authSlice = createSlice({
 
       state.userId = action.payload.userId;
       state.authorizationError = undefined;
+      state.locale = action.payload.userInfo.isKorean == true ? 'kr' : 'en'
     },
 
     setAuthorizingFlag: (state, action: PayloadAction<boolean>) => {
@@ -75,7 +79,9 @@ export function loginWithPasscode(
           userInfo: user,
         })
       );
-      dispatch(updateUserInfo({ name: user.name, isKorean: user.isKorean }));
+      dispatch(updateUserInfo({ name: user.name }));
+
+      await i18next.changeLanguage(user.isKorean === true ? 'kr' : 'en')
 
       onSuccess?.();
     } catch (err) {

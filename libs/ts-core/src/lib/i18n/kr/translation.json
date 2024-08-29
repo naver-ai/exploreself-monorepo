@@ -1,6 +1,6 @@
 { 
   "SignIn": {
-    "Title": "MeSense",
+    "Title": "ExploreSelf",
     "Passcode": {
       "Prompt": "패스코드"
     },
@@ -41,6 +41,7 @@
       "Title": "생각해볼 질문들",
       "Generating": "질문거리 생성중...",
       "More": "질문 더 추천받기",
+      "NewQuestion": "새로운 질문 추천받기",
       "Answer": "답변 쓰기", 
       "RequestHelp": "새로운 도움말 보기",
       "AnswerPlaceholder": "자유롭게 적어보아요",
@@ -62,6 +63,7 @@
     "AddMyself": "주제를 직접 작성해 보세요.",
     "Generating": "탐색해볼 주제 생성 중",
     "NoTheme": "아직 담은 주제가 없습니다.",
+    "PinTitle": "주제 바구니",
     "Tooltip":{
       "NewThread": "이 주제로 새로운 생각 타래를 열려면 클릭하세요.",
       "PinTheme": "나중에 다시 탐색하기 위해 주제 바구니에 담아두려면 클릭하세요.",
@@ -88,7 +90,8 @@
     "Submit": "제출",
     "WrapUp": "탐색 마무리",
     "Press": "눌러서 확인하기",
-    "Count": "개"
+    "Count": "개",
+    "ShowHelp": "사용 안내 다시보기"
   },
 
   "Outline": {

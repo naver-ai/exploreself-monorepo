@@ -93,6 +93,6 @@ const server = app.listen(port, "0.0.0.0", () => {
   console.log(`Listening at ${process.env.BACKEND_HOSTNAME}:${port}`);
 });
 
-initSocket(server, [`${process.env.BACKEND_HOSTNAME}:3000`, `${process.env.BACKEND_HOSTNAME}:4200`])
+initSocket(server, ['http://localhost:3000', 'http://localhost:4200', 'http://0.0.0.0:4200', `${process.env.BACKEND_HOSTNAME}:3000`, `${process.env.BACKEND_HOSTNAME}:4200`])
 
 server.on('error', console.error);

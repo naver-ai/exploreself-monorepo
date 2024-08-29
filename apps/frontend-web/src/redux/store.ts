@@ -18,13 +18,14 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { adminReducer } from '../admin/reducer';
+import i18next from 'i18next';
 
 const rootReducer = combineReducers({
   auth: persistReducer(
     {
       key: 'root',
       storage,
-      whitelist: ['token'],
+      whitelist: ['token', 'locale'],
     },
     authReducer
   ),
@@ -44,7 +45,10 @@ const store = configureStore({
     }),
 });
 
-export const persistor = persistStore(store);
+export const persistor = persistStore(store, null, async () => {
+  const locale = store.getState().auth.locale
+  await i18next.changeLanguage(locale)
+});
 export default store;
 
 // The following are type hints for redux methods.

@@ -1,6 +1,6 @@
 {
   "SignIn": {
-    "Title": "MeSense",
+    "Title": "ExploreSelf",
     "Passcode": {
       "Prompt": "password"
     },
@@ -23,11 +23,11 @@
   },
 
   "Narrative": {
-    "Title": "Jot down Your Story of Difficulty",
-    "Prompt": "Everyone has their own difficulties. Feel free to write about any aspect of the difficult situation and the way you feel about it that comes to mind. Afterwards, AI will suggest various topics for you to think about regarding your difficulty, and through simple writing activities, it aims to help you better understand your worries and the thoughts surrounding them. Remember, all of your writing will be completely confidential.",
-    "Placeholder": "Write your difficulty here.",
-    "Complete": "Start Exploring Difficulties",
-    "InitialNarrative": "My Difficulty"
+    "Title": "Jot down Your Challenging Story",
+    "Prompt": "Everyone has their own challenges. Feel free to write about any aspect of the difficult situation and the way you feel about it that comes to mind. Afterwards, AI will suggest various topics for you to think about regarding your difficulty, and through simple writing activities, it aims to help you better understand your worries and the thoughts surrounding them. Remember, all of your writing will be completely confidential.",
+    "Placeholder": "Write your challenges here.",
+    "Complete": "Start Exploring Challenges",
+    "InitialNarrative": "My Challenges"
   },
 
   "Exploration": {
@@ -40,6 +40,7 @@
       "Title": "Questions to Think About",
       "Generating": "Generating questions...",
       "Answer": "Write Response",
+      "NewQuestion": "Get New Question Suggestions",
       "More": "Get More Question Suggestions",
       "RequestHelp": "See New Tips",
       "AnswerPlaceholder": "Write down freely",
@@ -53,7 +54,7 @@
     }
   },
   "Theme": {
-    "Title": "Theme Basket",
+    "Title": "Explore New Themes",
     "MoreThemes": "See More Themes",
     "AltExpressions": "See Other Expressions",
     "CustomTitle": "🤔 Is there no topic that interests you?",
@@ -61,6 +62,7 @@
     "AddMyself": "Add Myself",
     "Generating": "Generating themes to explore",
     "NoTheme": "No themes added yet.",
+    "PinTitle": "Pinned Themes",
     "Tooltip": {
       "NewThread": "Click to open a new thread with this theme."
     },
@@ -83,7 +85,8 @@
     "WrapUp": "Wrap Up Exploration",
     "Press": "Press to Confirm",
     "Finish": "Finish",
-    "Count": ""
+    "Count": "",
+    "ShowHelp": "Show Help"
   },
 
   "Outline": {

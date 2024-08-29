@@ -22,11 +22,16 @@ router.get("/all", async (req, res) => {
 
 router.post("/new", async (req, res) => {
       try {
-        const userInfo: {passcode: string, alias: string} = req.body.userInfo
+        const userInfo: {passcode?: string, alias: string, isKorean: boolean} = req.body.userInfo
+        console.log("user info: ", userInfo)
         const newUser = await new User({
           passcode: userInfo.passcode,
-          alias: userInfo.alias
+          alias: userInfo.alias,
+          isKorean: userInfo.isKorean
         }).save()
+
+        console.log(newUser)
+
         res.json({
           user: newUser
         })

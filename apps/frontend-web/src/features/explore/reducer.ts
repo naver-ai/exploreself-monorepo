@@ -57,7 +57,7 @@ export type IExploreState = {
   recentRemovedTheme?: string | undefined
 } & Omit<
   IUserWithThreadIds,
-  '_id' | 'passcode' | 'threads' | 'alias' | 'createdAt' | 'updatedAt'
+  '_id' | 'passcode' | 'threads' | 'alias' | 'isKorean' | 'createdAt' | 'updatedAt'
 >;
 
 const initialState: IExploreState = {
@@ -71,7 +71,6 @@ const initialState: IExploreState = {
   userId: undefined,
 
   name: undefined,
-  isKorean: true,
   initialNarrative: undefined,
   debriefing: undefined,
   pinnedThemes: [],

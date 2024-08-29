@@ -1,4 +1,4 @@
-import {Button, Form, Input, Modal, Space} from 'antd'
+import {Button, Form, Input, Modal, Space, Switch} from 'antd'
 import { useDispatch, useSelector } from '../../../../redux/hooks';
 import { useForm } from 'react-hook-form'
 import { FormItem } from 'react-hook-form-antd'
@@ -11,7 +11,8 @@ import { ButtonProps } from 'antd';
 
 const creationSchema = yup.object().shape({
   alias: yup.string().required().trim().min(1).matches(/[a-zA-Z0-9\-_]+/, {message: "Alias should consist of alphanumeric letters, hyphens, and underscores."}),
-  passcode: yup.string().required().trim().min(5),
+  isKorean: yup.boolean().default(false),
+  passcode: yup.string().required().trim().min(5).optional()
 })
 
 const CreateUserModal = (props:{
@@ -26,6 +27,7 @@ const CreateUserModal = (props:{
   }, [props.onClose])
 
   const submitUserInfo = useCallback((values: any) => {
+    console.log(values)
     dispatch(createUser(values, (user) => {
       clearAndClose()
     }))
@@ -48,8 +50,12 @@ const cancelButtonProps: ButtonProps | undefined = useMemo(() => {
       <Input placeholder="User's alias (Only shown to researcher)"/>
   </FormItem>
 
+  <FormItem control={control} name="isKorean" label="Is Korean">
+      <Switch/>
+  </FormItem>
+
   <FormItem control={control} name="passcode" label="Passcode">
-      <Input placeholder="유저의 패스코드를 입력하세요"/>
+      <Input placeholder="Enter user passcode (Optional)"/>
   </FormItem>
 
   {

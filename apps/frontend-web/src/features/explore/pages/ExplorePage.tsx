@@ -37,7 +37,7 @@ const SidePanel = () => {
         id="sidebar-header"
         className="flex justify-between p-3 items-center  border-b-[1px]"
       >
-        <span className="text-sm font-black">MeSense</span>
+        <span className="text-sm font-black">ExploreSelf</span>
         <UserAvatar  disabled={isThemeSelectorOpen} buttonClassName="" />
       </div>
       <div className={classNames(

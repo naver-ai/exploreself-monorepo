@@ -296,7 +296,7 @@ const ThemeBox = () => {
         <span>{t("Theme.Title")}</span>
         <div className='flex items-center'>
           {
-            isLoadingThemes == false && didTutorial.themeBox == true ? <div onClick={handleTourOpen} className='cursor-pointer hover:text-blue-500 text-sm font-thin pr-3'>사용 안내 다시보기</div> : null
+            isLoadingThemes == false && didTutorial.themeBox == true ? <div onClick={handleTourOpen} className='cursor-pointer hover:text-blue-500 text-sm font-thin pr-3'>{t("Labels.ShowHelp")}</div> : null
           }
           
           <Button
@@ -360,7 +360,7 @@ const ThemeBox = () => {
         <div className='mt-8' ref={refPinnedThemes}>
           <div className='flex'>
           <BookmarkIcon className="w-5 h-5 text-orange-300"/>
-          <div className='ml-1 font-semibold text-blue-500 mb-2'> 주제 바구니</div>
+          <div className='ml-1 font-semibold text-blue-500 mb-2'>{t("Theme.PinTitle")}</div>
           </div>
           
           <PinnedThemesPanel/>

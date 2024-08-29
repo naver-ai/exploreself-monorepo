@@ -75,7 +75,7 @@ export const loadUsers = (): AppThunk => {
   }
 }
 
-export const createUser = (info: {passcode: string, alias: string}, onCreated: (user: IUserWithThreadIds) => void, onError?: (error: any) => void): AppThunk => {
+export const createUser = (info: {passcode: string, alias: string, isKorean: boolean}, onCreated: (user: IUserWithThreadIds) => void, onError?: (error: any) => void): AppThunk => {
   return async(dispatch, getState) => {
     const state = getState();
     if (state.admin.auth.token != null) {

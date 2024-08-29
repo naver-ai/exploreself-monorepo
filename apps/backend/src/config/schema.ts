@@ -95,7 +95,7 @@ export const BrowserSessionSchema = new Schema<BrowserSessionORM>({
 export const UserSchema = new Schema({
     alias: {type: String, required: true, unique: true},
     name: {type: String, required: false},
-    passcode: {type: String, required: true, unique: true, default: () => nanoid.customAlphabet('1234567890', 6) },
+    passcode: {type: String, required: true, unique: true, default: () => nanoid.customAlphabet('1234567890', 6)() },
     isKorean: {type: Boolean, required: true, default: true},
     initialNarrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     threads: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
