@@ -19,7 +19,7 @@ const SynthesisBox = () => {
   return (
     <div className='bg-white p-8 rounded-xl'>
       <div className='flex justify-between'>
-      <div className='mb-5 font-bold text-xl'>{t("Synthesis.Open")}</div>
+      <div className='mb-5 font-bold text-xl'>{t("Synthesis.Title")}</div>
       <div className='justify-end'>
         {isCreatingSynthesis? <LoadingIndicator title={t("Synthesis.Generating")}/>: <Button onClick={handleGenerateSynthesis} disabled={isCreatingSynthesis}>{t("Synthesis.More")}</Button>}
       </div>
