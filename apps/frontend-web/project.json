@@ -51,7 +51,8 @@
         "production": {
           "buildTarget": "frontend-web:build:production"
         }
-      }
+      },
+      "dependsOn": ["build"]
     }
   }
 }
