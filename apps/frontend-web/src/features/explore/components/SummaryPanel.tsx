@@ -1,16 +1,16 @@
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
 import { useCallback, useEffect } from 'react';
-import { getNewSynthesis } from '../reducer';
+import { getNewSummary } from '../reducer';
 import { useTranslation } from 'react-i18next';
 import { Button, Carousel } from 'antd';
 
-const SynthesisBox = () => {
-  const synthesisList: string[] = useSelector(state => state.explore.synthesis)
-  const isCreatingSynthesis = useSelector(state => state.explore.isCreatingSynthesis)
+export const SummaryPanel = () => {
+  const summaryList: string[] = useSelector(state => state.explore.summaries)
+  const isCreatingSummary = useSelector(state => state.explore.isCreatingSummary)
   const dispatch = useDispatch();
-  const handleGenerateSynthesis = useCallback(async () => {
-    dispatch(getNewSynthesis())
+  const handleGenerateSummary = useCallback(async () => {
+    dispatch(getNewSummary())
   },[])
   const name = useSelector(state => state.explore.name)
 
@@ -19,17 +19,17 @@ const SynthesisBox = () => {
   return (
     <div className='bg-white p-8 rounded-xl'>
       <div className='flex justify-between'>
-      <div className='mb-5 font-bold text-xl'>{t("Synthesis.Title")}</div>
+      <div className='mb-5 font-bold text-xl'>{t("Summary.Title")}</div>
       <div className='justify-end'>
-        {isCreatingSynthesis? <LoadingIndicator title={t("Synthesis.Generating")}/>: <Button onClick={handleGenerateSynthesis} disabled={isCreatingSynthesis}>{t("Synthesis.More")}</Button>}
+        {isCreatingSummary? <LoadingIndicator title={t("Summary.Generating")}/>: <Button onClick={handleGenerateSummary} disabled={isCreatingSummary}>{t("Summary.More")}</Button>}
       </div>
       </div>
-      {synthesisList.length && 
+      {summaryList.length && 
       <Carousel 
-      arrows = {synthesisList.length > 1}
+      arrows = {summaryList.length > 1}
       className='custom-carousel h-full'
-      initialSlide={synthesisList.length > 0? synthesisList.length -1: 0}>
-      {synthesisList?.map((item, i) => 
+      initialSlide={summaryList.length > 0? summaryList.length -1: 0}>
+      {summaryList?.map((item, i) => 
         <div className='rounded-lg flex items-center justify-center' key={i}>
           <div className='flex items-center justify-center px-10 pb-10 leading-loose h-full'>
             {item}
@@ -41,5 +41,3 @@ const SynthesisBox = () => {
     </div>
   )
 }
-
-export default SynthesisBox;

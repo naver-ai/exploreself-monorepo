@@ -3,8 +3,7 @@ import z from "zod"
 import { chatModel } from '../config/config';
 import { QASet } from '../config/schema';
 import { IUserORM } from '../config/schema';
-import { synthesizeProfilicInfo } from './synthesizeProfilicInfo';
-import { synthesizePrevThreads } from './synthesizeThread';
+import { summarizePrevThreads, summarizeProfilicInfo } from './summary';
 
 
 const generatePrompt = async (user: IUserORM, qid: string, keyword: string, curr_response: string, opt: number=3) => {
@@ -73,9 +72,9 @@ const generatePrompt = async (user: IUserORM, qid: string, keyword: string, curr
 
   const structuredLlm = chatModel.withStructuredOutput(keywordsSchema)
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = synthesizeProfilicInfo(user.initialNarrative)
+  const init_info = summarizeProfilicInfo(user.initialNarrative)
 
-  const prev_log = await synthesizePrevThreads(user._id)
+  const prev_log = await summarizePrevThreads(user._id)
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question, keyword: keyword, current_response: curr_response})
 
   return (result as any).prompts

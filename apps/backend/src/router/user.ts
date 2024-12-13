@@ -195,7 +195,7 @@ router.delete(
     req.user.initialNarrative = null;
     req.user.threads = [];
     req.user.pinnedThemes = [];
-    req.user.synthesis = [];
+    req.user.summaries = [];
     req.user.debriefing = undefined;
     req.user.sessionStatus = SessionStatus.Exploring;
 

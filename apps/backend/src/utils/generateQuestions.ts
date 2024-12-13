@@ -3,8 +3,7 @@ import { z } from "zod";
 import { chatModel } from "../config/config";
 import { User, ThreadItem } from "../config/schema";
 import nunjucks from 'nunjucks'
-import {synthesizePrevThreads} from './synthesizeThread'
-import { synthesizeProfilicInfo } from "./synthesizeProfilicInfo";
+import {summarizePrevThreads, summarizeProfilicInfo} from './summary'
 import mongoose from 'mongoose';
 
 
@@ -63,10 +62,10 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
   const structuredLlm = chatModel.withStructuredOutput(questionSchema)
 
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = synthesizeProfilicInfo(userData.initialNarrative)
+  const init_info = summarizeProfilicInfo(userData.initialNarrative)
   
   try {
-    const prev_session_log = await synthesizePrevThreads(uid, "question")
+    const prev_session_log = await summarizePrevThreads(uid, "question")
     console.log("Q: ", prev_session_log)
     const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: threadData.theme})
     return (result as any).questions;

@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { SessionStatus } from "@core";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
-import session from "redux-persist/lib/storage/session";
 
 
 const schema = yup.object({
@@ -35,7 +34,7 @@ const Debriefing = () => {
   const [t] = useTranslation()
 
   const handleSubmitDebriefing = useCallback(async (values: any) => {
-    if(window.confirm("Synthesis.CompleteConfirm")){
+    if(window.confirm("Summary.CompleteConfirm")){
       dispatch(terminateSession(values.debriefing));
     }
   }, []);
@@ -66,7 +65,7 @@ const Debriefing = () => {
               defaultValue={debriefing}
               autoFocus
               autoSize={{ minRows: 5, maxRows: 10 }}
-              placeholder={t("Synthesis.FinalReflection")}
+              placeholder={t("Summary.FinalReflection")}
             />
           </FormItem>
           <div className="flex justify-end mt-10 gap-3">
@@ -75,11 +74,11 @@ const Debriefing = () => {
               icon={<ArrowLeftIcon className="w-4 h-4" />}
               onClick={onReturnClick}
             >
-              {t("Synthesis.BackToExplore")}
+              {t("Summary.BackToExplore")}
             </Button>
           </div>
           <div className="flex justify-end mt-4">
-            <div className="mr-3">{t("Synthesis.Complete")}</div>
+            <div className="mr-3">{t("Summary.Complete")}</div>
             <Switch
               checked={sessionStatus !== SessionStatus.Reviewing}
               onChange={handleSwitchChange}
@@ -92,7 +91,7 @@ const Debriefing = () => {
           <div className="flex justify-end mt-4">
             <CheckCircleIcon className="w-6 h-6 text-green-500" />
             <span className="leading-0 mr-3">
-              {t("Synthesis.CompleteMessage")}
+              {t("Summary.CompleteMessage")}
             </span>
             <Switch
               checked={sessionStatus == SessionStatus.Terminated}

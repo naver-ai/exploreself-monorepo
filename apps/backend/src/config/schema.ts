@@ -78,7 +78,7 @@ export const ThreadItemSchema = new Schema({
    uid: {type: Schema.Types.ObjectId, ref: 'User', required: true},
    theme: {type: String, required: true},
    questions: {type: [Schema.Types.ObjectId], ref: 'QASet', required: true, default: []},
-   synthesized: {type: String, required: false, default: undefined},
+   summary: {type: String, required: false, default: undefined},
    createdAt: {type: Date, default: Date.now},
    updatedAt: {type: Date}
  });
@@ -99,7 +99,7 @@ export const UserSchema = new Schema({
     isKorean: {type: Boolean, required: true, default: true},
     initialNarrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
     threads: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
-    synthesis: {type: [String], required: true, default: []},
+    summaries: {type: [String], required: true, default: []},
     pinnedThemes: {type: [String], required: true, default: []},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date},

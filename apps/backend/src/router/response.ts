@@ -1,9 +1,8 @@
 import express from 'express';
-import { IThreadORM, Interaction, QASet, ThreadItem, User } from "../config/schema";
+import { QASet } from "../config/schema";
 import type { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
-import { synthesizeThread } from '../utils/synthesizeThread';
-import { IAIGuide, InteractionBase, InteractionType } from '@core';
+import { IAIGuide, InteractionBase } from '@core';
 import { logInteraction } from '../utils/logInteraction';
 
 const router = express.Router()

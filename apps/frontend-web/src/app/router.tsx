@@ -12,7 +12,7 @@ import { useVerifyToken } from '../features/auth/hooks';
 import { useEffect } from 'react';
 import { SignedInScreenFrame } from '../features/explore/components/SignedInScreenFrame';
 import { ProfilePage } from '../features/explore/pages/ProfilePage';
-import { SynthesisPage } from '../features/explore/pages/SynthesisPage';
+import { SummaryPage } from '../features/explore/pages/SummaryPage';
 import { useVerifyAdminToken } from '../admin/features/auth/hooks';
 import { AdminLoginPage } from '../admin/features/auth/pages/AdminLoginPage';
 import { UserListPage } from '../admin/features/users/pages/UserListPage';
@@ -74,7 +74,7 @@ export const MainRouter = () => {
             <Route element={<SignedInScreenFrame withHeader={true} />}>
               <Route path="narrative" element={<InitialNarrativePage />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="synthesis" element={<SynthesisPage />} />
+              <Route path="summary" element={<SummaryPage />} />
             </Route>
           </Route>
         </Route>

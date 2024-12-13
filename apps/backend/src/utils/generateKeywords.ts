@@ -3,8 +3,7 @@ import z from "zod"
 import { chatModel } from '../config/config';
 import { QASet } from '../config/schema';
 import { IUserORM } from '../config/schema';
-import { synthesizeProfilicInfo } from './synthesizeProfilicInfo';
-import { synthesizePrevThreads } from './synthesizeThread';
+import { summarizePrevThreads, summarizeProfilicInfo } from './summary';
 import nunjucks from 'nunjucks'
 
 
@@ -60,9 +59,9 @@ const generateKeywords = async (user: IUserORM, qid: string, opt:number=1) => {
 
   const structuredLlm = chatModel.withStructuredOutput(keywordsSchema)
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = synthesizeProfilicInfo(user.initialNarrative)
+  const init_info = summarizeProfilicInfo(user.initialNarrative)
 
-  const prev_log = await synthesizePrevThreads(user._id, "keyword")
+  const prev_log = await summarizePrevThreads(user._id, "keyword")
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question, keywords: keywords.join(', ')})
 
   return (result as any).keywords

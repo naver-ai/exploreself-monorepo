@@ -8,9 +8,8 @@ import generateQuestions from '../../api_call/generateQuestions';
 import generateComment from '../../api_call/generateComment';
 import generateKeywords from '../../api_call/generateKeywords';
 import { postInteractionData } from '../../api_call/postInteractionData';
-import generateSynthesisMappings from '../../api_call/generateSynthesisMapping';
+import { generateSummaryMappings } from '../../api_call/generateSummaryMapping';
 import generateThemes from '../../api_call/generateThemes';
-import exp from 'constants';
 import { IDidTutorial } from '@core';
 
 const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>({
@@ -28,7 +27,7 @@ const initialQuestionEneityState = questionEntityAdapter.getInitialState()
 export type IExploreState = {
   isLoadingUserInfo: boolean;
   isCreatingNewThread: boolean;
-  isCreatingSynthesis: boolean;
+  isCreatingSummary: boolean;
   isLoadingThemes: boolean;
   newThemes: ThemeWithExpressions[];
   didTutorial: IDidTutorial;
@@ -46,7 +45,6 @@ export type IExploreState = {
   questionShowKeywordsFlags: { [key: string]: boolean | undefined }
 
   isThemeSelectorOpen: boolean;
-  isSynthesisBoxOpen: boolean;
 
   recentlyActiveQuestionId: string | undefined;
 
@@ -63,7 +61,7 @@ export type IExploreState = {
 const initialState: IExploreState = {
   isLoadingUserInfo: false,
   isCreatingNewThread: false,
-  isCreatingSynthesis: false,
+  isCreatingSummary: false,
   isLoadingThemes: false,
   newThemes: [],
   didTutorial: {themeBox: false, explore: false},
@@ -77,7 +75,7 @@ const initialState: IExploreState = {
   recentRemovedTheme: undefined,
   sessionStatus: SessionStatus.Exploring,
 
-  synthesis: [],
+  summaries: [],
 
   threadInInitializationFlags: {},
   threadQuestionCreationLoadingFlags: {},
@@ -91,7 +89,6 @@ const initialState: IExploreState = {
   hoveringOutlineThreadId: undefined,
 
   isThemeSelectorOpen: false,
-  isSynthesisBoxOpen: false,
 
   recentlyActiveQuestionId: undefined,
 
@@ -130,9 +127,7 @@ const exploreSlice = createSlice({
     setThemeSelectorOpen: (state, action: PayloadAction<boolean>) => {
       state.isThemeSelectorOpen = action.payload;
     },
-    setSynthesisBoxOpen: (state, action: PayloadAction<boolean>) => {
-      state.isSynthesisBoxOpen = action.payload;
-    },
+
     setHoveringOutlineThreadId: (state, action: PayloadAction<string | undefined>) => {
       state.hoveringOutlineThreadId = action.payload
     },
@@ -148,9 +143,11 @@ const exploreSlice = createSlice({
     setCreatingNewThreadFlag: (state, action: PayloadAction<boolean>) => {
       state.isCreatingNewThread = action.payload;
     },
-    setCreatingSynthesisFlag: (state, action: PayloadAction<boolean>) => {
-      state.isCreatingSynthesis = action.payload
+    
+    setCreatingSummaryFlag: (state, action: PayloadAction<boolean>) => {
+      state.isCreatingSummary = action.payload
     },
+
     setLoadingThemesFlag: (state, action: PayloadAction<boolean>) => {
       state.isLoadingThemes = action.payload
     },
@@ -252,8 +249,8 @@ const exploreSlice = createSlice({
       state.questionShowKeywordsFlags[action.payload.qid] = action.payload.flag
     },
 
-    addNewSynthesis: (state, action: PayloadAction<string>) => {
-      state.synthesis.push(action.payload)
+    addNewSummary: (state, action: PayloadAction<string>) => {
+      state.summaries.push(action.payload)
     },
 
     appendPinnedTheme: (state, action: PayloadAction<string>) => {
@@ -664,19 +661,19 @@ export function getNewKeywords(qid: string, opt: number = 1): AppThunk {
   }
 }
 
-export function getNewSynthesis(): AppThunk {
+export function getNewSummary(): AppThunk {
   return async (dispatch, getState) => {
     const state = getState()
     if (state.auth.token) {
       try {
-        dispatch(exploreSlice.actions.setCreatingSynthesisFlag(true))
-        const synthesisMappings = await generateSynthesisMappings(state.auth.token)
-        const synthesis = (synthesisMappings.map((item: any) => item.sentence)).join(' ')
-        dispatch(exploreSlice.actions.addNewSynthesis(synthesis))
+        dispatch(exploreSlice.actions.setCreatingSummaryFlag(true))
+        const summaryMappings = await generateSummaryMappings(state.auth.token)
+        const combinedSummary = (summaryMappings.map((item: any) => item.sentence)).join(' ')
+        dispatch(exploreSlice.actions.addNewSummary(combinedSummary))
       } catch (ex) {
         console.log(ex)
       } finally {
-        dispatch(exploreSlice.actions.setCreatingSynthesisFlag(false))
+        dispatch(exploreSlice.actions.setCreatingSummaryFlag(false))
       }
     }
   }
@@ -792,7 +789,6 @@ export const {
   updateUserInfo,
   resetState,
   setThemeSelectorOpen,
-  setSynthesisBoxOpen,
   setFloatingHeaderFlag,
   setRecentlyActiveQuestionId,
   updateQuestion,

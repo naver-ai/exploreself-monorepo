@@ -7,7 +7,7 @@ const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { UserAvatar } from '../components/UserAvatar';
-import {enterReviewStage, getNewThemes, resetNewThemes, selectFloatingHeader, setSynthesisBoxOpen, setThemeSelectorOpen, threadSelectors } from '../reducer';
+import {enterReviewStage, getNewThemes, resetNewThemes, selectFloatingHeader, setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon, BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
@@ -28,7 +28,7 @@ const SidePanel = () => {
 
   const handleEndSession = useCallback(async () => {
     await dispatch(enterReviewStage())
-    navigate("/app/synthesis")
+    navigate("/app/summary")
   },[])
 
   return (
@@ -53,7 +53,7 @@ const SidePanel = () => {
         {false && <PinnedThemesPanel />}
       </div>
       <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
-        <Button disabled={isThemeSelectorOpen} className='w-full' onClick={handleEndSession}>{t("Synthesis.Open")}<InfoPopover title="AI 요약 보기" content='지금까지 적어본 것들에 대한 AI 요약을 확인해볼 수 있어요.'/></Button>
+        <Button disabled={isThemeSelectorOpen} className='w-full' onClick={handleEndSession}>{t("Summary.Open")}<InfoPopover title="AI 요약 보기" content='지금까지 적어본 것들에 대한 AI 요약을 확인해볼 수 있어요.'/></Button>
       </div>
     </>
   );
@@ -123,7 +123,7 @@ export const ExplorerPage = () => {
   } else if (initialNarrative == null || initialNarrative.length == 0) {
     return <Navigate to="/app/narrative" />;
   } else if (sessionStatus == SessionStatus.Reviewing || sessionStatus == SessionStatus.Terminated){
-    return <Navigate to="/app/synthesis"/>;
+    return <Navigate to="/app/summary"/>;
   } else {
     const themeButtonIcon = <LightBulbIcon className={`w-5 h-5 ${focusOnThemeButton ? "animate-bounce-emphasized text-yellow-200":""}`} />
     const themeButtonLabel = <span className={`${focusOnThemeButton ? 'animate-pulse font-semibold':''}`}>{threadIds.length == 0 ? t("Exploration.ShowMoreThemesInitial") : t("Exploration.ShowMoreThemes")}</span>
@@ -145,7 +145,6 @@ export const ExplorerPage = () => {
             ref={scrollViewRef}
           >
             <ThemeBox />
-            {/* <SynthesisBox/> */}
             <div className="container px-4 md:px-8 py-4 md:py-8 relative">
               <Card ref={narrativeCardRef} title={t("Narrative.InitialNarrative")}>
                 <span className="text-gray-600 leading-7">

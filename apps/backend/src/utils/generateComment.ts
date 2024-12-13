@@ -4,8 +4,7 @@ import { chatModel } from '../config/config';
 import { QASet } from '../config/schema';
 import { IUserORM } from '../config/schema';
 import nunjucks from 'nunjucks'
-import { synthesizeProfilicInfo } from './synthesizeProfilicInfo';
-import { synthesizePrevThreads } from './synthesizeThread';
+import { summarizePrevThreads, summarizeProfilicInfo } from './summary';
 
 
 const generateComment = async (user: IUserORM, qid: string, response: string) => {
@@ -77,9 +76,9 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
 
   const structuredLlm = chatModel.withStructuredOutput(commentSchema)
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = synthesizeProfilicInfo(user.initialNarrative)
+  const init_info = summarizeProfilicInfo(user.initialNarrative)
 
-  const prev_log = await synthesizePrevThreads(user._id, "comment")
+  const prev_log = await summarizePrevThreads(user._id, "comment")
   
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question, current_response_status: response_stat})
   return result

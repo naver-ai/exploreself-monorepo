@@ -1,7 +1,5 @@
-import { Input } from "antd"
 import { AggregateBox } from "../components/AggregateBox"
-import SynthesisBox from "../components/SynthesisBox"
-import {Flex, Row, Col} from "antd"
+import { SummaryPanel } from "../components/SummaryPanel"
 import { useSelector } from "../../../redux/hooks"
 import { questionSelectors } from "../reducer"
 import { useRef } from "react"
@@ -13,7 +11,7 @@ type QuestionRefs = {
   [key: string]: HTMLDivElement | null;
 };
 
-export const SynthesisPage = () => {
+export const SummaryPage = () => {
 
   const allQuestions = useSelector((state) => questionSelectors.selectAll(state));
   const filteredQuestions = allQuestions
@@ -36,7 +34,7 @@ export const SynthesisPage = () => {
           
           <div className="flex-1 flex flex-col !pl-4 !pr-8 py-10 overflow-y-scroll">
             <div className="pb-10">
-              <SynthesisBox/>
+              <SummaryPanel/>
             </div>
             <div>
               <Debriefing/>

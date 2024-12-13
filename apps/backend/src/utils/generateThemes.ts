@@ -3,10 +3,9 @@ import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
 import { chatModel } from '../config/config';
 import nunjucks from 'nunjucks'
-import { User, ThreadItem, IThreadORM } from '../config/schema';
+import { User, IThreadORM } from '../config/schema';
 import { IUserBase } from '@core';
-import { synthesizeProfilicInfo } from './synthesizeProfilicInfo';
-import {synthesizePrevThreads} from './synthesizeThread'
+import {summarizePrevThreads, summarizeProfilicInfo} from './summary'
 import mongoose from 'mongoose';
 
 const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<string> = [], opt: number=1) => {
@@ -83,8 +82,8 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
   const structuredLlm = chatModel.withStructuredOutput(edgeSchema);
 
   const chain = finalPromptTemplate.pipe(structuredLlm);
-  const init_info = synthesizeProfilicInfo(userData.initialNarrative)
-  const prev_session_log = await synthesizePrevThreads(uid)
+  const init_info = summarizeProfilicInfo(userData.initialNarrative)
+  const prev_session_log = await summarizePrevThreads(uid)
 
   const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log, pinned_themes: themeList.concat(pinnedThemes).concat(prev_themes).join(', ')});
 

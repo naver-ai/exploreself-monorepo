@@ -4,7 +4,6 @@ import { RequestWithUser } from './middlewares';
 import { signedInUserMiddleware } from './middlewares';
 import generateQuestions from '../utils/generateQuestions';
 import { body } from 'express-validator';
-import { synthesizeThread } from '../utils/synthesizeThread';
 
 const router = express.Router();
 

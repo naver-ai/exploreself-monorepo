@@ -20,7 +20,7 @@ export enum InteractionType {
 
   UserToggleKeywords = "UserToggleKeywords",
 
-  UserRequestsSynthesize = 'UserRequestsSynthesize',
+  UserRequestsSummary = 'UserRequestsSummary',
   UserChangeSessionStatus = "UserChangeSessionStatus",
   UserTerminateExploration = "UserTerminateExploration",
   UserRevertTermination = "UserRevertTermination"
@@ -63,7 +63,7 @@ export interface IQASetWithIds extends IQASetBase {
 
 export interface IThreadBase {
   theme: string;
-  synthesized?: string;
+  summary?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -94,7 +94,7 @@ export interface IUserBase {
   isKorean: boolean;
   initialNarrative: string | undefined;
   pinnedThemes: Array<string>
-  synthesis: string[];
+  summaries: string[];
   createdAt: Date;
   updatedAt: Date;
   debriefing: string | undefined;

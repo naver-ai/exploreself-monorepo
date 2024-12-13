@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useRef, useMemo, MouseEventHandler, useState } from 'react';
+import { useCallback, useEffect, useRef, MouseEventHandler, useState } from 'react';
 import {
   Button,
   Card,
   Flex,
-  Collapse,
 } from 'antd';
 import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { ShortcutManager } from '../../../services/shortcut';
-import { getMoreQuestion, getNewQuestions, questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeaderFlag, threadSelectors, unSelectedQuestionIdsSelector } from '../reducer';
+import { getNewQuestions, questionSelectors, selectedQuestionIdsSelector, selectQuestion, setFloatingHeaderFlag, threadSelectors } from '../reducer';
 import { useInView } from 'react-intersection-observer';
 import { QuestionBox } from './QuestionBox';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
@@ -23,12 +22,6 @@ const UnselectedQuestionItem = (props: { qid: string, onSelectQuestion?: () => v
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
 
   const dispatch = useDispatch();
-
-  const deleteQuestionHandler = useCallback(() => {
-    try {
-      // TODO: implement
-    } catch (err) {}
-  }, []);
 
   const onSelect = useCallback(() =>{
     dispatch(selectQuestion(props.qid, (q)=>{
