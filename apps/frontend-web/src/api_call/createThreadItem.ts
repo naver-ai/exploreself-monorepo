@@ -3,11 +3,12 @@ import { Http } from '../net/http';
 
 const createThreadItem = async (
   token: string,
+  agendaId: string,
   theme: string
 ): Promise<IThreadWithQuestionIds | null> => {
   try {
     const response = await Http.axios.post(
-      `/threads/new`,
+      `/agendas/${agendaId}/themes/new`,
       {
         theme: theme,
       },

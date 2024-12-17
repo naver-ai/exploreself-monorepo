@@ -1,11 +1,11 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Http } from '../../../net/http';
-import { IUserWithThreadIds } from '@core';
+import { IUserWithAgendaIds } from '@core';
 import { AppState, AppThunk } from '../../../redux/store';
 
 
-const userEntityAdapter = createEntityAdapter<IUserWithThreadIds, string>({
-  selectId: (model: IUserWithThreadIds) => {
+const userEntityAdapter = createEntityAdapter<IUserWithAgendaIds, string>({
+  selectId: (model: IUserWithAgendaIds) => {
     return model._id}
 })
 
@@ -39,15 +39,15 @@ const manageSlice = createSlice({
   _setCreatingUserFlag: (state, action: PayloadAction<boolean>) => {
     state.isCreatingUser = action.payload
   },
-  _setLoadedUsers: (state, action: PayloadAction<Array<IUserWithThreadIds>>) => {
+  _setLoadedUsers: (state, action: PayloadAction<Array<IUserWithAgendaIds>>) => {
     userEntityAdapter.setAll(state.userEntityState, action.payload)
   },
 
-  setOneUser: (state, action: PayloadAction<IUserWithThreadIds>) => {
+  setOneUser: (state, action: PayloadAction<IUserWithAgendaIds>) => {
       userEntityAdapter.setOne(state.userEntityState, action.payload)
   },
 
-  _appendUser: (state, action: PayloadAction<IUserWithThreadIds>) => {
+  _appendUser: (state, action: PayloadAction<IUserWithAgendaIds>) => {
     userEntityAdapter.addOne(state.userEntityState, action.payload)
   }
   },
@@ -64,7 +64,7 @@ export const loadUsers = (): AppThunk => {
         const resp = await Http.axios.get('/admin/users/all', {
           headers: Http.makeSignedInHeader(state.admin.auth.token)
         })
-        const users: IUserWithThreadIds[] = resp.data.userList
+        const users: IUserWithAgendaIds[] = resp.data.userList
         dispatch(manageSlice.actions._setLoadedUsers(users))
       } catch (err) {
         console.log(err)
@@ -75,7 +75,7 @@ export const loadUsers = (): AppThunk => {
   }
 }
 
-export const createUser = (info: {passcode: string, alias: string, isKorean: boolean}, onCreated: (user: IUserWithThreadIds) => void, onError?: (error: any) => void): AppThunk => {
+export const createUser = (info: {passcode: string, alias: string, isKorean: boolean}, onCreated: (user: IUserWithAgendaIds) => void, onError?: (error: any) => void): AppThunk => {
   return async(dispatch, getState) => {
     const state = getState();
     if (state.admin.auth.token != null) {

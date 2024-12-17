@@ -13,8 +13,8 @@ export const AggregateBox = () => {
   const filteredQuestions = allQuestions
     .filter(q => q.response && q.response.length > 0)
   
-  const name = useSelector(state => state.explore.name)
-  const initNarrative = useSelector(state => state.explore.initialNarrative)
+  const name = useSelector(state => state.agenda.name)
+  const initNarrative = useSelector(state => state.agenda.initialNarrative)
 
     return (
     //   <div className='bg-white p-8 rounded-xl h-[100vh]'>

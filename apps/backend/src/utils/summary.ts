@@ -1,11 +1,13 @@
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from '@langchain/core/prompts';
 import z from "zod"
 import { chatModel } from '../config/config';
-import { IUserORM } from '../config/schema';
+import { IAgendaORM, IUserORM } from '../config/schema';
 
 import mongoose from "mongoose"
 import { ThreadItem, User } from "../config/schema"
 import nunjucks from 'nunjucks'
+import { IMappedSummarySentence } from '@core';
+
 
 export const summarizeProfilicInfo = (init_nar: string) => {
 
@@ -14,7 +16,50 @@ export const summarizeProfilicInfo = (init_nar: string) => {
     `
   }
 
-export const summarizeThread = async (tid: string, option='default') => {
+export async function generateTitleFromNarrative(user: IUserORM, narrative: string) {
+  const user_name = user.name
+  const isKorean = user.isKorean
+
+  const systemTemplae = `
+  [Context]
+  The user has inserted their own story. 
+
+  [Task]
+  Provide a brief title text from the story.
+
+  [Output Note]
+  ${isKorean? "- The title should be in Korean.":""}
+  - Refer to the user by name, in the 3rd person.
+  - Keep it concise and grounded in the user’s actual input.
+  `
+
+  const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplae)
+
+  const humanTemplate = `
+  <story/>: {story}
+  <user_name/>: {user_name}
+  `
+
+  const humanMessage = HumanMessagePromptTemplate.fromTemplate(humanTemplate)
+
+  const finalPromptTemplate = ChatPromptTemplate.fromMessages([
+    systemMessage,
+    humanMessage
+  ])
+
+  const summarySchema = z.object({
+    title: z.string().min(1).describe('A result title derived from the user\'s story.')
+  })
+
+  const structuredLlm = chatModel.withStructuredOutput(summarySchema)
+  const chain = finalPromptTemplate.pipe(structuredLlm)
+  
+  const result = await chain.invoke({story: narrative, user_name: user_name})
+
+  return result.title
+}
+
+export async function summarizeThread(tid: string, option='default') {
   /*
   
   */
@@ -42,7 +87,7 @@ export const summarizeThread = async (tid: string, option='default') => {
   return summary
 }
 
-const summarizeThreadWithQid = async (tid: string, option='default') => {
+async function summarizeThreadWithQid (tid: string, option='default') {
 
   const threadItem = await ThreadItem.findById(tid).populate('questions')
   
@@ -73,15 +118,9 @@ const summarizeThreadWithQid = async (tid: string, option='default') => {
   return summary
 }
 
-export const summarizePrevThreads = async (uid: mongoose.Types.ObjectId, option: string='default') => {
-  const user = await User.findById(uid);
-  
-  if (!user) {
-    throw new Error('User not found');
-  }
-  
-  if (user.threads.length) {
-    const summaries = await Promise.all(user.threads.map(async (ref) => {
+export async function summarizePrevThreads (agenda: IAgendaORM, option: string='default') {
+  if (agenda.threads.length) {
+    const summaries = await Promise.all(agenda.threads.map(async (ref) => {
       if(option=='qid'){
         return summarizeThreadWithQid(ref.toString(), option)
       }
@@ -95,7 +134,7 @@ export const summarizePrevThreads = async (uid: mongoose.Types.ObjectId, option:
 }
 
 
-export const generateSummary = async (user: IUserORM, opt: number=1) => {
+export async function generateSummary (user: IUserORM, agenda: IAgendaORM, opt: number=1) {
   const user_name = user.name
   const isKorean = user.isKorean
 
@@ -146,9 +185,9 @@ export const generateSummary = async (user: IUserORM, opt: number=1) => {
 
   const structuredLlm = chatModel.withStructuredOutput(summarySchema)
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = summarizeProfilicInfo(user.initialNarrative)
+  const init_info = summarizeProfilicInfo(agenda.initialNarrative)
 
-  const prev_log = await summarizePrevThreads(user._id)
+  const prev_log = await summarizePrevThreads(agenda)
 
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, user_name: user_name})
 
@@ -157,7 +196,7 @@ export const generateSummary = async (user: IUserORM, opt: number=1) => {
 }
 
 
-export const mapSummaryToQIDs = async (user: IUserORM, summary: string) => {
+export async function mapSummaryToQIDs(agenda: IAgendaORM, summary: string): Promise<Array<IMappedSummarySentence>>{
     const systemTemplate = `
     [Context]
     The user has completed a self-help session and a narrative summary has been generated based on their Q&A log. Each Q&A set in the log has a unique identifier (QID).
@@ -203,7 +242,7 @@ export const mapSummaryToQIDs = async (user: IUserORM, summary: string) => {
     const structuredLlm = chatModel.withStructuredOutput(mappingSchema);
     const chain = finalPromptTemplate.pipe(structuredLlm);
   
-    const prev_log = await summarizePrevThreads(user._id, 'qid');
+    const prev_log = await summarizePrevThreads(agenda, 'qid');
   
     const result = await chain.invoke({ summary, prev_log: prev_log });
   

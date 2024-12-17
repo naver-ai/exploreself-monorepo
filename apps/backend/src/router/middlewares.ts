@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { IUserORM, User } from '../config/schema'
+import { AgendaItem, IAgendaORM, IUserORM, User } from '../config/schema'
 import jwt from 'jsonwebtoken'
 import { Types } from 'mongoose'
 
@@ -27,4 +27,22 @@ export const signedInUserMiddleware =  async (req: Request, res: Response, next)
     } catch (err) {
         res.status(400).send("No auth header provided: " + err)
     }        
+}
+
+export type RequestWithAgenda = RequestWithUser & { agenda: IAgendaORM }
+
+export const assertAgendaIdParamMiddleware = async (req: RequestWithUser, res: Response, next) => {
+    try {
+        if(req.params.aid){
+            const agenda = await AgendaItem.findOne({uid: req.user._id, _id: req.params.id})
+            if(agenda != null){
+                req["agenda"] = agenda
+                next()
+            }else throw "WrongAgendaId"
+        } else{
+            next()
+        }
+    } catch (err) {
+        res.status(400).send("No valid agenda ID provided: " + err)
+    }
 }

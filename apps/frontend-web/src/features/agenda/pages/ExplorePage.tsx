@@ -1,18 +1,17 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { OutlinePanel, PinnedThemesPanel } from '../components/sidebar-views';
 import ThemeBox from '../components/ThemeBox';
 import { ThreadBox } from '../components/ThreadBox';
-import { Card,  Button, Input, Popover } from 'antd';
+import { Card,  Button, Input } from 'antd';
 const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { UserAvatar } from '../components/UserAvatar';
+import { UserAvatar } from '../../user/components/UserAvatar';
 import {enterReviewStage, getNewThemes, resetNewThemes, selectFloatingHeader, setThemeSelectorOpen, threadSelectors } from '../reducer';
-import { LightBulbIcon, BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/24/solid';
+import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
 import { ShortcutManager } from '../../../services/shortcut';
 import useScrollbarSize from 'react-scrollbar-size';
-import {AlignLeftOutlined, InfoCircleOutlined} from '@ant-design/icons'
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames'
 import { SessionStatus } from '@core';
@@ -22,7 +21,7 @@ import { InfoPopover } from '../../../components/InfoPopover';
 const SidePanel = () => {
 
   const dispatch = useDispatch();
-  const isThemeSelectorOpen = useSelector(state => state.explore.isThemeSelectorOpen)
+  const isThemeSelectorOpen = useSelector(state => state.agenda.isThemeSelectorOpen)
   const [t] = useTranslation()
   const navigate = useNavigate();
 
@@ -64,19 +63,18 @@ export const ExplorerPage = () => {
   const [t] = useTranslation()
 
   const initialNarrative = useSelector(
-    (state) => state.explore.initialNarrative
+    (state) => state.agenda.initialNarrative
   );
 
-  const sessionStatus = useSelector(state => state.explore.sessionStatus)
+  const sessionStatus = useSelector(state => state.agenda.sessionStatus)
 
-  const userName = useSelector((state) => state.explore.name);
   const threadIds = useSelector(threadSelectors.selectIds);
 
-  const isThemeSelectorOpen = useSelector(state => state.explore.isThemeSelectorOpen)
+  const isThemeSelectorOpen = useSelector(state => state.agenda.isThemeSelectorOpen)
 
   const floatingHeader = useSelector(selectFloatingHeader)
 
-  const { ref, inView, entry } = useInView({
+  const { ref, inView } = useInView({
     /* Optional options */
     threshold: 0,
   });
@@ -118,11 +116,7 @@ export const ExplorerPage = () => {
 
   const focusOnThemeButton = threadIds.length === 0 && isThemeSelectorOpen === false
 
-  if (userName == null || userName.length == 0) {
-    return <Navigate to="/app/profile" />;
-  } else if (initialNarrative == null || initialNarrative.length == 0) {
-    return <Navigate to="/app/narrative" />;
-  } else if (sessionStatus == SessionStatus.Reviewing || sessionStatus == SessionStatus.Terminated){
+  if (sessionStatus == SessionStatus.Reviewing || sessionStatus == SessionStatus.Terminated){
     return <Navigate to="/app/summary"/>;
   } else {
     const themeButtonIcon = <LightBulbIcon className={`w-5 h-5 ${focusOnThemeButton ? "animate-bounce-emphasized text-yellow-200":""}`} />

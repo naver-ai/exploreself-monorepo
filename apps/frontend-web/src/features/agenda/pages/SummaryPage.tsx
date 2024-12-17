@@ -21,7 +21,7 @@ export const SummaryPage = () => {
     questionRefs.current[id]?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const sessionStatus = useSelector(state => state.explore.sessionStatus)
+  const sessionStatus = useSelector(state => state.agenda.sessionStatus)
 
   if(sessionStatus == SessionStatus.Exploring){
     return <Navigate to="/app"/>

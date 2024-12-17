@@ -1,4 +1,4 @@
-import { IThreadBase, IUserBase, IQASetBase, SessionStatus, IUserBrowserSessionBase } from "@core";
+import { IThreadBase, IUserBase, IQASetBase, SessionStatus, IUserBrowserSessionBase, IAgendaBase } from "@core";
 import mongoose, {Schema, Document, mongo} from "mongoose";
 import { InteractionType, InteractionBase } from "@core";
 import * as nanoid from 'nanoid'
@@ -21,11 +21,19 @@ export interface IQASetORM extends IQASetBase, Document {
 export interface IThreadORM extends IThreadBase, Document {
   _id: mongoose.Types.ObjectId
   questions: Array<mongoose.Types.ObjectId | IQASetORM>
+  aid: mongoose.Types.ObjectId
+}
+
+export interface IAgendaORM extends IAgendaBase, Document {
+  _id: mongoose.Types.ObjectId
+  threads: Array<mongoose.Types.ObjectId | IThreadORM>
   uid: mongoose.Types.ObjectId
 }
 
 export interface IUserORM extends IUserBase, Document {
   _id: mongoose.Types.ObjectId
+  agendas: Array<mongoose.Types.ObjectId | IAgendaORM>
+
   threads: Array<mongoose.Types.ObjectId | IThreadORM>
   browserSessions: Array<mongoose.Types.ObjectId | BrowserSessionORM>
 }
@@ -75,7 +83,7 @@ export const QASetSchema = new Schema({
 QASetSchema.set('timestamps', true);
  
 export const ThreadItemSchema = new Schema({
-   uid: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+   aid: {type: Schema.Types.ObjectId, ref: 'Agenda', required: true},
    theme: {type: String, required: true},
    questions: {type: [Schema.Types.ObjectId], ref: 'QASet', required: true, default: []},
    summary: {type: String, required: false, default: undefined},
@@ -92,19 +100,41 @@ export const BrowserSessionSchema = new Schema<BrowserSessionORM>({
   endedTimestamp: {type: Number, nullable: true, default: null, index: true},
 })
 
+export const AgendaSchema = new Schema({
+  uid: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+  title: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
+  initialNarrative: {type: String, required: true, minLength: 1},
+  threads: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
+  summaries: {type: [String], required: true, default: []},
+  pinnedThemes: {type: [String], required: true, default: []},
+  createdAt: {type: Date, default: Date.now},
+  updatedAt: {type: Date},
+  debriefing: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
+  sessionStatus: {type: String, enum: Object.keys(SessionStatus), default: SessionStatus.Exploring},
+  deleted: {type: Boolean, required: false}
+});
+
+AgendaSchema.set('timestamps', true);
+AgendaSchema.set('toJSON', {
+transform: function(doc, ret, options) {
+    // delete ret.passcode;
+    if(ret.initialNarrative != null && ret.initialNarrative == ''){
+      ret.initialNarrative = undefined
+    }
+    return ret;
+}
+})
+
 export const UserSchema = new Schema({
     alias: {type: String, required: true, unique: true},
     name: {type: String, required: false},
     passcode: {type: String, required: true, unique: true, default: () => nanoid.customAlphabet('1234567890', 6)() },
     isKorean: {type: Boolean, required: true, default: true},
-    initialNarrative: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
-    threads: {type: [Schema.Types.ObjectId], ref: 'ThreadItem', required: true, default: []},
-    summaries: {type: [String], required: true, default: []},
-    pinnedThemes: {type: [String], required: true, default: []},
+
+    agendas: {type: [Schema.Types.ObjectId], ref: 'AgendaItem', required: true, default: []},
+
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date},
-    debriefing: {type: String, required: false, default: null, set: emptyStringToUndefinedConverter},
-    sessionStatus: {type: String, enum: Object.keys(SessionStatus), default: SessionStatus.Exploring},
     browserSessions: {type: [Schema.Types.ObjectId], ref: 'BrowserSession', required: true, default: []},
     didTutorial: {type: {themeBox: Boolean, explore: Boolean}, default: {themeBox: false, explore: false}}
   });
@@ -133,6 +163,7 @@ InteractionSchema.set('timestamps', true);
 
 export const QASet = mongoose.model<IQASetORM>('QASet', QASetSchema)
 export const ThreadItem = mongoose.model<IThreadORM>('ThreadItem', ThreadItemSchema)
+export const AgendaItem = mongoose.model<IAgendaORM>('AgendaItem', AgendaSchema)
 export const User = mongoose.model<IUserORM>('User', UserSchema)
 export const Interaction = mongoose.model<InteractionORM>('Interaction', InteractionSchema);
 export const BrowserSession = mongoose.model<BrowserSessionORM>('BrowserSession', BrowserSessionSchema)

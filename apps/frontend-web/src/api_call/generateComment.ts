@@ -2,12 +2,14 @@ import { Http } from '../net/http';
 
 const generateComment = async (
   token: string,
+  agendaId: string,
+  tid: string,
   qid: string,
   response: string
 ) => {
   try {
     const resp = await Http.axios.post(
-      `/generate/comment/${qid}`,
+      `/agendas/${agendaId}/themes/${tid}/quesions/${qid}/comments/generate`,
       {
         response: response,
       },

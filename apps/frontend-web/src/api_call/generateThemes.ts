@@ -1,8 +1,8 @@
 import { Http } from '../net/http';
 
-const generateThemes = async (token: string, prevThemes: string[] = [], opt: number) => {
+const getThemeRecommendation = async (token: string, agendaId: string, prevThemes: string[] = [], opt: number) => {
   try {
-    const response = await Http.axios.post(`/generate/themes`, {
+    const response = await Http.axios.post(`/agendas/${agendaId}/themes/recommendation`, {
       prevThemes: prevThemes,
       opt: opt
     },
@@ -16,4 +16,4 @@ const generateThemes = async (token: string, prevThemes: string[] = [], opt: num
   }
 };
 
-export default generateThemes;
+export default getThemeRecommendation;

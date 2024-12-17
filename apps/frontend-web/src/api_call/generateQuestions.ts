@@ -2,15 +2,17 @@ import { Http } from '../net/http';
 
 const generateQuestions = async (
   token: string,
+  agendaId: string,
   tid: string,
   opt: number = 1,
-  prevQ: Array<string> =[]
+  prevQuestions: Array<string> =[]
 ) => {
   try {
     const response = await Http.axios.post(
-      `/generate/question/${tid}?opt=${opt}`,
+      `/agendas/${agendaId}/themes/${tid}/questions/generate`,
       {
-        prevQ: prevQ
+        prevQuestions,
+        opt
       },
       {
         headers: Http.makeSignedInHeader(token),

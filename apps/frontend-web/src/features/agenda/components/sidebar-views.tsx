@@ -120,8 +120,8 @@ export const PinnedThemesPanel = () => {
 
   const dispatch = useDispatch()
 
-  const pinnedThemes = useSelector((state) => state.explore.pinnedThemes);
-  const recentRemovedTheme = useSelector(state => state.explore.recentRemovedTheme)
+  const pinnedThemes = useSelector((state) => state.agenda.pinnedThemes);
+  const recentRemovedTheme = useSelector(state => state.agenda.recentRemovedTheme)
   const token = useSelector((state) => state.auth.token) as string;
 
   const schema = yup.object({

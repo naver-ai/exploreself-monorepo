@@ -7,15 +7,15 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormItem } from 'react-hook-form-antd';
-import { submitUserProfile } from '../reducer';
+import { updateUserProfile } from '../../user/reducer';
 
 const schema = yup.object({
   name: yup.string().trim().min(1).required(),
 });
 
 export const ProfilePage = () => {
-  const userId = useSelector((state) => state.explore.userId);
-  const userName = useSelector((state) => state.explore.name);
+  const userId = useSelector((state) => state.user.userId);
+  const userName = useSelector((state) => state.user.name);
 
   const {
     control,
@@ -33,8 +33,8 @@ export const ProfilePage = () => {
 
   const submitProfile = useCallback(async (values: { name: string }) => {
     dispatch(
-      submitUserProfile(values, () => {
-        navigate('/app');
+      updateUserProfile(values, () => {
+        navigate(-1);
       })
     );
   }, []);

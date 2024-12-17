@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { Button, Carousel } from 'antd';
 
 export const SummaryPanel = () => {
-  const summaryList: string[] = useSelector(state => state.explore.summaries)
-  const isCreatingSummary = useSelector(state => state.explore.isCreatingSummary)
+  const summaryList: string[] = useSelector(state => state.agenda.summaries)
+  const isCreatingSummary = useSelector(state => state.agenda.isCreatingSummary)
   const dispatch = useDispatch();
   const handleGenerateSummary = useCallback(async () => {
     dispatch(getNewSummary())
   },[])
-  const name = useSelector(state => state.explore.name)
+  const name = useSelector(state => state.agenda.name)
 
 
   const [t] = useTranslation()

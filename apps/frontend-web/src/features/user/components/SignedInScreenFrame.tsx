@@ -2,13 +2,13 @@ import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { useEffect } from 'react';
-import { fetchUserInfo } from '../reducer';
 import { Spin } from 'antd';
 import * as rrweb from 'rrweb'
 import { Http } from '../../../net/http';
 import { SessionRecordingManager } from '../../../services/recording';
 import { socket } from '../../../services/socket';
 import { SocketEvents } from '@core';
+import { mountUser } from '../reducer';
 
 export const SignedInScreenFrame = (props: { withHeader: boolean }) => {
   const dispatch = useDispatch();
@@ -16,13 +16,22 @@ export const SignedInScreenFrame = (props: { withHeader: boolean }) => {
   const token = useSelector(state => state.auth.token)
 
   const isLoadingUserInfo = useSelector(
-    (state) => state.explore.isLoadingUserInfo
+    (state) => state.user.isLoadingUserInfo
   );
+
+  useEffect(()=>{
+    if(token != null){
+      dispatch(mountUser()).then(userId => {
+        
+      })
+    }
+  }, [token])
 
   useEffect(()=>{
     let stopRecording: (()=>void) | undefined = undefined
     let sessionId: string
     if(token != null){
+
       Http.axios.post("/user/browser_sessions/start", null, {headers: Http.makeSignedInHeader(token)}).then(resp => {
         sessionId = resp.data.sessionId
         stopRecording = rrweb.record({
@@ -58,10 +67,6 @@ export const SignedInScreenFrame = (props: { withHeader: boolean }) => {
     }
       
   }, [token])
-
-  useEffect(() => {
-    dispatch(fetchUserInfo());
-  }, []);
 
   return props.withHeader === true ? (
     <div className="h-screen flex flex-col">

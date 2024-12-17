@@ -7,8 +7,7 @@ import {
   populateNewThread,
   resetNewThemes,
   setThemeSelectorOpen,
-  unpinTheme,
-  updateDidTutorial,
+  unpinTheme
 } from '../reducer';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { CloseOutlined } from '@ant-design/icons';
@@ -25,6 +24,7 @@ import { FormItem } from 'react-hook-form-antd';
 import { InfoPopover } from '../../../components/InfoPopover';
 import { init } from 'i18next';
 import { PinnedThemesPanel } from './pinned-themes';
+import { updateDidTutorial } from '../../user/reducer';
 const { Text } = Typography;
 
 
@@ -40,7 +40,7 @@ const ThemeButton = React.forwardRef<HTMLButtonElement, ThemeButtonProps>((props
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
   const { buttonRef, theme, ...rest } = props;
-  const isPinned = useSelector(state => state.explore.pinnedThemes.includes(theme))
+  const isPinned = useSelector(state => state.agenda.pinnedThemes.includes(theme))
 
   const onPinButtonClick = async () => {
     if(isPinned){
@@ -80,14 +80,14 @@ const schema = yup.object({
 
 const ThemeBox = () => {
 
-  const isOpen = useSelector((state) => state.explore.isThemeSelectorOpen);
-  const didTutorial = useSelector((state) => state.explore.didTutorial)
+  const isOpen = useSelector((state) => state.agenda.isThemeSelectorOpen);
+  const didTutorial = useSelector((state) => state.user.didTutorial)
 
-  const themes = useSelector(state => state.explore.newThemes)
+  const themes = useSelector(state => state.agenda.newThemes)
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token) as string;
-  const isLoadingThemes = useSelector(state => state.explore.isLoadingThemes)
-  const isCreatingNewThread = useSelector(state => state.explore.isCreatingNewThread)
+  const isLoadingThemes = useSelector(state => state.agenda.isLoadingThemes)
+  const isCreatingNewThread = useSelector(state => state.agenda.isCreatingNewThread)
   const [isTourClosing, setIsTourClosing] = useState(false);
 
   const [currentExpressionIndex, setCurrentExpressionIndex] = useState<number[]>([]);

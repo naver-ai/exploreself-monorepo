@@ -34,6 +34,10 @@ p strong {
   @apply font-bold;
 }
 
+h1 {
+  @apply text-xl my-4 font-semibold;
+}
+
 .container-narrow {
   @apply container max-w-[640px];
 }
@@ -44,6 +48,10 @@ p strong {
 
 .ant-card {
   @apply shadow-xl shadow-teal-950/5 border-none;
+}
+
+.card-button-wrapper{
+  @apply bg-white cursor-pointer hover:shadow-lg hover:text-emerald-500 py-4 px-5 rounded-xl transition-all;
 }
 
 label.ant-form-item-required {

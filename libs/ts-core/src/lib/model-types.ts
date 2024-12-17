@@ -71,14 +71,14 @@ export interface IThreadBase {
 export interface IThreadWithQuestionIds extends IThreadBase {
   _id: string,
   questions: Array<string>,
-  uid: string
+  aid: string
 }
 
 
 export interface IThreadAllPopulated extends IThreadBase {
   _id: string,
   questions: Array<IQASetWithIds>,
-  uid: string
+  aid: string
 }
 
 export enum SessionStatus{
@@ -87,24 +87,46 @@ export enum SessionStatus{
   Terminated = "Terminated"
 }
 
-export interface IUserBase {
-  alias: string;
-  passcode: string;
-  name?: string | undefined;
-  isKorean: boolean;
-  initialNarrative: string | undefined;
+
+export interface IAgendaBase {
+  title: string | undefined;
+  initialNarrative: string;
   pinnedThemes: Array<string>
   summaries: string[];
   createdAt: Date;
   updatedAt: Date;
   debriefing: string | undefined;
   sessionStatus: SessionStatus;
+}
+
+export interface IAgendaWithThemeIds extends IAgendaBase {
+  _id: string,
+  threads: Array<string>
+}
+
+export interface IAgendaAllPopulated extends IAgendaBase {
+  _id: string,
+  threads: Array<IThreadAllPopulated>
+}
+
+export interface IUserBase {
+  alias: string;
+  passcode: string;
+  name?: string | undefined;
+  isKorean: boolean;
+  createdAt: Date;
+  updatedAt: Date;
   didTutorial: {themeBox: boolean, explore: boolean};
 }
 
-export interface IUserWithThreadIds extends IUserBase {
+export interface IUserWithAgendaIds extends IUserBase {
   _id: string,
-  threads: Array<string>
+  agendas: Array<string>
+}
+
+export interface IUserWithAgendaPopulated extends IUserBase {
+  _id: string,
+  agendas: Array<IAgendaWithThemeIds>
 }
 
 export interface IUserAllPopulated extends IUserBase {
@@ -134,3 +156,8 @@ export interface IDidTutorial {
   themeBox: boolean;
   explore: boolean;
 };
+
+export interface IMappedSummarySentence{
+  sentence: string
+  qids: Array<string>
+}

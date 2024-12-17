@@ -56,25 +56,3 @@ export const updateResponse = async (
     return null;
   }
 };
-
-export const saveComment = async (
-  token: string,
-  qid: string,
-  comment: string
-) => {
-  try {
-    const response = await Http.axios.put(
-      `/response/comment/${qid}`,
-      {
-        comment: comment,
-      },
-      {
-        headers: Http.makeSignedInHeader(token),
-      }
-    );
-    return response;
-  } catch (err) {
-    console.log('Err in saveComment: ', err);
-    return null;
-  }
-};

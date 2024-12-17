@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from '../../../redux/hooks';
 import { useMemo } from 'react';
 import { signOut } from '../../auth/reducer';
 import { useTranslation } from 'react-i18next';
-import { dangerousReset } from '../reducer';
+import { dangerousReset } from '../../agenda/reducer';
 
 export const UserAvatar = (props: { buttonClassName?: string, disabled?: boolean}) => {
-  const userName = useSelector((state) => state.explore.name);
+  const userName = useSelector((state) => state.user.name);
 
   const [t] = useTranslation()
 

@@ -13,7 +13,7 @@ import {
 } from '@ant-design/icons';
 const { TextArea } = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
-import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, setRecentlyActiveQuestionId, updateDidTutorial, updateQuestion, updateQuestionResponse } from '../reducer';
+import { getNewComment, getNewKeywords, questionSelectors, setQuestionShowKeywordsFlag, setRecentlyActiveQuestionId, updateQuestion, updateQuestionResponse } from '../reducer';
 import { diffChars, Change } from 'diff';
 import { InteractionBase, InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
@@ -25,11 +25,12 @@ import { ShortcutManager } from '../../../services/shortcut';
 import { filter } from 'rxjs';
 import { InfoPopover } from '../../../components/InfoPopover';
 import { ReactTyped } from "react-typed";
+import { updateDidTutorial } from '../../user/reducer';
 
 
 const SKELETON_PARAG_PARAMS :SkeletonParagraphProps = {rows: 3,}
 
-export const QuestionBox = (props: { qid: string }) => {
+export const QuestionBox = (props: { qid: string, tid: string }) => {
   const dispatch = useDispatch()
 
   const token = useSelector(state => state.auth.token)
@@ -40,19 +41,19 @@ export const QuestionBox = (props: { qid: string }) => {
   const comment = question.aiGuides.length > 0 ? question.aiGuides[question.aiGuides.length-1].content : null;
   const [lastSavedResponse, setLastSavedResponse] = useState('');
   const [isInputFieldActive, setIsInputFieldActive] = useState(false);
-  const isQuestionBoxActive = useSelector(state => state.explore.recentlyActiveQuestionId == props.qid)
-  const isCreatingComment = useSelector(state => state.explore.questionCommentCreationLoadingFlags[props.qid] || false)
-  const isCreatingKeywords = useSelector(state => state.explore.questionKeywordCreationLoadingFlags[props.qid] || false)
+  const isQuestionBoxActive = useSelector(state => state.agenda.recentlyActiveQuestionId == props.qid)
+  const isCreatingComment = useSelector(state => state.agenda.questionCommentCreationLoadingFlags[props.qid] || false)
+  const isCreatingKeywords = useSelector(state => state.agenda.questionKeywordCreationLoadingFlags[props.qid] || false)
 
   const viewRef = useRef<HTMLDivElement>(null)
   const textFieldRef = useRef<TextAreaRef>(null)
 
-  const didTutorial = useSelector((state) => state.explore.didTutorial)
+  const didTutorial = useSelector((state) => state.user.didTutorial)
 
   const [t] = useTranslation()
 
   const getNewKeywordsHandler = useCallback((opt: number=2) => {
-    dispatch(getNewKeywords(props.qid, opt))
+    dispatch(getNewKeywords(props.tid, props.qid, opt))
   },[props.qid])
 
   useEffect(() => {
@@ -62,8 +63,8 @@ export const QuestionBox = (props: { qid: string }) => {
   },[keywords])
 
   const getNewCommentHandler = useCallback(() => {
-    dispatch(getNewComment(props.qid, response))
-  },[props.qid, response])
+    dispatch(getNewComment(props.tid, props.qid, response))
+  },[props.qid, props.tid, response])
 
   const determineChangeType = (prevText: string, newText: string) => {
     const diffs: Change[] = diffChars(prevText, newText);
@@ -132,7 +133,7 @@ export const QuestionBox = (props: { qid: string }) => {
       await postInteractionData(token, InteractionType.UserBlurQuestion, {currentResponse: response}, {qid: props.qid})
     }
   };
-  const isQuestionKeywordsShown = useSelector(state => state.explore.questionShowKeywordsFlags[props.qid] || false)
+  const isQuestionKeywordsShown = useSelector(state => state.agenda.questionShowKeywordsFlags[props.qid] || false)
 
   const handleToggleChange = async (checked: boolean) => {
     if(!didTutorial.explore){

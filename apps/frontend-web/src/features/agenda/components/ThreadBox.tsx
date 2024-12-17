@@ -62,11 +62,11 @@ const SelectedQuestionList = (props: { tid: string }) => {
 
   const questionIds = useSelector(state => selectedQuestionIdsSelector(state, props.tid))
   
-  const isThreadInCreation = useSelector(state=>state.explore.threadInInitializationFlags[props.tid])
+  const isThreadInCreation = useSelector(state=>state.agenda.threadInInitializationFlags[props.tid])
 
   return questionIds.length > 0 ? <div>
       {questionIds.map((qid) => (
-        <QuestionBox key={qid} qid={qid} />
+        <QuestionBox key={qid} tid={props.tid} qid={qid} />
       ))}
     </div> : (isThreadInCreation !== true ? <div className='pb-6 pt-0 px-2 flex items-center font-base text-blue-500'>
       <ArrowDownIcon className='w-6 h-6 mr-2 animate-bounce'/>
@@ -78,7 +78,7 @@ const NewQuestionList = (props: {tid: string}) => {
   const [t] = useTranslation()
 
   const dispatch = useDispatch();
-  const isCreatingQuestions = useSelector(state => state.explore.threadQuestionCreationLoadingFlags[props.tid] || false)
+  const isCreatingQuestions = useSelector(state => state.agenda.threadQuestionCreationLoadingFlags[props.tid] || false)
   const selectedQuestionIds = useSelector(state => selectedQuestionIdsSelector(state, props.tid))
   const [isQSelectorOpen, setIsQSelectorOpen] = useState<boolean>(true)
   const [questions, setQuestions] = useState<Array<IQASetWithIds>>([])
@@ -162,7 +162,7 @@ export const ThreadBox = (props: { tid: string }) => {
 
   const scrollAnchorRef = useRef<HTMLDivElement>(null);
 
-  const isHoveringInOutline = useSelector(state => state.explore.hoveringOutlineThreadId == props.tid)
+  const isHoveringInOutline = useSelector(state => state.agenda.hoveringOutlineThreadId == props.tid)
 
   useEffect(() => {
     const focusRequestSubscription =

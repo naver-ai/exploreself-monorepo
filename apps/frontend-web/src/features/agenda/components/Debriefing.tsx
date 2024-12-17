@@ -19,8 +19,8 @@ const schema = yup.object({
 });
 
 const Debriefing = () => {
-  const debriefing = useSelector(state => state.explore.debriefing)
-  const sessionStatus = useSelector(state => state.explore.sessionStatus)
+  const debriefing = useSelector(state => state.agenda.debriefing)
+  const sessionStatus = useSelector(state => state.agenda.sessionStatus)
   const dispatch = useDispatch();
 
   const {
