@@ -116,6 +116,7 @@ const agendaSlice = createSlice({
       state,
       action: PayloadAction<Partial<IAgendaAllPopulated>>
     ) => {
+      console.log(action.payload)
       for (const key of Object.keys(action.payload)) {
         if (key == 'threads') {
           const questions =
@@ -123,6 +124,7 @@ const agendaSlice = createSlice({
               (prev: Array<IQASetWithIds>, curr) => prev.concat(curr.questions),
               []
             ) || [];
+          console.log(questions)
           // Handle threads
           const threadMapped: Array<IThreadWithQuestionIds> =
             action.payload.threads?.map((thread) => ({
@@ -430,6 +432,8 @@ export function loadAgenda(id: string): AppThunk {
 
         const agenda: IAgendaAllPopulated = response.data.agenda
 
+        console.log("loaded agenda: ", agenda)
+
         dispatch(agendaSlice.actions.updateAgendaInfo(agenda))
 
       } catch (ex) {
@@ -606,14 +610,15 @@ export function populateNewThread(
 }
 
 export function selectQuestion(
+  tid: string,
   qid: string,
   onComplete?: (updatedQuestion: IQASetWithIds) => void
 ): AppThunk {
   return async (dispatch, getState) => {
     const state = getState();
-    if (state.auth.token) {
+    if (state.auth.token && state.agenda.agendaId) {
       try {
-        const updatedQuestion = await selectQuestionById(state.auth.token, qid);
+        const updatedQuestion = await selectQuestionById(state.auth.token, state.agenda.agendaId, tid, qid);
         if (updatedQuestion) {
           dispatch(agendaSlice.actions.updateQuestion(updatedQuestion));
           await postInteractionData(
@@ -703,6 +708,8 @@ export function getNewQuestions(
             { tid: tid }
           );
         }
+        console.log("fetchedQuestions:", fetchedQuestion)
+
         return fetchedQuestion;
       } catch (ex) {
         console.log(ex);

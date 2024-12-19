@@ -7,6 +7,8 @@ export const AgendaRoute = () => {
     
     const agendaId = useAgendaIdInRoute()
 
+    console.log("Agenda id: ", agendaId)
+
     const dispatch = useDispatch()
 
     useEffect(()=>{

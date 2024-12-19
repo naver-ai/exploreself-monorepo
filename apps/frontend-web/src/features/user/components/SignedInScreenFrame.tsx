@@ -27,6 +27,7 @@ export const SignedInScreenFrame = (props: { withHeader: boolean }) => {
     }
   }, [token])
 
+  /*
   useEffect(()=>{
     let stopRecording: (()=>void) | undefined = undefined
     let sessionId: string
@@ -66,7 +67,7 @@ export const SignedInScreenFrame = (props: { withHeader: boolean }) => {
       }
     }
       
-  }, [token])
+  }, [token])*/
 
   return props.withHeader === true ? (
     <div className="h-screen flex flex-col">

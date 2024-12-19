@@ -27,7 +27,7 @@ const SidePanel = () => {
 
   const handleEndSession = useCallback(async () => {
     await dispatch(enterReviewStage())
-    navigate("/app/summary")
+    navigate("./summary")
   },[])
 
   return (
@@ -117,7 +117,7 @@ export const ExplorerPage = () => {
   const focusOnThemeButton = threadIds.length === 0 && isThemeSelectorOpen === false
 
   if (sessionStatus == SessionStatus.Reviewing || sessionStatus == SessionStatus.Terminated){
-    return <Navigate to="/app/summary"/>;
+    return <Navigate to="./summary"/>;
   } else {
     const themeButtonIcon = <LightBulbIcon className={`w-5 h-5 ${focusOnThemeButton ? "animate-bounce-emphasized text-yellow-200":""}`} />
     const themeButtonLabel = <span className={`${focusOnThemeButton ? 'animate-pulse font-semibold':''}`}>{threadIds.length == 0 ? t("Exploration.ShowMoreThemesInitial") : t("Exploration.ShowMoreThemes")}</span>

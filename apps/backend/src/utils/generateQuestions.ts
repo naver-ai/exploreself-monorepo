@@ -60,14 +60,10 @@ const generateQuestions = async (user: IUserORM, agenda: IAgendaORM, thread: ITh
   const chain = finalPromptTemplate.pipe(structuredLlm)
   const init_info = summarizeProfilicInfo(agenda.initialNarrative)
   
-  try {
-    const prev_session_log = await summarizePrevThreads(agenda, "question")
-    console.log("Q: ", prev_session_log)
-    const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: thread.theme})
-    return (result as any).questions;
-  } catch (err){
-    throw err;
-  }
+  const prev_session_log = await summarizePrevThreads(agenda, "question")
+  console.log("Q: ", prev_session_log)
+  const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: thread.theme})
+  return (result as any).questions;
 }
 
 export default generateQuestions;

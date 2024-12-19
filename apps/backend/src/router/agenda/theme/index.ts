@@ -1,8 +1,8 @@
 import express from 'express';
 import { ThreadItem, QASet } from '../../../config/schema';
-import { RequestWithAgenda } from '../../middlewares';
+import { assertThemeIdParamMiddleward, RequestWithAgenda } from '../../middlewares';
 import generateQuestions from '../../../utils/generateQuestions';
-import { body } from 'express-validator';
+import { body, validationResult } from 'express-validator';
 import questionRouter from './question'
 import generateThemes from 'apps/backend/src/utils/generateThemes';
 
@@ -13,33 +13,45 @@ router.post(
   body('theme').exists(),
   async (req: RequestWithAgenda, res) => {
 
-    const newThreadItem = new ThreadItem({
-      aid: req.params.aid,
-      theme: req.body.theme,
-    });
+    const validationErrors = validationResult(req)
+    if(validationErrors.isEmpty()){
+      const newThreadItem = new ThreadItem({
+        aid: req.agenda._id,
+        theme: req.body.theme,
+      });
 
-    const newThread = await newThreadItem.save();
-    req.agenda.threads.push(newThread._id)
-    await req.agenda.save()
+      const newThread = await newThreadItem.save();
+      req.agenda.threads.push(newThread._id)
+      await req.agenda.save()
 
-    res.json(newThread.toJSON());
+      res.json(newThread.toJSON());
+    }else{
+      res.status(400).send("No valid theme in body.")
+    }
   }
 );
 
 
 
-router.get('/recommendation', body('prevThemes').optional().isArray(), body('opt').optional(), async (req: RequestWithAgenda, res) => {
-  const prevThemes = req.body.prevThemes
-  const opt = req.body.opt
-  try {
-    const themes = await generateThemes(req.user, req.agenda, prevThemes, opt)
-    res.json({
-      themes: themes
-    })
-  } catch (err) {
-    res.json({
-      err: err.message
-    })
+router.post('/recommendation', body('prevThemes').optional().isArray(), body('opt').optional(), async (req: RequestWithAgenda, res) => {
+  const validationErrors = validationResult(req)
+  
+  if(validationErrors.isEmpty()){
+    const prevThemes = req.body.prevThemes
+    const opt = req.body.opt
+    try {
+      const themes = await generateThemes(req.user, req.agenda, prevThemes, opt)
+      console.log(themes)
+      res.json({
+        themes: themes
+      })
+    } catch (err) {
+      res.json({
+        err: err.message
+      })
+    }
+  }else{
+    res.send(400).json(validationErrors.array())
   }
 })
 
@@ -48,7 +60,7 @@ router.post('/:tid/populate', async (req: RequestWithAgenda, res) => {
   try {
     const thread = await ThreadItem.findById(tid);
     if (thread?.questions.length == 0 || !thread.questions) {
-      console.log('generate questions....');
+      console.log('generate three questions....');
       const questions = await generateQuestions(req.user, req.agenda, thread, 3);
       const qaPromises = questions.map(async (question, index) => {
         const newQASet = new QASet({
@@ -85,6 +97,6 @@ router.post('/:tid/populate', async (req: RequestWithAgenda, res) => {
   }
 });
 
-router.use("/:tid/questions", questionRouter)
+router.use("/:tid/questions", assertThemeIdParamMiddleward, questionRouter)
 
 export default router;

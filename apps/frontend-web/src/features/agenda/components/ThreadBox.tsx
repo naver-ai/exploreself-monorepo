@@ -17,14 +17,14 @@ import { useTranslation } from 'react-i18next';
 import { ArrowDownIcon, PencilIcon } from '@heroicons/react/20/solid';
 import { IQASetWithIds } from '@core';
 
-const UnselectedQuestionItem = (props: { qid: string, onSelectQuestion?: () => void }) => {
+const UnselectedQuestionItem = (props: { tid: string, qid: string, onSelectQuestion?: () => void }) => {
 
   const question = useSelector(state => questionSelectors.selectById(state, props.qid))
 
   const dispatch = useDispatch();
 
   const onSelect = useCallback(() =>{
-    dispatch(selectQuestion(props.qid, (q)=>{
+    dispatch(selectQuestion(props.tid, props.qid, (q)=>{
       requestAnimationFrame(()=>{
         ShortcutManager.instance.requestFocus({type:"question", id: q._id})
       })
@@ -85,6 +85,8 @@ const NewQuestionList = (props: {tid: string}) => {
 
   const _handleGetQuestions = useCallback(async () => {
     const newQuestions = await dispatch(getNewQuestions(props.tid, 3, questions.map(q => q.question.content))) as IQASetWithIds[]
+    console.log("newQuestions:", newQuestions)
+    
     const newQuestionList = [...questions, ...newQuestions]
     setQuestions(newQuestionList)
     setIsQSelectorOpen(true)
@@ -131,7 +133,7 @@ const NewQuestionList = (props: {tid: string}) => {
         {moreButton}
       </div>
       }
-      {[...questions].reverse().map((q) => (<UnselectedQuestionItem key={q._id} qid={q._id} onSelectQuestion={() => handleQuestionSelect()}/>))}
+      {[...questions].reverse().map((q) => (<UnselectedQuestionItem key={q._id} tid={q.tid} qid={q._id} onSelectQuestion={() => handleQuestionSelect()}/>))}
     </div>}
     </>
   )

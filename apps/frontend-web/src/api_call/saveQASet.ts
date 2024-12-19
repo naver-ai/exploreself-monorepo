@@ -1,10 +1,10 @@
 import { IQASetBase, IQASetWithIds, InteractionBase } from '@core';
 import { Http } from '../net/http';
 
-export async function selectQuestionById(token: string, qid: string): Promise<IQASetWithIds | null> {
+export async function selectQuestionById(token: string, aid: string, tid: string, qid: string): Promise<IQASetWithIds | null> {
   try {
     const resp = await Http.axios.put(
-      `/question/${qid}/select`,
+      `/agendas/${aid}/themes/${tid}/questions/${qid}/select`,
       {},
       {
         headers: Http.makeSignedInHeader(token),
@@ -17,10 +17,10 @@ export async function selectQuestionById(token: string, qid: string): Promise<IQ
   }
 };
 
-export async function unSelectQuestion(token: string, qid: string): Promise<IQASetWithIds | null> {
+export async function unSelectQuestion(token: string, aid: string, tid: string, qid: string): Promise<IQASetWithIds | null> {
   try {
     const resp = await Http.axios.put(
-      `/question/${qid}/unselect`,
+      `/agendas/${aid}/themes/${tid}/questions/${qid}/unselect`,
       {},
       {
         headers: Http.makeSignedInHeader(token),

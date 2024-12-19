@@ -1,6 +1,6 @@
 import express from 'express';
 import { QASet, ThreadItem } from '../../../config/schema';
-import type {RequestWithAgenda, RequestWithUser} from '../../middlewares'
+import type {RequestWithAgenda, RequestWithTheme, RequestWithUser} from '../../middlewares'
 import { signedInUserMiddleware } from '../../middlewares';
 import { IAIGuide, InteractionBase } from '@core';
 import { logInteraction } from 'apps/backend/src/utils/logInteraction';
@@ -12,14 +12,13 @@ import generateQuestions from 'apps/backend/src/utils/generateQuestions';
 
 const router = express.Router()
 
-router.post('/generate', body('opt').optional().toInt(10), body("prevQuestions").isArray().optional(), async (req: RequestWithAgenda, res) => {
+router.post('/generate', body('opt').optional().toInt(10), body("prevQuestions").isArray().optional(), async (req: RequestWithTheme, res) => {
   try {
-    const thread = await ThreadItem.findById(req.params.tid)
     
-    const questions = await generateQuestions(req.user, req.agenda, thread, req.body.opt, req.body.prevQuestions)
+    const questions = await generateQuestions(req.user, req.agenda, req.theme, req.body.opt, req.body.prevQuestions)
     const qaPromises = questions.map(async(question, index) => {
       const newQASet = new QASet({
-        tid: thread._id,
+        tid: req.theme._id,
         question: {content: question.question},
         selected: false
       })
@@ -27,28 +26,15 @@ router.post('/generate', body('opt').optional().toInt(10), body("prevQuestions")
     })
     const savedQASets = await Promise.all(qaPromises);
     const qaSetIds = savedQASets.map(qa => qa._id)
-    thread.questions.push(qaSetIds as any)
-    await thread.save()
+    req.theme.questions.push(qaSetIds as any)
+    await req.theme.save()
 
     return res.json({
       questions: savedQASets
     })
   } catch (err) {
-    res.json({
-      err: err.message
-    })
-  }
-})
-
-router.get('/:qid', async(req: RequestWithUser, res) => {
-  const qid = req.params.qid
-  try {
-    const qData = await QASet.findById(qid)
-    return res.json({
-      qData: qData
-    })
-  } catch (err) {
-    return res.json({
+    console.error(err)
+    res.status(500).json({
       err: err.message
     })
   }
@@ -149,6 +135,20 @@ router.post('/:qid/keywords/generate', body('opt').toInt(10), async(req:RequestW
     const updatedQuestion = await QASet.findByIdAndUpdate(qid, {$push: {keywords: {$each: keywords.map(item => item.keyword)}}})
     return res.json({
       keywords: keywords
+    })
+  } catch (err) {
+    return res.json({
+      err: err.message
+    })
+  }
+})
+
+router.get('/:qid', async(req: RequestWithUser, res) => {
+  const qid = req.params.qid
+  try {
+    const qData = await QASet.findById(qid)
+    return res.json({
+      qData: qData
     })
   } catch (err) {
     return res.json({
