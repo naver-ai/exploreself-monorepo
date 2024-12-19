@@ -50,6 +50,8 @@ export type IAgendaState = {
 
   agendaId?: string
 
+  title?: string 
+
   threadEntityState: typeof initialThreadEntityState;
   questionEntityState: typeof initialQuestionEneityState;
 
@@ -81,6 +83,8 @@ const initialState: IAgendaState = {
   newThemes: [],
 
   agendaId: undefined,
+
+  title:undefined,
 
   initialNarrative: '',
   debriefing: undefined,

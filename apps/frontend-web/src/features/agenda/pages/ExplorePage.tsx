@@ -62,6 +62,8 @@ export const ExplorerPage = () => {
 
   const [t] = useTranslation()
 
+  const title = useSelector(state => state.agenda.title)
+
   const initialNarrative = useSelector(
     (state) => state.agenda.initialNarrative
   );
@@ -140,7 +142,7 @@ export const ExplorerPage = () => {
           >
             <ThemeBox />
             <div className="container px-4 md:px-8 py-4 md:py-8 relative">
-              <Card ref={narrativeCardRef} title={t("Narrative.InitialNarrative")}>
+              <Card ref={narrativeCardRef} title={`${t("Narrative.InitialNarrative")} - ${title}`}>
                 <span className="text-gray-600 leading-7">
                   {initialNarrative}
                 </span>

@@ -73,7 +73,7 @@ router.post('/:tid/populate', async (req: RequestWithAgenda, res) => {
       const savedQASets = await Promise.all(qaPromises);
       const qaSetIds = savedQASets.map((qa) => qa._id);
 
-      console.log('Generated questions');
+      console.log('Generated questions - ', qaSetIds);
 
       const updatedThread = await ThreadItem.findByIdAndUpdate(
         tid,
