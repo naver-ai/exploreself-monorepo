@@ -35,13 +35,14 @@ export async function unSelectQuestion(token: string, aid: string, tid: string, 
 
 export const updateResponse = async (
   token: string,
+  aid: string, tid: string,
   qid: string,
   response: string,
   interaction: InteractionBase
 ) => {
   try {
     const resp = await Http.axios.post(
-      `/response/${qid}`,
+      `/agendas/${aid}/themes/${tid}/questions/${qid}/response`,
       {
         response: response,
         interaction: interaction

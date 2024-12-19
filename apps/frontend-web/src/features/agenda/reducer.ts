@@ -852,13 +852,14 @@ export function getNewSummary(): AppThunk {
 }
 
 export function updateQuestionResponse(
+  tid: string, 
   qid: string,
   response: string,
   interaction_data: InteractionBase
 ): AppThunk {
   return async (dispatch, getState) => {
     const state = getState();
-    if (state.auth.token) {
+    if (state.auth.token && state.agenda.agendaId) {
       try {
         dispatch(
           agendaSlice.actions.updateQuestionResponse({
@@ -868,6 +869,7 @@ export function updateQuestionResponse(
         );
         const updatedQuestion = await updateResponse(
           state.auth.token,
+          state.agenda.agendaId, tid,
           qid,
           response,
           interaction_data

@@ -95,24 +95,24 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
   const importKeyword = useCallback(async (keyword: string) => {
     try {
       const interaction: InteractionBase = {type: InteractionType.ImportKeyword, data: {keyword: keyword}, metadata: {qid: props.qid}}
-      await dispatch(updateQuestionResponse(props.qid, response.concat(keyword), interaction))
+      await dispatch(updateQuestionResponse(props.tid, props.qid, response.concat(keyword), interaction))
     } catch (err) {
       console.error("Failed to import keyword")
     }
-  },[props.qid, response])
+  },[props.tid, props.qid, response])
 
   const saveResponse = useCallback(async () => {
     if (response !== lastSavedResponse) {
       try {
         const interaction: InteractionBase = determineChangeType(lastSavedResponse, response) as InteractionBase
-        await dispatch(updateQuestionResponse(props.qid, response, interaction))
+        await dispatch(updateQuestionResponse(props.tid, props.qid, response, interaction))
         setLastSavedResponse(response);
       } catch (error) {
         console.error('Failed to save content:', error);
       } finally {
       }
     }
-  }, [response, props.qid, lastSavedResponse]);
+  }, [response, props.tid, props.qid, lastSavedResponse]);
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(updateQuestion({_id: props.qid, response: event.target.value}))
