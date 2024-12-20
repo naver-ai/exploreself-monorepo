@@ -3,7 +3,6 @@ import { OutlinePanel, PinnedThemesPanel } from '../components/sidebar-views';
 import ThemeBox from '../components/ThemeBox';
 import { ThreadBox } from '../components/ThreadBox';
 import { Card,  Button, Input } from 'antd';
-const {TextArea} = Input;
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { UserAvatar } from '../../user/components/UserAvatar';
@@ -16,12 +15,16 @@ import { useTranslation } from 'react-i18next';
 import classNames from 'classnames'
 import { SessionStatus } from '@core';
 import { InfoPopover } from '../../../components/InfoPopover';
+import { ChevronDoubleLeftIcon } from '@heroicons/react/20/solid';
 
 
 const SidePanel = () => {
 
   const dispatch = useDispatch();
   const isThemeSelectorOpen = useSelector(state => state.agenda.isThemeSelectorOpen)
+
+  const title = useSelector(state => state.agenda.title)
+
   const [t] = useTranslation()
   const navigate = useNavigate();
 
@@ -30,14 +33,26 @@ const SidePanel = () => {
     navigate("./summary")
   },[])
 
+  const onReturnClick = useCallback(()=>{
+    navigate("../")
+  }, [])
+
   return (
     <>
       <div
         id="sidebar-header"
-        className="flex justify-between p-3 items-center  border-b-[1px]"
+        className="flex justify-between items-center  border-b-[1px]"
       >
-        <span className="text-sm font-black">ExploreSelf</span>
-        <UserAvatar  disabled={isThemeSelectorOpen} buttonClassName="" />
+        {title != null && <Button
+              type="text"
+              className='p-2 font-semibold text-base w-full rounded-none justify-start'
+              size='large'
+              iconPosition='start'
+              icon={<ChevronDoubleLeftIcon className="w-6 h-6" />}
+              onClick={onReturnClick}
+            >
+              {title}
+            </Button>}
       </div>
       <div className={classNames(
         'flex-1 overflow-y-auto bg-gray-400/2',

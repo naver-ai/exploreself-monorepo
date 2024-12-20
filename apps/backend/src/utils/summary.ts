@@ -29,7 +29,7 @@ export async function generateTitleFromNarrative(user: IUserORM, narrative: stri
 
   [Output Note]
   ${isKorean? "- The title should be in Korean.":""}
-  - Refer to the user by name, in the 3rd person.
+  - Refer to the user in the 1st person, if necessary.
   - Keep it concise and grounded in the user’s actual input.
   `
 

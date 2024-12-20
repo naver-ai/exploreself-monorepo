@@ -26,8 +26,6 @@ import generateKeywords from '../../api_call/generateKeywords';
 import { postInteractionData } from '../../api_call/postInteractionData';
 import { generateSummary } from '../../api_call/generateSummary';
 import getThemeRecommendation from '../../api_call/generateThemes';
-import { IDidTutorial } from '@core';
-import { convertStringTimestampToDate } from '../../utils/time';
 
 const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>(
   {
@@ -433,7 +431,7 @@ export function loadAgenda(id: string): AppThunk {
           headers: Http.makeSignedInHeader(state.auth.token),
         });
 
-        const agenda: IAgendaAllPopulated = convertStringTimestampToDate(response.data.agenda)
+        const agenda: IAgendaAllPopulated = response.data.agenda
 
         dispatch(agendaSlice.actions.updateAgendaInfo(agenda))
 

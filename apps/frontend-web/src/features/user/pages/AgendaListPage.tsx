@@ -15,8 +15,6 @@ const AgendaView = (props: {agendaId: string}) => {
 
     const agenda = useSelector(state => agendaSelectors.selectById(state, props.agendaId))
 
-    console.log(agenda)
-
     const createdAtLabel = useMemo(()=>{
         return moment(agenda.createdAt).locale('es').format('lll')
     }, [agenda.createdAt])

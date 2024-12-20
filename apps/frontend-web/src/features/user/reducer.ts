@@ -2,12 +2,12 @@ import { IAgendaWithThemeIds, IDidTutorial, IUserWithAgendaIds, IUserWithAgendaP
 import { createEntityAdapter, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { AppState, AppThunk } from "../../redux/store"
 import { Http } from "../../net/http"
-import { convertStringTimestampToDate } from "../../utils/time"
+import { assertDate } from "../../utils/time"
 
 const agendaEntityAdapter = createEntityAdapter<IAgendaWithThemeIds, string>({
     selectId: (model) => model._id,
     sortComparer: (a, b) => {
-        return b.createdAt.getTime() - a.createdAt.getTime()
+        return assertDate(b.createdAt).getTime() - assertDate(a.createdAt).getTime()
     }
 })
 
@@ -97,10 +97,6 @@ export function mountUser(): AppThunk<Promise<string | null>> {
                     headers: Http.makeSignedInHeader(state.auth.token),
                 });
                 const { user } = resp.data;
-
-                user.agendas.forEach((agenda: any) => {
-                    convertStringTimestampToDate(agenda)
-                })
 
                 dispatch(userSlice.actions.updateUserInfo(user))
                 return userId

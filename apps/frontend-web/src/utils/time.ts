@@ -1,13 +1,7 @@
-export function convertStringTimestampToDate(object: any): any {
-    for(const key of Object.keys(object)){
-        switch(key){
-            case 'createdAt':
-            case 'updatedAt':
-                if(typeof object[key] === 'string'){
-                    object[key] = new Date(object[key])
-                }
-                break;
-        }
+export function assertDate(object: Date | string): Date {
+    if(typeof object === 'string'){
+        return new Date(object)
+    }else{
+        return object
     }
-    return object
 }
