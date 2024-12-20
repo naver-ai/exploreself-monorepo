@@ -64,6 +64,7 @@ const userSlice = createSlice({
             
             agendaEntityAdapter.setAll(state.agendaEntityState, action.payload.agendas || [])
             state.name= action.payload.name
+            state.didTutorial = action.payload.didTutorial
         },
 
 
