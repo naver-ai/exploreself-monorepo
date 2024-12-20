@@ -24,7 +24,10 @@
 
   "Agendas": {
     "Title": "탐색 스토리",
-     "New": "새 스토리 시작하기"
+    "New": "새 스토리 시작하기",
+    "ThemeCount_zero": "탐색한 파생주제 없음",
+    "ThemeCount_one": "탐색한 파생주제 1개",
+    "ThemeCount_other": "탐색한 파생주제 {{count}}개"
   },
 
   "Narrative": {
@@ -97,7 +100,6 @@
     "Submit": "제출",
     "WrapUp": "탐색 마무리",
     "Press": "눌러서 확인하기",
-    "Count": "개",
     "ShowHelp": "사용 안내 다시보기"
   },
 

@@ -19,6 +19,8 @@ const AgendaView = (props: {agendaId: string}) => {
         return moment(agenda.createdAt).locale('es').format('lll')
     }, [agenda.createdAt])
 
+    const [t] = useTranslation()
+
     const navigate = useNavigate()
 
     const onClick = useCallback(async ()=>{
@@ -32,7 +34,9 @@ const AgendaView = (props: {agendaId: string}) => {
             <div className="select-none text-slate-400 text-sm">{createdAtLabel}</div>
         </div>
         <ResponsiveEllipsis maxLine={1} trimRight basedOn="letters" className="select-none mt-3 text-sm text-slate-400" text={agenda.initialNarrative}/>
-
+        <div className="mt-4 px-.5">
+            <div className="text-xs font-semibold text-slate-400">{t("Agendas.ThemeCount", {count: agenda.threads.length})}</div>
+        </div>
     </div>
 }
 

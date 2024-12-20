@@ -24,7 +24,10 @@
 
   "Agendas": {
     "Title": "My Agendas",
-     "New": "Explore New Agenda"
+    "New": "Explore New Agenda",
+    "ThemeCount_zero": "No themes",
+    "ThemeCount_one": "1 theme",
+    "ThemeCount_other": "{{count}} themes"
   },
 
   "Narrative": {
@@ -97,7 +100,6 @@
     "WrapUp": "Wrap Up Exploration",
     "Press": "Press to Confirm",
     "Finish": "Finish",
-    "Count": "",
     "ShowHelp": "Show Help"
   },
 
