@@ -1,19 +1,19 @@
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from '@langchain/core/prompts';
 import z from "zod"
 import { chatModel } from '../config/config';
-import { QASet } from '../config/schema';
+import { IAgendaORM, QASet } from '../config/schema';
 import { IUserORM } from '../config/schema';
 import { summarizePrevThreads, summarizeProfilicInfo } from './summary';
 import nunjucks from 'nunjucks'
 
 
-const generateKeywords = async (user: IUserORM, qid: string, opt:number=1) => {
+const generateKeywords = async (user: IUserORM, agenda: IAgendaORM, qid: string, opt:number=1) => {
   const qData = await QASet.findById(qid)
   const question = qData.question.content
   const keywords = qData.keywords
   const language = user.isKorean ? "in KOREAN": "in English"
 
-  const systemTemplae = nunjucks.renderString(`
+  const systemTemplate = nunjucks.renderString(`
   [Role]
   You are a therapeutic assistant specializing in supporting users to response to socratic questions, facilitating self-reflection and personal growth. 
 
@@ -32,7 +32,7 @@ const generateKeywords = async (user: IUserORM, qid: string, opt:number=1) => {
   {% endif %}
   `,{keywords: keywords.length})
 
-  const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplae)
+  const systemMessage = SystemMessagePromptTemplate.fromTemplate(systemTemplate)
 
   const humanTemplate = nunjucks.renderString(`
   <initial_information/>: {init_info}
@@ -59,9 +59,9 @@ const generateKeywords = async (user: IUserORM, qid: string, opt:number=1) => {
 
   const structuredLlm = chatModel.withStructuredOutput(keywordsSchema)
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = summarizeProfilicInfo(user.initialNarrative)
+  const init_info = summarizeProfilicInfo(agenda.initialNarrative)
 
-  const prev_log = await summarizePrevThreads(user._id, "keyword")
+  const prev_log = await summarizePrevThreads(agenda, "keyword")
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question, keywords: keywords.join(', ')})
 
   return (result as any).keywords

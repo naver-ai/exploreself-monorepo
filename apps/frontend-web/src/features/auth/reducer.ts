@@ -1,10 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IUserWithThreadIds } from '@core';
+import { IUserWithAgendaIds } from '@core';
 import { AppThunk } from '../../redux/store';
 import { jwtDecode } from 'jwt-decode';
 import { Http } from '../../net/http';
-import { updateUserInfo } from '../explore/reducer';
+import storage from 'redux-persist/lib/storage';
+import { updateUserInfo } from '../user/reducer';
 import i18next from 'i18next';
+import { persistReducer, REHYDRATE } from 'redux-persist';
+import { IAdminAuthState } from '../../admin/features/auth/reducer';
 
 export type IAuthState = {
   isAuthorizing: boolean;
@@ -30,7 +33,7 @@ const authSlice = createSlice({
       action: PayloadAction<{
         token: string;
         userId: string;
-        userInfo: IUserWithThreadIds;
+        userInfo: IUserWithAgendaIds;
       }>
     ) => {
       state.token = action.payload.token;
@@ -38,6 +41,10 @@ const authSlice = createSlice({
       state.userId = action.payload.userId;
       state.authorizationError = undefined;
       state.locale = action.payload.userInfo.isKorean == true ? 'kr' : 'en'
+    },
+
+    setUserId: (state, action: PayloadAction<string>) => {
+      state.userId = action.payload
     },
 
     setAuthorizingFlag: (state, action: PayloadAction<boolean>) => {
@@ -79,7 +86,7 @@ export function loginWithPasscode(
           userInfo: user,
         })
       );
-      dispatch(updateUserInfo({ name: user.name }));
+      dispatch(updateUserInfo(user));
 
       await i18next.changeLanguage(user.isKorean === true ? 'kr' : 'en')
 
@@ -100,4 +107,29 @@ export function signOut(onSuccess?: () => {}): AppThunk {
   };
 }
 
-export default authSlice.reducer;
+export default persistReducer(
+  {
+    key: 'root',
+    storage,
+    whitelist: ['token', 'locale'],
+  },
+  (state: any, action: PayloadAction<any>) => {
+    if(action.type === REHYDRATE){
+      const incomingState = action.payload;
+      if (incomingState && incomingState.token) {
+        const decoded = jwtDecode<{
+          sub: string;
+          iat: number;
+          exp: number;
+        }>(incomingState.token);
+
+        if (decoded) {
+          // Use the mountUser action to set the state
+          return authSlice.reducer(state, authSlice.actions.setUserId(decoded.sub));
+        }
+      }
+    }
+
+    return authSlice.reducer(state, action)
+  }
+)

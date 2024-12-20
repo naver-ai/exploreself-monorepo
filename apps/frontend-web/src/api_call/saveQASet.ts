@@ -1,10 +1,10 @@
 import { IQASetBase, IQASetWithIds, InteractionBase } from '@core';
 import { Http } from '../net/http';
 
-export async function selectQuestionById(token: string, qid: string): Promise<IQASetWithIds | null> {
+export async function selectQuestionById(token: string, aid: string, tid: string, qid: string): Promise<IQASetWithIds | null> {
   try {
     const resp = await Http.axios.put(
-      `/question/${qid}/select`,
+      `/agendas/${aid}/themes/${tid}/questions/${qid}/select`,
       {},
       {
         headers: Http.makeSignedInHeader(token),
@@ -17,10 +17,10 @@ export async function selectQuestionById(token: string, qid: string): Promise<IQ
   }
 };
 
-export async function unSelectQuestion(token: string, qid: string): Promise<IQASetWithIds | null> {
+export async function unSelectQuestion(token: string, aid: string, tid: string, qid: string): Promise<IQASetWithIds | null> {
   try {
     const resp = await Http.axios.put(
-      `/question/${qid}/unselect`,
+      `/agendas/${aid}/themes/${tid}/questions/${qid}/unselect`,
       {},
       {
         headers: Http.makeSignedInHeader(token),
@@ -35,13 +35,14 @@ export async function unSelectQuestion(token: string, qid: string): Promise<IQAS
 
 export const updateResponse = async (
   token: string,
+  aid: string, tid: string,
   qid: string,
   response: string,
   interaction: InteractionBase
 ) => {
   try {
     const resp = await Http.axios.post(
-      `/response/${qid}`,
+      `/agendas/${aid}/themes/${tid}/questions/${qid}/response`,
       {
         response: response,
         interaction: interaction
@@ -53,28 +54,6 @@ export const updateResponse = async (
     return resp.data.qaSet;
   } catch (err) {
     console.log('Err in updateResponse: ', err);
-    return null;
-  }
-};
-
-export const saveComment = async (
-  token: string,
-  qid: string,
-  comment: string
-) => {
-  try {
-    const response = await Http.axios.put(
-      `/response/comment/${qid}`,
-      {
-        comment: comment,
-      },
-      {
-        headers: Http.makeSignedInHeader(token),
-      }
-    );
-    return response;
-  } catch (err) {
-    console.log('Err in saveComment: ', err);
     return null;
   }
 };

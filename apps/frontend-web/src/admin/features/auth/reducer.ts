@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IUserWithThreadIds } from '@core';
 import { jwtDecode } from 'jwt-decode';
 import { Http } from '../../../net/http';
 import { AppThunk } from '../../../redux/store';

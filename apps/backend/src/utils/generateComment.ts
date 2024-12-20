@@ -1,13 +1,13 @@
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from '@langchain/core/prompts';
 import z from "zod"
 import { chatModel } from '../config/config';
-import { QASet } from '../config/schema';
+import { IAgendaORM, QASet } from '../config/schema';
 import { IUserORM } from '../config/schema';
 import nunjucks from 'nunjucks'
 import { summarizePrevThreads, summarizeProfilicInfo } from './summary';
 
 
-const generateComment = async (user: IUserORM, qid: string, response: string) => {
+const generateComment = async (user: IUserORM, agenda: IAgendaORM, qid: string, response?: string) => {
   const qData = await QASet.findById(qid)
   const question = qData.question.content
   const response_stat = response
@@ -76,9 +76,9 @@ const generateComment = async (user: IUserORM, qid: string, response: string) =>
 
   const structuredLlm = chatModel.withStructuredOutput(commentSchema)
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = summarizeProfilicInfo(user.initialNarrative)
+  const init_info = summarizeProfilicInfo(agenda.initialNarrative)
 
-  const prev_log = await summarizePrevThreads(user._id, "comment")
+  const prev_log = await summarizePrevThreads(agenda, "comment")
   
   const result = await chain.invoke({init_info: init_info, prev_log: prev_log, question: question, current_response_status: response_stat})
   return result

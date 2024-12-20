@@ -5,20 +5,22 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
-import { ExplorerPage } from '../features/explore/pages/ExplorePage';
-import { InitialNarrativePage } from '../features/explore/pages/InitialNarrativePage';
+import { ExplorerPage } from '../features/agenda/pages/ExplorePage';
+import { InitialNarrativePage } from '../features/user/pages/InitialNarrativePage';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { useVerifyToken } from '../features/auth/hooks';
 import { useEffect } from 'react';
-import { SignedInScreenFrame } from '../features/explore/components/SignedInScreenFrame';
-import { ProfilePage } from '../features/explore/pages/ProfilePage';
-import { SummaryPage } from '../features/explore/pages/SummaryPage';
+import { SignedInScreenFrame } from '../features/user/components/SignedInScreenFrame';
+import { ProfilePage } from '../features/user/pages/ProfilePage';
+import { SummaryPage } from '../features/agenda/pages/SummaryPage';
 import { useVerifyAdminToken } from '../admin/features/auth/hooks';
 import { AdminLoginPage } from '../admin/features/auth/pages/AdminLoginPage';
 import { UserListPage } from '../admin/features/users/pages/UserListPage';
 import UserDetailPage from '../admin/features/user/pages/UserDetailPage';
 import { AdminSignedInRouteFrame } from '../admin/components/AdminSignedInRouteFrame';
 import { DataPage } from '../admin/features/data/pages/DataPage';
+import { AgendaListPage } from '../features/user/pages/AgendaListPage';
+import { AgendaRoute } from '../features/agenda/components/AgendaRoute';
 
 const AdminLoggedInRoute = () => {
   const { verify, isSignedIn } = useVerifyAdminToken();
@@ -68,13 +70,25 @@ export const MainRouter = () => {
         <Route path="app">
           <Route path="login" element={<LoginPage />} />
           <Route element={<SignedInRoute />}>
+            <Route index element={<Navigate to="agendas" />} />
             <Route element={<SignedInScreenFrame withHeader={false} />}>
-              <Route index element={<ExplorerPage />} />
-            </Route>
-            <Route element={<SignedInScreenFrame withHeader={true} />}>
-              <Route path="narrative" element={<InitialNarrativePage />} />
               <Route path="profile" element={<ProfilePage />} />
-              <Route path="summary" element={<SummaryPage />} />
+            </Route>
+            <Route path="agendas">
+              <Route element={<SignedInScreenFrame withHeader={true} />}>
+                <Route index element={<AgendaListPage />} />
+                <Route path="new" element={<InitialNarrativePage />} />
+              </Route>
+              <Route path=":agendaId">
+                <Route element={<SignedInScreenFrame withHeader={false} />}>
+                  <Route element={<AgendaRoute />}>
+                    <Route index element={<ExplorerPage />} />
+                  </Route>
+                  <Route element={<AgendaRoute />}>
+                    <Route path="summary" element={<SummaryPage />} />
+                  </Route>
+                </Route>
+              </Route>
             </Route>
           </Route>
         </Route>
@@ -88,7 +102,7 @@ export const MainRouter = () => {
                 <Route path=":id" element={<UserDetailPage />} />
               </Route>
               <Route path="data">
-                <Route index element={<DataPage/>} />
+                <Route index element={<DataPage />} />
               </Route>
             </Route>
           </Route>

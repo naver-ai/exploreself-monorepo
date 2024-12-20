@@ -4,11 +4,7 @@ import * as fs from 'fs-extra'
 import * as bodyParser from 'body-parser';
 import userRouter from './router/user'
 import authRouter from './router/auth'
-import questionRouter from './router/question'
-import responseRouter from './router/response'
-import threadRouter from './router/thread'
-import themeRouter from './router/theme'
-import generateRouter from './router/generate'
+import agendaRouter from './router/agenda'
 import interactionRouter from './router/interaction'
 import adminAuthRouter from './router/admin/auth'
 import adminUserRouter from './router/admin/user'
@@ -58,11 +54,7 @@ mongoose.connect(process.env.MONGODB_URL + process.env.MONGODB_DBNAME)
 const apiRouter = express.Router()
 apiRouter.use("/user", userRouter)
 apiRouter.use("/auth", authRouter)
-apiRouter.use("/question", questionRouter)
-apiRouter.use("/response", responseRouter)
-apiRouter.use("/threads", threadRouter)
-apiRouter.use("/themes", themeRouter)
-apiRouter.use("/generate", generateRouter)
+apiRouter.use("/agendas", agendaRouter)
 apiRouter.use("/interaction", interactionRouter)
 apiRouter.use("/admin/auth", adminAuthRouter)
 apiRouter.use("/admin/users", signedInAdminUserMiddleware, adminUserRouter)

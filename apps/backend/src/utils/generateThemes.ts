@@ -3,17 +3,17 @@ import {SystemMessage} from "@langchain/core/messages"
 import {z} from "zod";
 import { chatModel } from '../config/config';
 import nunjucks from 'nunjucks'
-import { User, IThreadORM } from '../config/schema';
-import { IUserBase } from '@core';
+import { IUserORM, IAgendaORM, ThreadItem } from '../config/schema';
 import {summarizePrevThreads, summarizeProfilicInfo} from './summary'
-import mongoose from 'mongoose';
 
-const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<string> = [], opt: number=1) => {
+async function generateThemes(user: IUserORM, agenda: IAgendaORM, prev_themes: Array<string> = [], opt: number=1): Promise<any> {
 
-  const userData = await User.findById(uid).populate({path: 'threads'}) as IUserBase & {threads: IThreadORM[]}
-  const themeList = userData.threads?.map(iteme => iteme.theme)
-  const pinnedThemes = userData.pinnedThemes
-  const language = userData.isKorean ? "in KOREAN": "in English"
+  const threads = await ThreadItem.find({aid: agenda._id})
+
+  const themeList = threads.map(item => item.theme)
+
+  const pinnedThemes = agenda.pinnedThemes
+  const language = user.isKorean ? "in KOREAN": "in English"
   
   const system_message = nunjucks.renderString(`
   [Role] You are a therapeutic assistant designed to foster deep self-reflection and promote personal growth in clients. Your approach is empathetic, client-centered, and rooted in the principles of therapeutic inquiry. 
@@ -82,8 +82,8 @@ const generateThemes = async (uid: mongoose.Types.ObjectId, prev_themes: Array<s
   const structuredLlm = chatModel.withStructuredOutput(edgeSchema);
 
   const chain = finalPromptTemplate.pipe(structuredLlm);
-  const init_info = summarizeProfilicInfo(userData.initialNarrative)
-  const prev_session_log = await summarizePrevThreads(uid)
+  const init_info = summarizeProfilicInfo(agenda.initialNarrative)
+  const prev_session_log = await summarizePrevThreads(agenda)
 
   const result = await chain.invoke({init_info: init_info, prev_log: prev_session_log, pinned_themes: themeList.concat(pinnedThemes).concat(prev_themes).join(', ')});
 

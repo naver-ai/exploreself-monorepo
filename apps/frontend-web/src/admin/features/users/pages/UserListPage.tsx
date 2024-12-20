@@ -1,12 +1,12 @@
 import Table, { ColumnsType } from "antd/es/table"
 import CreateUserModal from "../components/CreateUserModal"
-import { IUserWithThreadIds } from "@core"
+import { IUserWithAgendaIds } from "@core"
 import { Button, Space } from "antd"
 import { Link } from "react-router-dom"
 import { useDispatch, useSelector } from "../../../../redux/hooks"
 import { loadUsers, usersSelectors } from "../reducer"
 import { useCallback, useEffect, useState } from "react"
-const columns: ColumnsType<IUserWithThreadIds> = [{
+const columns: ColumnsType<IUserWithAgendaIds> = [{
   title: "Alias",
   dataIndex: "alias",
   key: "alias"

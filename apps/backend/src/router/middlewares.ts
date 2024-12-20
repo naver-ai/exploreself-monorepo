@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { IUserORM, User } from '../config/schema'
+import { AgendaItem, IAgendaORM, IThreadORM, IUserORM, ThreadItem, User } from '../config/schema'
 import jwt from 'jsonwebtoken'
 import { Types } from 'mongoose'
 
@@ -27,4 +27,44 @@ export const signedInUserMiddleware =  async (req: Request, res: Response, next)
     } catch (err) {
         res.status(400).send("No auth header provided: " + err)
     }        
+}
+
+export type RequestWithAgenda = RequestWithUser & { agenda: IAgendaORM }
+
+export const assertAgendaIdParamMiddleware = async (req: RequestWithUser, res: Response, next) => {
+    signedInUserMiddleware(req, res, async () => {
+        try {
+            if(req.params.aid){
+                const agenda = await AgendaItem.findOne({uid: req.user._id, _id: req.params.aid})
+                if(agenda != null){
+                    req["agenda"] = agenda
+                    next()
+                }else throw "WrongAgendaId"
+            } else{
+                next()
+            }
+        } catch (err) {
+            res.status(400).send("No valid agenda ID provided: " + err)
+        }
+    })
+}
+
+export type RequestWithTheme = RequestWithAgenda & {theme: IThreadORM}
+
+export const assertThemeIdParamMiddleward = async (req: RequestWithAgenda, res: Response, next) => {
+    assertAgendaIdParamMiddleware(req, res, async () => {
+        try{
+            if(req.params.tid){
+                const theme = await ThreadItem.findOne({aid: req.agenda._id, _id: req.params.tid})
+                if(theme != null){
+                    req["theme"] = theme
+                    next()
+                }else throw "WrongThemeId"
+            }else{
+                next()
+            }
+        }catch (err) {
+            res.status(400).send("No valid theme ID provided: " + err)
+        }
+    })
 }

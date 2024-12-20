@@ -1,19 +1,15 @@
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from "@langchain/core/prompts"
 import { z } from "zod";
 import { chatModel } from "../config/config";
-import { User, ThreadItem } from "../config/schema";
+import { IUserORM, IThreadORM, IAgendaORM } from "../config/schema";
 import nunjucks from 'nunjucks'
 import {summarizePrevThreads, summarizeProfilicInfo} from './summary'
-import mongoose from 'mongoose';
 
 
-const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:number=1, prevQ: Array<string>=[]) => {
+const generateQuestions = async (user: IUserORM, agenda: IAgendaORM, thread: IThreadORM, opt:number=1, prevQ: Array<string>=[]) => {
 
-  const userData = await User.findById(uid);
-  const threadData = await ThreadItem.findById(tid);
-
-  const threadLength = userData.threads.length;
-  const language = userData.isKorean ? "in KOREAN": "in English"
+  const threadLength = agenda.threads.length;
+  const language = user.isKorean ? "in KOREAN": "in English"
 
   const systemTemplate = nunjucks.renderString(`
   [Role]
@@ -62,16 +58,12 @@ const generateQuestions = async (uid: mongoose.Types.ObjectId, tid: string, opt:
   const structuredLlm = chatModel.withStructuredOutput(questionSchema)
 
   const chain = finalPromptTemplate.pipe(structuredLlm)
-  const init_info = summarizeProfilicInfo(userData.initialNarrative)
+  const init_info = summarizeProfilicInfo(agenda.initialNarrative)
   
-  try {
-    const prev_session_log = await summarizePrevThreads(uid, "question")
-    console.log("Q: ", prev_session_log)
-    const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: threadData.theme})
-    return (result as any).questions;
-  } catch (err){
-    throw err;
-  }
+  const prev_session_log = await summarizePrevThreads(agenda, "question")
+  console.log("Q: ", prev_session_log)
+  const result = await chain.invoke({init_info: init_info, prev_session_log: prev_session_log, theme: thread.theme})
+  return (result as any).questions;
 }
 
 export default generateQuestions;

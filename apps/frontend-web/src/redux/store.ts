@@ -4,11 +4,11 @@ import {
   Action,
   ThunkAction,
 } from '@reduxjs/toolkit';
-import exploreReducer from '../features/explore/reducer';
+import agendaReducer from '../features/agenda/reducer';
 import authReducer from '../features/auth/reducer';
+import userReducer from '../features/user/reducer';
 import {
   persistStore,
-  persistReducer,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -16,21 +16,15 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
 import { adminReducer } from '../admin/reducer';
 import i18next from 'i18next';
 
 const rootReducer = combineReducers({
-  auth: persistReducer(
-    {
-      key: 'root',
-      storage,
-      whitelist: ['token', 'locale'],
-    },
-    authReducer
-  ),
+  auth: authReducer,
 
-  explore: exploreReducer,
+  user: userReducer,
+
+  agenda: agendaReducer,
 
   admin: adminReducer
 });

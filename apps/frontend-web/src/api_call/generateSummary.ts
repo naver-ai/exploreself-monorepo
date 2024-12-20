@@ -1,17 +1,19 @@
+import { IMappedSummarySentence } from '@core';
 import { Http } from '../net/http';
 
-export const generateSummary = async (
+export async function generateSummary(
   token: string,
-) => {
+  agendaId: string
+): Promise<Array<IMappedSummarySentence>|null> {
   try {
     const response = await Http.axios.put(
-      `/generate/summary`,
+      `/agendas/${agendaId}/summarize`,
       {},
       {
         headers: Http.makeSignedInHeader(token),
       }
     );
-    return response.data.summary;
+    return response.data.summaryMappings;
   } catch (err) {
     console.error('Error in getting final summary: ', err);
     return null;

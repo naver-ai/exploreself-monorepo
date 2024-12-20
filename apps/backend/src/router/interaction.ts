@@ -1,7 +1,6 @@
 import express from 'express';
 import type {RequestWithUser} from './middlewares'
 import { signedInUserMiddleware } from './middlewares';
-import { InteractionType } from '@core';
 import { logInteraction } from '../utils/logInteraction';
 
 const router = express.Router()
