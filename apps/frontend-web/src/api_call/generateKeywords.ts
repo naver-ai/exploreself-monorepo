@@ -9,7 +9,7 @@ const generateKeywords = async (
 ): Promise<string[] | null> => {
   try {
     const response = await Http.axios.post(
-      `/agendas/${agendaId}/themes/${tid}/quesions/${qid}/keywords/generate`,
+      `/agendas/${agendaId}/themes/${tid}/questions/${qid}/keywords/generate`,
       {
         opt
       },

@@ -9,7 +9,7 @@ const generateComment = async (
 ) => {
   try {
     const resp = await Http.axios.post(
-      `/agendas/${agendaId}/themes/${tid}/quesions/${qid}/comments/generate`,
+      `/agendas/${agendaId}/themes/${tid}/questions/${qid}/comments/generate`,
       {
         response: response,
       },

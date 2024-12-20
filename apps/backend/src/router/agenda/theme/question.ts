@@ -104,7 +104,6 @@ router.put('/:qid/unselect', async (req: RequestWithUser, res) => {
   }
 });
 
-// The upper APIs are currently deprecated, and will delete in order
 router.post('/:qid/response', async (req: RequestWithUser, res) => {
   const qid = req.params.qid;
   const response = req.body.response;
