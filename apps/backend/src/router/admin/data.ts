@@ -14,10 +14,13 @@ router.get('/all', query('exclude').optional().isArray(), async (req, res) => {
     console.log("exclude: ", exclude)
     const users = (await User.find({ _id: { $not: { $in: exclude } } }).populate(
         {
-            path: 'threads',
+            path: 'agendas',
             populate: {
-                path: 'questions',
-            },
+                path: 'threads',
+                populate: {
+                    path: 'questions',
+                },
+            }
         }
     )).map(user => user.toJSON())
 
