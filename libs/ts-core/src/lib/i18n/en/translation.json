@@ -22,12 +22,20 @@
     }
   },
 
+  "Agendas": {
+    "Title": "My Agendas",
+     "New": "Explore New Agenda"
+  },
+
   "Narrative": {
     "Title": "Jot down Your Challenging Story",
     "Prompt": "Everyone has their own challenges. Feel free to write about any aspect of the difficult situation and the way you feel about it that comes to mind. Afterwards, AI will suggest various topics for you to think about regarding your difficulty, and through simple writing activities, it aims to help you better understand your worries and the thoughts surrounding them. Remember, all of your writing will be completely confidential.",
     "Placeholder": "Write your challenges here.",
     "Complete": "Start Exploring Challenges",
-    "InitialNarrative": "My Challenges"
+    "Back": "Back to Previous Screen",
+    "BackConfirm": "Discard the current writing and go back to the previous screen?",
+    "InitialNarrative": "My Challenges",
+    "Helper": "Please freely write about what has been weighing on your mind or presenting personal challenges lately. Before AI can assist you in better understanding these issues, this is a process for you to articulate the personal challenges you are encountering. **This is not a text meant to be shared with others.** Nobody will check, judge, or critique it. Do not worry about spelling, grammar, or punctuation when writing."
   },
 
   "Exploration": {
@@ -55,16 +63,18 @@
   },
   "Theme": {
     "Title": "Explore New Themes",
+    "CustomTitle": "🤔 Is there no topic that interests you?",
     "MoreThemes": "See More Themes",
     "AltExpressions": "See Other Expressions",
-    "CustomTitle": "🤔 Is there no topic that interests you?",
     "Add": "Add",
     "AddMyself": "Add Myself",
     "Generating": "Generating themes to explore",
     "NoTheme": "No themes added yet.",
     "PinTitle": "Pinned Themes",
     "Tooltip": {
-      "NewThread": "Click to open a new thread with this theme."
+      "NewThread": "Click to open a new thread with this theme.",
+      "PinTheme": "Pin the theme to revisit it later.",
+      "UnpinTheme": "Remove this theme from the pinned list."
     },
     "UndoDelete": "Undo Theme Deletion"
   },
@@ -73,11 +83,13 @@
     "Open": "View AI Summary",
     "Generating": "Generating summary",
     "More": "View New Summary",
-    "Aggregate": "'s Exploration History",
     "Complete": "End session",
+    "CompleteConfirm": "End the exploration session?", 
     "CompleteMessage": "The session has ended. Thank you :).",
     "BackToExplore": "Go back to the Exploration Page",
-    "FinalReflection": "Through this exploration, what have you learned or newly realized about yourself and your situation? Feel free to write down whatever comes to mind."
+    "Aggregate": "'s Exploration History",
+    "FinalReflection": "Through this exploration, what have you learned or newly realized about yourself and your situation? Feel free to write down whatever comes to mind.",
+    "NoSummaries": "No AI summaries yet."
   },
   "Labels": {
     "Apply": "Apply",
@@ -94,5 +106,9 @@
   },
   "Auth": {
 
+  },
+  "Info": {
+    "NewTheme": "You can browse themes related to your personal challenge.", 
+    "Outline": "Lists up the expanded themes in order."
   }
 }

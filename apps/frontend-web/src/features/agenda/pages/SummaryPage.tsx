@@ -6,12 +6,15 @@ import { useRef } from "react"
 import Debriefing from "../components/Debriefing"
 import { SessionStatus } from "@core"
 import { Navigate } from "react-router-dom"
+import { useAgendaIdInRoute } from "../hooks"
 
 type QuestionRefs = {
   [key: string]: HTMLDivElement | null;
 };
 
 export const SummaryPage = () => {
+
+  const agendaId = useAgendaIdInRoute()
 
   const allQuestions = useSelector((state) => questionSelectors.selectAll(state));
   const filteredQuestions = allQuestions
@@ -24,7 +27,7 @@ export const SummaryPage = () => {
   const sessionStatus = useSelector(state => state.agenda.sessionStatus)
 
   if(sessionStatus == SessionStatus.Exploring){
-    return <Navigate to="/app"/>
+    return <Navigate to={`/app/agendas/${agendaId}`}/>
   }else{
     return (
         <div className="container-wide flex h-full">

@@ -16,7 +16,16 @@ const createThreadItem = async (
         headers: Http.makeSignedInHeader(token),
       }
     );
-    return response.data;
+    const d = response.data;
+    if(typeof d.createdAt === 'string'){
+      d.createdAt = new Date(d.createdAt)
+    }
+    if(typeof d.updatedAt === 'string'){
+      d.updatedAt = new Date(d.updatedAt)
+    }
+
+    return d
+
   } catch (err) {
     console.log('Err in fetching questions: ', err);
     return null;

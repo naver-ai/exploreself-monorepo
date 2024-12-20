@@ -4,18 +4,28 @@ import { useCallback, useEffect } from 'react';
 import { getNewSummary } from '../reducer';
 import { useTranslation } from 'react-i18next';
 import { Button, Carousel } from 'antd';
+import { useAgendaIdInRoute } from '../hooks';
+import { usePrevious } from '@uidotdev/usehooks';
 
 export const SummaryPanel = () => {
+  const agendaId = useAgendaIdInRoute()
+  const prevAgendaId = usePrevious(agendaId)
   const summaryList: string[] = useSelector(state => state.agenda.summaries)
   const isCreatingSummary = useSelector(state => state.agenda.isCreatingSummary)
   const dispatch = useDispatch();
+  
   const handleGenerateSummary = useCallback(async () => {
     dispatch(getNewSummary())
   },[])
-  const name = useSelector(state => state.agenda.name)
-
 
   const [t] = useTranslation()
+
+  useEffect(()=>{
+    if(prevAgendaId != agendaId && summaryList.length == 0){
+      dispatch(getNewSummary())
+    }
+  }, [prevAgendaId, agendaId, summaryList.length])
+
   return (
     <div className='bg-white p-8 rounded-xl'>
       <div className='flex justify-between'>
@@ -24,7 +34,7 @@ export const SummaryPanel = () => {
         {isCreatingSummary? <LoadingIndicator title={t("Summary.Generating")}/>: <Button onClick={handleGenerateSummary} disabled={isCreatingSummary}>{t("Summary.More")}</Button>}
       </div>
       </div>
-      {summaryList.length && 
+      {summaryList.length > 0 ? 
       <Carousel 
       arrows = {summaryList.length > 1}
       className='custom-carousel h-full'
@@ -35,7 +45,7 @@ export const SummaryPanel = () => {
             {item}
           </div>
         </div>)}
-    </Carousel>
+    </Carousel> : <div>{t("Summary.NoSummaries")}</div>
       }
       
     </div>

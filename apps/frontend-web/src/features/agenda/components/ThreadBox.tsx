@@ -45,12 +45,12 @@ const UnselectedQuestionItem = (props: { tid: string, qid: string, onSelectQuest
     >
       <span className='my-2'>{question?.question?.content}</span>
       {<Flex>
-        <Button className='pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity'
+        <Button className='pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity mx-3'
           onClick={onSelect}
           icon={<PencilIcon className='w-4 h-4'/>}
           type="primary"
         >{t("Thread.Questions.Answer")}</Button>
-        {false && <Button type="text" icon={<DeleteOutlined />} shape="circle" className="ml-3" />}
+        {false && <Button type="text" icon={<DeleteOutlined />} shape="circle" className="mx-3" />}
       </Flex>}
     </Flex>
   );

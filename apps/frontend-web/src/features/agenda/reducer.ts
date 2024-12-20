@@ -27,6 +27,7 @@ import { postInteractionData } from '../../api_call/postInteractionData';
 import { generateSummary } from '../../api_call/generateSummary';
 import getThemeRecommendation from '../../api_call/generateThemes';
 import { IDidTutorial } from '@core';
+import { convertStringTimestampToDate } from '../../utils/time';
 
 const threadEntityAdapter = createEntityAdapter<IThreadWithQuestionIds, string>(
   {
@@ -120,7 +121,6 @@ const agendaSlice = createSlice({
       state,
       action: PayloadAction<Partial<IAgendaAllPopulated>>
     ) => {
-      console.log(action.payload)
       for (const key of Object.keys(action.payload)) {
         if (key == 'threads') {
           const questions =
@@ -128,7 +128,6 @@ const agendaSlice = createSlice({
               (prev: Array<IQASetWithIds>, curr) => prev.concat(curr.questions),
               []
             ) || [];
-          console.log(questions)
           // Handle threads
           const threadMapped: Array<IThreadWithQuestionIds> =
             action.payload.threads?.map((thread) => ({
@@ -434,9 +433,7 @@ export function loadAgenda(id: string): AppThunk {
           headers: Http.makeSignedInHeader(state.auth.token),
         });
 
-        const agenda: IAgendaAllPopulated = response.data.agenda
-
-        console.log("loaded agenda: ", agenda)
+        const agenda: IAgendaAllPopulated = convertStringTimestampToDate(response.data.agenda)
 
         dispatch(agendaSlice.actions.updateAgendaInfo(agenda))
 
@@ -712,7 +709,6 @@ export function getNewQuestions(
             { tid: tid }
           );
         }
-        console.log("fetchedQuestions:", fetchedQuestion)
 
         return fetchedQuestion;
       } catch (ex) {
@@ -751,7 +747,6 @@ export function getNewComment(
           qid,
           userResponse
         );
-        console.log('NEW COM: ', newComment);
         if (newComment) {
           dispatch(
             agendaSlice.actions.updateQuestionWithNewComment({
