@@ -34,10 +34,10 @@ const Debriefing = () => {
   const [t] = useTranslation()
 
   const handleSubmitDebriefing = useCallback(async (values: any) => {
-    if(window.confirm("Summary.CompleteConfirm")){
+    if(window.confirm(t("Summary.CompleteConfirm"))){
       dispatch(terminateSession(values.debriefing));
     }
-  }, []);
+  }, [t]);
 
   const handleRevertTerminateSession = useCallback(async () => {
     dispatch(revertTerminateSession())

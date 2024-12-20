@@ -13,7 +13,7 @@ export const AggregateBox = () => {
   const filteredQuestions = allQuestions
     .filter(q => q.response && q.response.length > 0)
   
-  const name = useSelector(state => state.agenda.name)
+  const name = useSelector(state => state.user.name)
   const initNarrative = useSelector(state => state.agenda.initialNarrative)
 
     return (

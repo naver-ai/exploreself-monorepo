@@ -84,8 +84,6 @@ export const MainRouter = () => {
                   <Route element={<AgendaRoute />}>
                     <Route index element={<ExplorerPage />} />
                   </Route>
-                </Route>
-                <Route element={<SignedInScreenFrame withHeader={true} />}>
                   <Route element={<AgendaRoute />}>
                     <Route path="summary" element={<SummaryPage />} />
                   </Route>
