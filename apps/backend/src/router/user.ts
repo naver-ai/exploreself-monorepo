@@ -124,6 +124,7 @@ router.put(
         { $set: { [`didTutorial.${key}`]: value } },
         { new: true }
       );
+      console.log("Updated tutorial flag:", updatedUser.didTutorial)
       res.sendStatus(200);
     } catch (err) {
       res.sendStatus(400);

@@ -23,7 +23,16 @@ router.post('/login', createPasscodeValidation(), async (req: Request, res: Resp
         try {
             const passcode = req.body.passcode
             console.log('find user with passcode - ', passcode)
-            let user = await User.findOne({ passcode });
+            let user = await User.findOne({ passcode }).populate([
+              {
+                path: 'agendas',
+                match: {
+                  deleted: {
+                    $ne: true
+                  }
+                }
+              }]);
+              
             console.log(user)
             if (user) {  
               res.status(200).send({ token: makeUserToken(user), user: user.toJSON() })
