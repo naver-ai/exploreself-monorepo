@@ -49,7 +49,7 @@ const UnselectedQuestionItem = (props: { tid: string, qid: string, onSelectQuest
           onClick={onSelect}
           icon={<PencilIcon className='w-4 h-4'/>}
           type="primary"
-        >{t("Thread.Questions.Answer")}</Button>
+        >{t("Theme.Questions.Answer")}</Button>
         {false && <Button type="text" icon={<DeleteOutlined />} shape="circle" className="mx-3" />}
       </Flex>}
     </Flex>
@@ -70,7 +70,7 @@ const SelectedQuestionList = (props: { tid: string }) => {
       ))}
     </div> : (isThreadInCreation !== true ? <div className='pb-6 pt-0 px-2 flex items-center font-base text-blue-500'>
       <ArrowDownIcon className='w-6 h-6 mr-2 animate-bounce'/>
-      <span>{t("Thread.Questions.NoQuestionPlaceholder")}</span>
+      <span>{t("Theme.Questions.NoQuestionPlaceholder")}</span>
     </div> : null)
 };
 
@@ -104,8 +104,8 @@ const NewQuestionList = (props: {tid: string}) => {
     setQuestions(newQuestionList)
   },[props.tid, questions])
 
-  const moreButton = <Button className='' disabled={isCreatingQuestions} onClick={handleMoreQuestions}>{t("Thread.Questions.More")}</Button>
-  const newButton = <Button className='' type='primary' disabled={isCreatingQuestions} onClick={handleGetQuestions}>{t("Thread.Questions.NewQuestion")}</Button>
+  const moreButton = <Button className='' disabled={isCreatingQuestions} onClick={handleMoreQuestions}>{t("Theme.Questions.More")}</Button>
+  const newButton = <Button className='' type='primary' disabled={isCreatingQuestions} onClick={handleGetQuestions}>{t("Theme.Questions.NewQuestion")}</Button>
 
   const handleQuestionSelect = useCallback(() => {
     setIsQSelectorOpen(false); 
@@ -123,12 +123,12 @@ const NewQuestionList = (props: {tid: string}) => {
     {!isQSelectorOpen? 
     <div>
       {newButton}
-      {isCreatingQuestions && <LoadingIndicator title={t("Thread.Questions.Generating")}/>}
+      {isCreatingQuestions && <LoadingIndicator title={t("Theme.Questions.Generating")}/>}
     </div>
     :
     <div>
       {isCreatingQuestions? 
-      <LoadingIndicator title={t("Thread.Questions.Generating")}/>:
+      <LoadingIndicator title={t("Theme.Questions.Generating")}/>:
       <div className="flex justify-end mb-2">
         {moreButton}
       </div>

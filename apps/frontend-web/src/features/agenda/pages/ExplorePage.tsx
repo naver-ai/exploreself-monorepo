@@ -67,7 +67,7 @@ const SidePanel = () => {
         {false && <PinnedThemesPanel />}
       </div>
       <div className='border-t p-2 shadow-slate-600 shadow-2xl'>
-        <Button disabled={isThemeSelectorOpen} className='w-full' onClick={handleEndSession}>{t("Summary.Open")}<InfoPopover title="AI 요약 보기" content='지금까지 적어본 것들에 대한 AI 요약을 확인해볼 수 있어요.'/></Button>
+        <Button disabled={isThemeSelectorOpen} className='w-full' onClick={handleEndSession}>{t("Summary.Open")}<InfoPopover title={t("Summary.Button")} content={t("Summary.ButtonHint")}/></Button>
       </div>
     </>
   );

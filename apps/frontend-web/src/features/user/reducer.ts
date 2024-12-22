@@ -7,7 +7,7 @@ import { assertDate } from "../../utils/time"
 const agendaEntityAdapter = createEntityAdapter<IAgendaWithThemeIds, string>({
     selectId: (model) => model._id,
     sortComparer: (a, b) => {
-        return assertDate(b.createdAt).getTime() - assertDate(a.createdAt).getTime()
+        return (assertDate(b.createdAt)?.getTime() || 0) - (assertDate(a.createdAt)?.getTime() || 0)
     }
 })
 
@@ -62,6 +62,8 @@ const userSlice = createSlice({
         updateUserInfo: (state, action: PayloadAction<IUserWithAgendaPopulated>) => {
             state.isAgendaListValid = true
             
+            console.log("User payload:", action.payload)
+
             agendaEntityAdapter.setAll(state.agendaEntityState, action.payload.agendas || [])
             state.name= action.payload.name
             state.didTutorial = action.payload.didTutorial

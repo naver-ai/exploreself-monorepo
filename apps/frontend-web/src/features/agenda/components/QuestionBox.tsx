@@ -195,8 +195,8 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
        {<Row>
         <div className={`transition-all border-dashed ${isQuestionKeywordsShown ? "bg-transparent" : "bg-transparent"} rounded-lg p-2 w-full mb-2`}>
           <div className={`flex items-center gap-x-2 mb-2 last:mb-0`}>
-            <Switch className={`${didTutorial.explore? '': 'outline animate-focus-indicate'}`} id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={handleToggleChange}/><label className='select-none text-sm cursor-pointer' htmlFor={switch_id}>{t("Thread.Keywords.HelperKeywords")}</label>
-            <InfoPopover title="표현을 돕는 단어들" content='생각이 쉽게 나지 않을 때 눌러보세요. 머릿속으로부터 표현이나 생각을 끄집어내주는 단어들을 보여줄거에요.'/>
+            <Switch className={`${didTutorial.explore? '': 'outline animate-focus-indicate'}`} id={switch_id} defaultChecked checked={isQuestionKeywordsShown} onChange={handleToggleChange}/><label className='select-none text-sm cursor-pointer' htmlFor={switch_id}>{t("Theme.Keywords.HelperKeywords")}</label>
+            <InfoPopover content={t("Theme.Keywords.Tooltip.Description")}/>
           </div>
           {isQuestionKeywordsShown && <Flex wrap gap="small" className="flex items-center">
             {keywords &&
@@ -210,14 +210,14 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
                 </Button>
               ))}
             {
-              isCreatingKeywords == true? <LoadingIndicator title={t("Thread.Keywords.Generating")} className='ml-2'/> : <Button
+              isCreatingKeywords == true? <LoadingIndicator title={t("Theme.Keywords.Generating")} className='ml-2'/> : <Button
               type="text"
               className="px-2 py-1 text-black text-opacity-50"
               onClick={() => {
                 getNewKeywordsHandler(1);
               }}
             >
-              {t("Thread.Keywords.More")}
+              {t("Theme.Keywords.More")}
             </Button>
             }
           </Flex>}
@@ -233,7 +233,7 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
             onChange={handleChange}
             onBlur={handleBlur}
             onFocus={handleFocus}
-            placeholder={t("Thread.Questions.AnswerPlaceholder")}
+            placeholder={t("Theme.Questions.AnswerPlaceholder")}
             className='minimal dimmed !min-h-full'
             data-enable-grammarly={false}
             autoSize={{ minRows: 2 }}
@@ -242,7 +242,7 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
         <Col span={8} className="">
           <div className="bg-[#F1F8F8] p-3 rounded-lg text-xs flex flex-col leading-7">
             <div>
-              <InfoPopover title="도움말" content={`어떻게 이어서 적어나가야할지 막막할 때 눌러보세요.\n 생각의 방향에 도움을 줄 수 있어요.`}/>
+              <InfoPopover title={t("Theme.Comments.Tooltip.Title")} content={t("Theme.Comments.Tooltip.Description")}/>
             </div>
             
             {
@@ -261,7 +261,7 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
                 onClick={() => getNewCommentHandler()}
                 size="small"
                 className="text-xs justify-center py-3"
-              >{t("Thread.Questions.RequestHelp")}</Button>
+              >{t("Theme.Questions.RequestHelp")}</Button>
               </>
             }
             

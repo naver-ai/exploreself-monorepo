@@ -347,7 +347,7 @@ const ThemeBox = () => {
                   disabled={currentExpressionIndex[index] >= themeItem.expressions.length || isCreatingNewThread || isLoadingThemes || isTourClosing}
                   icon={<PlusIcon className='w-4 h-4' />} ref={ index == 0? refAltExp: null}>
                   {t("Theme.AltExpressions")}
-                  <InfoPopover content='비슷한 주제의 다양한 표현들을 살펴볼 수 있어요.'/>
+                  <InfoPopover content={t("Theme.Tooltip.ThemeVariation")}/>
                 </Button>
             </Col>
           )

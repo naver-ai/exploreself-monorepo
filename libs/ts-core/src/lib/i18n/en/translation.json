@@ -46,7 +46,23 @@
     "ShowMoreThemesInitial": "Explore Related Themes"
   },
 
-  "Thread": {
+  "Theme": {
+    "Title": "Explore New Themes",
+    "CustomTitle": "🤔 Is there no topic that interests you?",
+    "MoreThemes": "See More Themes",
+    "AltExpressions": "See Other Expressions",
+    "Add": "Add",
+    "AddMyself": "Add Myself",
+    "Generating": "Generating themes to explore",
+    "NoTheme": "No themes added yet.",
+    "PinTitle": "Pinned Themes",
+    "Tooltip": {
+      "NewThread": "Click to open a new thread with this theme.",
+      "PinTheme": "Pin the theme to revisit it later.",
+      "UnpinTheme": "Remove this theme from the pinned list.",
+      "ThemeVariation": "Get variations for this theme."
+    },
+    "UndoDelete": "Undo Theme Deletion",
     "Questions": {
       "Title": "Questions to Think About",
       "Generating": "Generating questions...",
@@ -61,27 +77,22 @@
     "Keywords": {
       "More": "See More Keywords",
       "Generating": "Generating keywords",
-      "HelperKeywords": "Keywords to Help Your Expression"
+      "HelperKeywords": "Keywords to Guide Your Expression",
+      "Tooltip": {
+        "Description": "Press this when it's hard to think. It will show you words that help draw out expressions or thoughts from your mind."
+      }
+    },
+    "Comments": {
+      "Tooltip": {
+        "Title": "AI comment",
+        "Description": "Refer to this when you're unsure how to continue writing. It can help guide your thoughts."
+      }
     }
   },
-  "Theme": {
-    "Title": "Explore New Themes",
-    "CustomTitle": "🤔 Is there no topic that interests you?",
-    "MoreThemes": "See More Themes",
-    "AltExpressions": "See Other Expressions",
-    "Add": "Add",
-    "AddMyself": "Add Myself",
-    "Generating": "Generating themes to explore",
-    "NoTheme": "No themes added yet.",
-    "PinTitle": "Pinned Themes",
-    "Tooltip": {
-      "NewThread": "Click to open a new thread with this theme.",
-      "PinTheme": "Pin the theme to revisit it later.",
-      "UnpinTheme": "Remove this theme from the pinned list."
-    },
-    "UndoDelete": "Undo Theme Deletion"
-  },
+
   "Summary": {
+    "Button": "View AI Summary",
+    "ButtonHint": "You can check the AI summary distilled from the current exploration.",
     "Title": "AI Summary",
     "Open": "View AI Summary",
     "Generating": "Generating summary",
