@@ -21,7 +21,6 @@
       "Placeholder": "Name or Nickname"
     }
   },
-
   "Agendas": {
     "Title": "My Agendas",
     "New": "Explore New Agenda",
@@ -29,7 +28,6 @@
     "ThemeCount_one": "1 theme",
     "ThemeCount_other": "{{count}} themes"
   },
-
   "Narrative": {
     "Title": "Jot down Your Challenging Story",
     "Prompt": "Everyone has their own challenges. Feel free to write about any aspect of the difficult situation and the way you feel about it that comes to mind. Afterwards, AI will suggest various topics for you to think about regarding your difficulty, and through simple writing activities, it aims to help you better understand your worries and the thoughts surrounding them. Remember, all of your writing will be completely confidential.",
@@ -40,12 +38,10 @@
     "InitialNarrative": "My Challenges",
     "Helper": "Please freely write about what has been weighing on your mind or presenting personal challenges lately. Before AI can assist you in better understanding these issues, this is a process for you to articulate the personal challenges you are encountering. **This is not a text meant to be shared with others.** Nobody will check, judge, or critique it. Do not worry about spelling, grammar, or punctuation when writing."
   },
-
   "Exploration": {
     "ShowMoreThemes": "Explore Other Themes",
     "ShowMoreThemesInitial": "Explore Related Themes"
   },
-
   "Theme": {
     "Title": "Explore New Themes",
     "CustomTitle": "🤔 Is there no topic that interests you?",
@@ -87,9 +83,43 @@
         "Title": "AI comment",
         "Description": "Refer to this when you're unsure how to continue writing. It can help guide your thoughts."
       }
+    },
+    "Tour": {
+      "Intro": {
+        "Title": "Explore the Topics Window",
+        "Description": "Welcome to the {{title}} window!{{newline}}Press the {{next}} button to proceed with the guide."
+      },
+      "Themes": {
+        "Title": "AI Generated Themes",
+        "Description": "Explore themes generated from your stories."
+      },
+      "Variants": {
+        "Description": "Explore various expressions on similar topics."
+      },
+      "OneTheme": {
+        "Description": "Pressing on a theme will generate a detailed discussion on it."
+      },
+      "MoreThemes": {
+        "Title": "More Themes",
+        "Description": "Want to see more themes? AI can generate more, though there are limits."
+      },
+      "PinThemes": {
+        "Title": "Pinning Themes",
+        "Description": "Want to save a theme to explore later? {{newline}} Press {{bookmark}} icon to store it in the pinned theme list."
+      },
+      "PinnedThemes": {
+        "Title": "Pinned Themes",
+        "Description": "The pinned {{bookmark}} themes are listed here and you can explore them anytime later."
+      },
+      "CreateTheme": {
+        "Title": "Create Your Own Theme",
+        "Description": "If you want to add a theme of your own, go ahead and write it!"
+      },
+      "Next": "Next",
+      "Previous": "Previous",
+      "Complete": "Complete"
     }
   },
-
   "Summary": {
     "Button": "View AI Summary",
     "ButtonHint": "You can check the AI summary distilled from the current exploration.",
@@ -98,7 +128,7 @@
     "Generating": "Generating summary",
     "More": "View New Summary",
     "Complete": "End session",
-    "CompleteConfirm": "End the exploration session?", 
+    "CompleteConfirm": "End the exploration session?",
     "CompleteMessage": "The session has ended. Thank you :).",
     "BackToExplore": "Go back to the Exploration Page",
     "Aggregate": "'s Exploration History",
@@ -113,15 +143,12 @@
     "Finish": "Finish",
     "ShowHelp": "Show Help"
   },
-
   "Outline": {
     "Title": "Outline"
   },
-  "Auth": {
-
-  },
+  "Auth": {},
   "Info": {
-    "NewTheme": "You can browse themes related to your personal challenge.", 
+    "NewTheme": "You can browse themes related to your personal challenge.",
     "Outline": "Lists up the expanded themes in order."
   }
 }

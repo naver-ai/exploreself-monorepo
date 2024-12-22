@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState, useRef} from 'react';
+import { useCallback, useEffect, useState, useRef, useMemo} from 'react';
 import React from 'react';
 import { Button, Col, ButtonProps, Modal, Form, Input, Divider, Tour, TourProps, Typography, Tooltip } from 'antd';
 import {
   getNewThemes,
   pinTheme,
   populateNewThread,
-  resetNewThemes,
   setThemeSelectorOpen,
   unpinTheme
 } from '../reducer';
@@ -14,7 +13,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { postInteractionData } from '../../../api_call/postInteractionData';
 import { InteractionType } from '@core';
 import { LoadingIndicator } from '../../../components/LoadingIndicator';
-import { BookmarkIcon, PlusCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
+import { BookmarkIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
 import { POPULATE_NEW_THREAD_OPTS } from './common';
 import * as yup from 'yup';
@@ -22,11 +21,13 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormItem } from 'react-hook-form-antd';
 import { InfoPopover } from '../../../components/InfoPopover';
-import { init } from 'i18next';
 import { PinnedThemesPanel } from './pinned-themes';
 import { updateDidTutorial } from '../../user/reducer';
+import reactStringReplace from 'react-string-replace';
 const { Text } = Typography;
 
+
+const VARIABLE_REGEX = /({{[a-zA-Z]+}})/g
 
 interface ThemeButtonProps extends ButtonProps {
   theme: string;
@@ -100,125 +101,119 @@ const ThemeBox = () => {
   const refBookmark = useRef(null);
   const refPinnedThemes = useRef(null);
 
-  const steps: TourProps['steps'] = [
+  const [t] = useTranslation()
+ 
+  const steps: TourProps['steps'] = useMemo(()=>[
     {
-      title: "주제 탐색하기 창 활용 안내",
-      description: (
-        <Text style={{color: '#555'}}>
-          <span className='font-semibold'>[주제 탐색하기] </span>창에 들어오셨군요!👍 <br/> <span className='font-semibold'>[다음]</span> 버튼을 눌러 안내를 확인해주세요.
-        </Text>
-      ),
+      title: t("Theme.Tour.Intro.Title"),
+      description: <span className='text-[#555]'>{reactStringReplace(t("Theme.Tour.Intro.Description"), VARIABLE_REGEX, (match, i) => {
+        switch(match){
+          case "{{newline}}": return <br key={match+i}/>
+          case "{{title}}":
+            return <span key={match+i} className='font-semibold'>[{t("Theme.Title")}]</span>
+          case "{{next}}":
+            return <span key={match+i} className='font-semibold'>[{t("Theme.Tour.Next")}]</span>
+        }
+      })}</span>,
       target: null,
       nextButtonProps: {
-        children: '다음'
+        children: t("Theme.Tour.Next")
       },
       prevButtonProps: {
-        children: '이전'
+        children: t("Theme.Tour.Previous")
       },
     },
     {
-      title: "AI 생성 주제들",
-      description: (
-        <Text style={{color: '#555'}}>
-          AI가 나의 이야기로부터 생성한 주제들
-        </Text>
-      ),
+      title: t("Theme.Tour.Themes.Title"),
+      description: (<span className='text-[#555]'>{t("Theme.Tour.Themes.Description")}</span>),
       target: () => refNewThemes.current || null,
       nextButtonProps: {
-        children: '다음'
+        children: t("Theme.Tour.Next")
       },
       prevButtonProps: {
-        children: '이전'
+        children: t("Theme.Tour.Previous")
       },
     },
     {
       title: "",
-      description: "비슷한 주제의 다양한 표현을 살펴볼 수 있어요.",
+      description: t("Theme.Tour.Variants.Description"),
       target: () => refAltExp.current || null,
       nextButtonProps: {
-        children: '다음'
+        children: t("Theme.Tour.Next")
       },
       prevButtonProps: {
-        children: '이전'
+        children: t("Theme.Tour.Previous")
       },
     }, 
     {
       title: "",
-      description: (
-        <Text style={{color: '#555'}}>
-          주제를 누르게 되면, 바로 주제에 대한 타래가 생성되어요.
-        </Text>
-      ),
+      description: (<span className='text-[#555]'>{t("Theme.Tour.OneTheme.Description")}</span>),
       target: () => refOneTheme.current || null,
       nextButtonProps: {
-        children: '다음'
+        children: t("Theme.Tour.Next")
       },
       prevButtonProps: {
-        children: '이전'
+        children: t("Theme.Tour.Previous")
       },
     },
     {
-      title: "주제 더 보기",
-      description: (
-        <Text style={{color: '#555'}}>
-          더 많은 주제를 보고 싶으면 AI가 생성해주어요. AI가 주제를 더 만들 수 없을 경우도 있어요.
-        </Text>
-      ),
+      title: t("Theme.Tour.MoreThemes.Title"),
+      description: (<span className='text-[#555]'>{t("Theme.Tour.MoreThemes.Description")}</span>),
       target: () => refMoreThemes.current || null,
       nextButtonProps: {
-        children: '다음'
+        children: t("Theme.Tour.Next")
       },
       prevButtonProps: {
-        children: '이전'
+        children: t("Theme.Tour.Previous")
       },
     },
     {
-      title: "주제 담아두기",
-      description: (
-        <Text style={{color: '#555'}}>
-          이따 탐색해보고 싶은 주제를 없어지지 않게 보관해두고 싶나요? <br/>
-          <span style={{ display: 'inline-flex', alignItems: 'center' }}><BookmarkIcon className="w-5 h-5" style={{ color: '#CCCCCC' }}/></span> 버튼을 누르면 아래의 <span>주제 바구니</span>에 주제를 담아둘 수 있어요. 
-        </Text>
+      title: t("Theme.Tour.PinThemes.Title"),
+      description: (<span className='text-[#555]'>{reactStringReplace(t("Theme.Tour.PinThemes.Description"), VARIABLE_REGEX, (match, i) => {
+        switch(match){
+          case "{{newline}}": return <br key={match+i}/>
+          case "{{bookmark}}":
+            return <span key={match+i} style={{ display: 'inline-flex', alignItems: 'center' }}><BookmarkIcon className="w-5 h-5 text-[#CCC]"/></span>
+        }
+      })}</span>
       ),
       target: () => refBookmark.current || null,
       nextButtonProps: {
-        children: '다음'
+        children: t("Theme.Tour.Next")
       },
       prevButtonProps: {
-        children: '이전'
+        children: t("Theme.Tour.Previous")
       },
     },
     {
-      title: "주제 바구니",
-      description: (
-        <Text style={{color: '#555'}}>
-          <span style={{ display: 'inline-flex', alignItems: 'center' }}><BookmarkIcon className="w-5 h-5" style={{ color: '#CCCCCC' }}/></span> 버튼을 누르면, 이곳의 <span className='font-semibold'>주제 바구니</span>에 주제를 담아둘 수 있어요. 
-        </Text>
+      title: t("Theme.Tour.PinnedThemes.Title"),
+      description: (<span className="text-[#555]">{reactStringReplace(t("Theme.Tour.PinnedThemes.Description"), VARIABLE_REGEX, (match, i) => {
+        switch(match){
+          case "{{bookmark}}":
+            return <span key={match+i} style={{ display: 'inline-flex', alignItems: 'center' }}><BookmarkIcon className="w-5 h-5 text-[#CCC]"/></span>
+        }
+      })}</span>
       ),
       target: () => refPinnedThemes.current || null,
       nextButtonProps: {
-        children: '다음'
+        children: t("Theme.Tour.Next")
       },
       prevButtonProps: {
-        children: '이전'
+        children: t("Theme.Tour.Previous")
       },
     },
     {
-      title: "주제 직접 작성하기",
-      description: (
-        <Text style={{color: '#555'}}>
-          내가 직접 추가하고 싶은 주제가 있다면, 직접 작성해보아요.
-        </Text>
-      ),
+      title: t("Theme.Tour.CreateTheme.Title"),
+      description: (<span className="text-[#555]">{t("Theme.Tour.CreateTheme.Description")}</span>),
       target: () => refCreateTheme.current || null,
       nextButtonProps: {
-        children: '완료'
+        children: t("Theme.Tour.Complete")
       },
       prevButtonProps: {
-        children: '이전'
+        children: t("Theme.Tour.Previous")
       },
     }
-  ];
+  ], [t])
 
 
   const {
@@ -230,8 +225,6 @@ const ThemeBox = () => {
     resolver: yupResolver(schema),
     reValidateMode: 'onChange',
   });
-
-  const [t] = useTranslation()
 
   const handleShowNextExpression = async (index: number) => {
     if (isTourClosing) return;
