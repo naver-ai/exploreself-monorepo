@@ -151,7 +151,7 @@ export function updateDidTutorial(
       const state = getState();
       if (state.auth.token) {
         try {
-          const response = await Http.axios.put(`/user/did_tutorial`,{type: tutorialType, value: didTutorial}, {
+          const response = await Http.axios.put(`/user/did_tutorial`,{key: tutorialType, value: didTutorial}, {
             headers: Http.makeSignedInHeader(state.auth.token),
           })
           dispatch(userSlice.actions.setDidTutorialFlag({key: tutorialType, value: didTutorial}));
