@@ -59,3 +59,5 @@ export const AdminLoginPage = () => {
     </div>
   );
 };
+
+export default AdminLoginPage

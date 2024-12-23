@@ -82,3 +82,5 @@ export const InitialNarrativePage = () => {
       </div>
     </div>
 };
+
+export default InitialNarrativePage

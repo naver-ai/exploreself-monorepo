@@ -202,3 +202,5 @@ export const ExplorerPage = () => {
     );
   }
 };
+
+export default ExplorerPage

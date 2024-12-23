@@ -54,3 +54,5 @@ useEffect(()=>{
     </div>
   )
 }
+
+export default UserListPage

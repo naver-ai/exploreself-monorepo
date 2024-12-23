@@ -60,3 +60,5 @@ export const AdminSignedInRouteFrame = () => {
             </Layout.Content>
         </Layout>
 }
+
+export default AdminSignedInRouteFrame

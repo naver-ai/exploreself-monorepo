@@ -65,3 +65,5 @@ export const DataPage = () => {
         }
     </div>
 }
+
+export default DataPage

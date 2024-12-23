@@ -72,3 +72,5 @@ export const AgendaListPage  = () => {
         </div>
     </div></div>
 }
+
+export default AgendaListPage

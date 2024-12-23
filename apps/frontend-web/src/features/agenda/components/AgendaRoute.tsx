@@ -23,3 +23,5 @@ export const AgendaRoute = () => {
         return null
     }
 }
+
+export default AgendaRoute
