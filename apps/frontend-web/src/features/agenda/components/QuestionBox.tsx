@@ -26,6 +26,7 @@ import { filter } from 'rxjs';
 import { InfoPopover } from '../../../components/InfoPopover';
 import { ReactTyped } from "react-typed";
 import { updateDidTutorial } from '../../user/reducer';
+import { usePrevious } from '@uidotdev/usehooks';
 
 
 const SKELETON_PARAG_PARAMS :SkeletonParagraphProps = {rows: 3,}
@@ -43,6 +44,7 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
   const [isInputFieldActive, setIsInputFieldActive] = useState(false);
   const isQuestionBoxActive = useSelector(state => state.agenda.recentlyActiveQuestionId == props.qid)
   const isCreatingComment = useSelector(state => state.agenda.questionCommentCreationLoadingFlags[props.qid] || false)
+  const preIsCreatingComment = usePrevious(isCreatingComment)
   const isCreatingKeywords = useSelector(state => state.agenda.questionKeywordCreationLoadingFlags[props.qid] || false)
 
   const viewRef = useRef<HTMLDivElement>(null)
@@ -170,6 +172,16 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
     } 
   },[])
 
+  const [shouldAnimateComment, setShouldAnimateComment] = useState(false)
+
+  useEffect(()=>{
+    if(comment != null && preIsCreatingComment == undefined){
+      setShouldAnimateComment(false)
+    }else if(preIsCreatingComment == true){
+      setShouldAnimateComment(true)
+    }
+  }, [comment, preIsCreatingComment, isCreatingComment])
+
   useEffect(()=>{
     const focusRequestSubscription = ShortcutManager.instance.onFocusRequestedEvent.pipe(filter(val => val.type == 'question' && val.id == props.qid)).subscribe({
       next: (args) => {
@@ -249,16 +261,16 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
               isCreatingComment === true ? 
                 <Skeleton className='skeleton-sm' active title={false} paragraph={SKELETON_PARAG_PARAMS} /> : 
                 <>
-                {comment && <ReactTyped
+                {comment != null ? (shouldAnimateComment===true ? <ReactTyped
                   strings={[comment]}
                   typeSpeed={30}
                   backSpeed={50}
                   loop={false}
-                />}    
+                /> : <div>{comment}</div>) : null}
                 <Button
                 type="text"
                 icon={<ReloadOutlined />}
-                onClick={() => getNewCommentHandler()}
+                onClick={getNewCommentHandler}
                 size="small"
                 className="text-xs justify-center py-3"
               >{t("Theme.Questions.RequestHelp")}</Button>
