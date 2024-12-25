@@ -269,11 +269,13 @@ export const QuestionBox = (props: { qid: string, tid: string }) => {
                 /> : <div>{comment}</div>) : null}
                 <Button
                 type="text"
-                icon={<ReloadOutlined />}
+                icon={<ReloadOutlined/>}
+                iconPosition='start'
                 onClick={getNewCommentHandler}
                 size="small"
-                className="text-xs justify-center py-3"
-              >{t("Theme.Questions.RequestHelp")}</Button>
+                className="text-xs justify-center mt-3">
+                  <div>{t("Theme.Questions.RequestHelp")}</div>
+                </Button>
               </>
             }
             

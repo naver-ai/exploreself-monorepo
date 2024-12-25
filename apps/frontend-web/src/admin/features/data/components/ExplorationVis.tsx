@@ -94,8 +94,8 @@ export const ExplorationVis = (props: {
                         return <div key={user._id} className={'w-[4%] min-w-[80px]'}>
                             <div className="font-bold mb-2">{user.alias}</div>
                             {
-                                user.initialNarrative != null ? <div className="bg-blue-400 p-1.5 rounded-md">
-                                <TextPlaceholder numLines={numLines(user.initialNarrative)}/>
+                                (user as any).initialNarrative != null ? <div className="bg-blue-400 p-1.5 rounded-md">
+                                <TextPlaceholder numLines={numLines((user as any).initialNarrative)}/>
                             </div> : null
                             }
                             {

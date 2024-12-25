@@ -2,10 +2,9 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { OutlinePanel, PinnedThemesPanel } from '../components/sidebar-views';
 import ThemeBox from '../components/ThemeBox';
 import { ThreadBox } from '../components/ThreadBox';
-import { Card,  Button, Input } from 'antd';
+import { Card,  Button } from 'antd';
 import { useDispatch, useSelector } from '../../../redux/hooks';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { UserAvatar } from '../../user/components/UserAvatar';
 import {enterReviewStage, getNewThemes, resetNewThemes, selectFloatingHeader, setThemeSelectorOpen, threadSelectors } from '../reducer';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { useInView } from 'react-intersection-observer';
@@ -142,7 +141,7 @@ export const ExplorerPage = () => {
     return <Navigate to="./summary"/>;
   } else {
     const themeButtonIcon = <LightBulbIcon className={`w-5 h-5 ${focusOnThemeButton ? "animate-bounce-emphasized text-yellow-200":""}`} />
-    const themeButtonLabel = <span className={`${focusOnThemeButton ? 'animate-pulse font-semibold':''}`}>{threadIds.length == 0 ? t("Exploration.ShowMoreThemesInitial") : t("Exploration.ShowMoreThemes")}</span>
+    const themeButtonLabel = <div className={`${focusOnThemeButton ? 'animate-pulse font-semibold':''} inline`}>{threadIds.length == 0 ? t("Exploration.ShowMoreThemesInitial") : t("Exploration.ShowMoreThemes")}</div>
     return (
       <div className="h-screen flex justify-stretch">
         <div className="basis-1/6 min-w-[200px] md:min-w-[300px] bg-white border-r-[1px] flex flex-col">
