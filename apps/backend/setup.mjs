@@ -73,7 +73,7 @@ async function setup(){
             required: true
         }),
         "MONGODB_DBNAME": env["MONGODB_DBNAME"] || await input({
-            default: "reauthor",
+            default: "exploreself",
             message: "Insert a DB name to store the app data.",
             required: true
         }),

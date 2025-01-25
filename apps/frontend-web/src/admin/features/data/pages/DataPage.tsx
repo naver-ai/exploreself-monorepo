@@ -34,7 +34,7 @@ export const DataPage = () => {
             const resp = await Http.axios.get("/admin/data/all", {
                 params: {exclude: Object.keys(excludedUserIds).filter(id => excludedUserIds[id] === true)},
                 headers: Http.makeSignedInHeader(token!)})
-            FileSaver.saveAs(new Blob([JSON.stringify(resp.data, null, 2)], {type: 'application/json'}), 'reauthor-users-all-data.json')
+            FileSaver.saveAs(new Blob([JSON.stringify(resp.data, null, 2)], {type: 'application/json'}), 'exploreself-users-all-data.json')
         }catch(ex){
             console.log(ex)
         }
