@@ -21,6 +21,9 @@
       "Placeholder": "Name or Nickname"
     }
   },
+  "Header": {
+    "UsernamePlaceholder": "User"
+  },
   "Agendas": {
     "Title": "My Agendas",
     "New": "Explore New Agenda",

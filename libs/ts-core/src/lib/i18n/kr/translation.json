@@ -21,6 +21,9 @@
       "Placeholder": "이름 또는 별명"
     }
   },
+  "Header": {
+    "UsernamePlaceholder": "사용자"
+  },
   "Agendas": {
     "Title": "탐색 스토리",
     "New": "새 스토리 시작하기",

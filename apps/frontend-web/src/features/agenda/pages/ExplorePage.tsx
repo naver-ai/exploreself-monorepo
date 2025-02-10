@@ -15,7 +15,9 @@ import classNames from 'classnames'
 import { SessionStatus } from '@core';
 import { InfoPopover } from '../../../components/InfoPopover';
 import { ChevronDoubleLeftIcon } from '@heroicons/react/20/solid';
-
+import LinesEllipsis from 'react-lines-ellipsis'
+import responsiveHOC from 'react-lines-ellipsis/lib/responsiveHOC'
+const ResponsiveEllipsis = responsiveHOC()(LinesEllipsis)
 
 const SidePanel = () => {
 
@@ -42,16 +44,14 @@ const SidePanel = () => {
         id="sidebar-header"
         className="flex justify-between items-center  border-b-[1px]"
       >
-        {title != null && <Button
+        <Button
               type="text"
-              className='p-2 font-semibold text-base w-full rounded-none justify-start'
+              className='p-2 rounded-none justify-start'
               size='large'
-              iconPosition='start'
-              icon={<ChevronDoubleLeftIcon className="w-6 h-6" />}
               onClick={onReturnClick}
-            >
-              {title}
-            </Button>}
+            ><ChevronDoubleLeftIcon className="w-6 h-6" />
+            </Button>
+            <ResponsiveEllipsis text={title} maxLine={1} className='w-full text-base select-none px-1 text-gray-500'/>
       </div>
       <div className={classNames(
         'flex-1 overflow-y-auto bg-gray-400/2',

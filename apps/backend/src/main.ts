@@ -44,7 +44,7 @@ mongoose.connect(process.env.MONGODB_URL + process.env.MONGODB_DBNAME)
         alias: "test",
         name: undefined,
         passcode: "12345",
-        isKorean: true
+        isKorean: false
       }).save()
       console.log("Created new user: ", newUser.toJSON())
     }

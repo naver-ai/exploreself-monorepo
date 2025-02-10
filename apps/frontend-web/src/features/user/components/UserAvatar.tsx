@@ -46,7 +46,7 @@ export const UserAvatar = (props: { buttonClassName?: string, disabled?: boolean
   return (
     <Dropdown menu={menuData} disabled={props.disabled}>
       <Button disabled={props.disabled} className={`${props.buttonClassName}`} type="dashed">
-        {userName}
+        {userName || t("Header.UsernamePlaceholder")}
       </Button>
     </Dropdown>
   );

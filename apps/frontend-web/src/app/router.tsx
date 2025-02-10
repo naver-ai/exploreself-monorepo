@@ -80,7 +80,7 @@ export const MainRouter = () => {
             <Route path="login" element={<LoginPage />} />
             <Route element={<SignedInRoute />}>
               <Route index element={<Navigate to="agendas" />} />
-              <Route element={<SignedInScreenFrame withHeader={false} />}>
+              <Route element={<SignedInScreenFrame withHeader={true} />}>
                 <Route path="profile" element={<ProfilePage />} />
               </Route>
               <Route path="agendas">

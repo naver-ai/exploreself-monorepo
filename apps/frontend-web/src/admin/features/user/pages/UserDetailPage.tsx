@@ -63,28 +63,7 @@ const BrowserSessionDetailView = (props: { sessionId: string, isLiveMode: boolea
 
     if (replayerWidth != null && replayerHeight != null) {
       if (props.isLiveMode == true) {
-        /*
-        console.log("Initialized rrweb player in live mode.")
-        replayerRef.current = new rrweb.Replayer(eventsRef.current!, {
-          root: document.getElementById(playerViewId)!,
-          liveMode: true
-        })
-        replayerRef.current?.startLive(Date.now() - 1000)
-        replayerRef.current?.play()*/
         loadBrowserSessionEvents(props.sessionId, userId, token!).then(events => {
-          
-          /*replayerRef.current = new rrwebPlayer({
-            target: document.getElementById(playerViewId)!,
-            props: {
-              liveMode: true,
-              events: events,
-              width: replayerWidth,
-              height: replayerHeight - 80,
-              speedOption: [1],
-              autoPlay: true
-            }
-          })
-          replayerRef.current?.getReplayer()?.play(Date.now() - events[0].timestamp - 1000)*/
           
           console.log("Initialized rrweb player in live mode.")
           replayerRef.current = new rrweb.Replayer(events, {
